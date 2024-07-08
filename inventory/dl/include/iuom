@@ -1,0 +1,30 @@
+#ifndef __$__iuom__81
+#define __$__iuom__81 1234	//include guard
+
+#include<iostream>
+using namespace std;
+namespace inventory
+{
+namespace data_layer
+{
+namespace abc
+{
+class IUnitOfMeasurement
+{
+public:
+virtual void setCode(int code)=0;
+virtual void setTital(string tital)=0;
+virtual int getCode() const=0;
+virtual string getTital() const=0;
+virtual IUnitOfMeasurement & operator=(const IUnitOfMeasurement &other)=0;
+virtual int operator<(const IUnitOfMeasurement &other)=0;
+virtual int operator>(const IUnitOfMeasurement &other)=0;
+virtual int operator<=(const IUnitOfMeasurement &other)=0;
+virtual int operator>=(const IUnitOfMeasurement &other)=0;
+virtual int operator!=(const IUnitOfMeasurement &other)=0;
+virtual int operator==(const IUnitOfMeasurement &other)=0;
+};
+}
+}
+}
+#endif
