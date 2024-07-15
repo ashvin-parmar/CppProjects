@@ -15,15 +15,16 @@ namespace abc
 class IUnitOfMeasurementDAO
 {
 public:
-virtual void add(IUnitOfMeasurement &unitOfMeasurement) throw(DAOException);
-virtual void update(IUnitOfMeasurement &unitOfMeasurement) throw(DAOException);
-virtual void remove(int code) throw(DAOException);
-virtual IUnitOfMeasurement *getByTital(string tital) throw(DAOException);
-virtual IUnitOfMeasurement *getByCode(int code) throw(DAOException);
-virtual forward_list<IUnitOfMeasurement *> * getAll() throw(DAOException);
-virtual int getCount() throw(DAOException);
-virtual int titalExist(string tital) throw(DAOException);
-virtual int codeExist(int code) throw(DAOException);
+static string FILE_NAME;
+virtual void add(IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
+virtual void update(IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
+virtual void remove(int code) noexcept(false);
+virtual IUnitOfMeasurement *getByTitle(string title) noexcept(false);
+virtual IUnitOfMeasurement *getByCode(int code) noexcept(false);
+virtual forward_list<IUnitOfMeasurement *> * getAll() noexcept(false);
+virtual int getCount() noexcept(false);
+virtual int titleExist(string title) noexcept(false);
+virtual int codeExist(int code) noexcept(false);
 };
 }
 }

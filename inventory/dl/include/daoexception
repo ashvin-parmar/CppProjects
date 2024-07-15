@@ -10,6 +10,7 @@ namespace data_layer
 class DAOException:public exception
 {
 string messege;
+public:
 DAOException();
 DAOException(const DAOException &other);
 DAOException(string messege);

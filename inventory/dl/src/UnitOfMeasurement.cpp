@@ -6,61 +6,61 @@ using namespace data_layer;
 UnitOfMeasurement::UnitOfMeasurement()
 {
 this->code=0;
-this->tital="";
+this->title="";
 }
 UnitOfMeasurement::UnitOfMeasurement(const UnitOfMeasurement &other)
 {
 this->code=other.code;
-this->tital=other.tital;
+this->title=other.title;
 }
-UnitOfMeasurement::UnitOfMeasurement(int code,string tital)
+UnitOfMeasurement::UnitOfMeasurement(int code,string title)
 {
 this->code=code;
-this->tital=tital;
+this->title=title;
 }
 void UnitOfMeasurement::setCode(int code)
 {
 this->code=code;
 }
-void UnitOfMeasurement::setTital(string tital)
+void UnitOfMeasurement::setTitle(string title)
 {
-this->tital=tital;
+this->title=title;
 }
-string UnitOfMeasurement::getTital() const
+string UnitOfMeasurement::getTitle() const
 {
-return this->tital;
+return this->title;
 }
-int UnitOfMeasurement::getcode() const
+int UnitOfMeasurement::getCode() const
 {
 return this->code;
 }
 abc::IUnitOfMeasurement& UnitOfMeasurement::operator=(const abc::IUnitOfMeasurement &other)
 {
 this->code=other.getCode();
-this->tital=other.getTital();
+this->title=other.getTitle();
 return *this;
 }
-int UnitOfMeasurement::operator<(const IUnitOfMeasurement &other)
+int UnitOfMeasurement::operator<(const abc::IUnitOfMeasurement &other)
 {
 return this->code<other.getCode();
 }
-int UnitOfMeasurement::operator>(const IUnitOfMeasurement &other)
+int UnitOfMeasurement::operator>(const abc::IUnitOfMeasurement &other)
 {
 return this->code>other.getCode();
 }
-int UnitOfMeasurement::operator<=(const IUnitOfMeasurement &other)
+int UnitOfMeasurement::operator<=(const abc::IUnitOfMeasurement &other)
 {
 return this->code<=other.getCode();
 }
-int UnitOfMeasurement::operator>=(const IUnitOfMeasurement &other)
+int UnitOfMeasurement::operator>=(const abc::IUnitOfMeasurement &other)
 {
 return this->code>=other.getCode();
 }
-int UnitOfMeasurement::operator==(const IUnitOfMeasurement &other)
+int UnitOfMeasurement::operator==(const abc::IUnitOfMeasurement &other)
 {
 return this->code==other.getCode();
 }
-int UnitOfMeasurement::operator!=(const IUnitOfMeasurement &other)
+int UnitOfMeasurement::operator!=(const abc::IUnitOfMeasurement &other)
 {
 return this->code!=other.getCode();
 }

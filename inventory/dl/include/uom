@@ -11,22 +11,22 @@ class UnitOfMeasurement:public abc::IUnitOfMeasurement
 {
 private:
 int code;
-string tital;
+string title;
 public:
 UnitOfMeasurement();
 UnitOfMeasurement(const UnitOfMeasurement &other);
-UnitOfMeasurement(int code,string tital);
+UnitOfMeasurement(int code,string title);
 void setCode(int code);
-void setTital(string tital);
-string getTital() const;
-int getcode() const;
-IUnitOfMeasurement& operator=(const IUnitOfMeasurement &other);
-int operator<(const IUnitOfMeasurement &other);
-int operator>(const IUnitOfMeasurement &other);
-int operator<=(const IUnitOfMeasurement &other);
-int operator>=(const IUnitOfMeasurement &other);
-int operator==(const IUnitOfMeasurement &other);
-int operator!=(const IUnitOfMeasurement &other);
+void setTitle(string title);
+string getTitle() const;
+int getCode() const;
+abc::IUnitOfMeasurement& operator=(const abc::IUnitOfMeasurement &other);
+int operator<(const abc::IUnitOfMeasurement &other);
+int operator>(const abc::IUnitOfMeasurement &other);
+int operator<=(const abc::IUnitOfMeasurement &other);
+int operator>=(const abc::IUnitOfMeasurement &other);
+int operator==(const abc::IUnitOfMeasurement &other);
+int operator!=(const abc::IUnitOfMeasurement &other);
 virtual ~UnitOfMeasurement();
 };
 }
