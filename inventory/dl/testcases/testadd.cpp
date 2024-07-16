@@ -8,7 +8,10 @@ int main()
 {
 UnitOfMeasurement m;
 UnitOfMeasurementDAO unitOfMeasurement;
-m.setTitle(string("Gram"));
+string a;
+cout<<"Enter title: ";
+cin>>a;
+m.setTitle(a);
 try
 {
 unitOfMeasurement.add(&m);

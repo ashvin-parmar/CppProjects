@@ -75,6 +75,7 @@ void UnitOfMeasurementDAO::update(abc::IUnitOfMeasurement *unitOfMeasurement) no
 {
 
 
+
 }
 void UnitOfMeasurementDAO::remove(int code) noexcept(false)
 {
@@ -90,7 +91,39 @@ return NULL;
 }
 forward_list<abc::IUnitOfMeasurement *> * UnitOfMeasurementDAO::getAll() noexcept(false)
 {
-return NULL;
+fstream dataFile(FILE_NAME,ios::in | ios::binary);
+if(dataFile.fail()) 
+{
+throw DAOException("Unit of measurement does not exist");
+}
+dataFile.seekp(0,ios::beg);
+Header header;
+dataFile.read((char *)&header,sizeof(Header));
+if(dataFile.fail())
+{
+dataFile.close();
+throw DAOException("Unit of measurement does not exist");
+}
+if(header.numberOfRecords==0)
+{
+dataFile.close();
+throw DAOException("Unit of measurement does not exist");
+}
+_UnitOfMeasurement _unitOfMeasurement;
+abc::IUnitOfMeasurement *unitOfMeasurement;
+forward_list<abc::IUnitOfMeasurement *> *list;
+list=new forward_list<abc::IUnitOfMeasurement*>;
+forward_list<abc::IUnitOfMeasurement *>::iterator i=list->before_begin();
+while(true) 
+{
+dataFile.read((char *)&_unitOfMeasurement,sizeof(_UnitOfMeasurement));
+if(dataFile.fail()) break;
+unitOfMeasurement=new UnitOfMeasurement;
+unitOfMeasurement->setCode(_unitOfMeasurement.code);
+unitOfMeasurement->setTitle(string(_unitOfMeasurement.title));
+i=list->insert_after(i,unitOfMeasurement);
+}
+return list;
 }
 int UnitOfMeasurementDAO::getCount() noexcept(false)
 {
@@ -98,8 +131,8 @@ return 0;
 }
 int UnitOfMeasurementDAO::titleExist(string title) noexcept(false)
 {
-return 0;
 
+return 0;
 }
 int UnitOfMeasurementDAO::codeExist(int code) noexcept(false)
 {
