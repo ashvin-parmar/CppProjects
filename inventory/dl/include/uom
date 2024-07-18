@@ -1,5 +1,5 @@
-#ifndef __$__uom__81
-#define __$__uom__81 324
+#ifndef __$__uom__dl
+#define __$__uom__dl 324
 #include<iuom>
 #include<iostream>
 using namespace std;

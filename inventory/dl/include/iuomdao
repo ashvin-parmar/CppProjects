@@ -1,5 +1,5 @@
-#ifndef __$__iuomdao__ 
-#define __$__iuomdao__ 234
+#ifndef __$__iuomdao__dl 
+#define __$__iuomdao__dl 234
 #include<iostream>
 #include<iuom>
 #include<uom>

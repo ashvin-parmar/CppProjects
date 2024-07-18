@@ -1,5 +1,5 @@
-#ifndef __$__iuom__81
-#define __$__iuom__81 1234	//include guard
+#ifndef __$__iuom__dl
+#define __$__iuom__dl 1234	//include guard
 
 #include<iostream>
 using namespace std;

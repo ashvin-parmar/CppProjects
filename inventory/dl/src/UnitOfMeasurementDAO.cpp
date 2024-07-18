@@ -1,3 +1,5 @@
+//Compilation: g++ -c *.cpp -I ..\include -I ..\..\..\tmcommon\include
+
 #include<stdio.h>
 #include<iuom>
 #include<uom>
