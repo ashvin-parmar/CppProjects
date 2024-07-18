@@ -1,4 +1,4 @@
-#include<iuomdao>
+#include<dl/iuomdao>
 #include<iostream>
 using namespace std;
 using namespace inventory;

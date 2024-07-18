@@ -1,6 +1,6 @@
 #include<iostream>
-#include<uomdao>
-#include<uom>
+#include<dl/uomdao>
+#include<dl/uom>
 #include<forward_list>
 using namespace std;
 using namespace inventory;

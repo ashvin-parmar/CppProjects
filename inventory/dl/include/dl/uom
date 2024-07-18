@@ -1,11 +1,11 @@
-#ifndef __$__uom__bl
-#define __$__uom__bl 324
-#include<iuom>
+#ifndef __$__uom__dl
+#define __$__uom__dl 324
+#include<dl/iuom>
 #include<iostream>
 using namespace std;
 namespace inventory
 {
-namespace business_layer
+namespace data_layer
 {
 class UnitOfMeasurement:public abc::IUnitOfMeasurement
 {

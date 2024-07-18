@@ -1,5 +1,5 @@
 #include<iostream>
-#include<stringutils>
+#include<common/stringutils>
 using namespace std;
 string stringutils::trimmed(const string &s)
 {
