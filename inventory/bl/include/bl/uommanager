@@ -1,0 +1,35 @@
+#ifndef __$__uommanager__bl
+#define __$__uommanager__bl 324
+#include<iostream>
+#include<bl/iuom>
+#include<bl/uom>
+#include<bl/iuommanager>
+#include<bl/blexception>
+#include<forward_list>
+#include<map>
+#include<utility>
+using namespace std;
+namespace inventory
+{
+namespace business_layer
+{
+class UnitOfMeasurementManager:public abc::IUnitOfMeasurementManager
+{
+private:
+map<string *,abc::IUnitOfMeasurement *> titleMap;
+map<int,abc::IUnitOfMeasurement *> codeMap;
+public:
+void addUnitOfMeasurement(const abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
+void updateUnitOfMeasurement(const abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
+void removeUnitOfMeasurementByCode(int code) noexcept(false);
+void removeUnitOfMeasurementByTitle(string &title) noexcept(false);
+abc::IUnitOfMeasurement * getUnitOfMeasurementByCode(int code) noexcept(false);
+abc::IUnitOfMeasurement * getUnitOfMeasurementByTitle(string &title) noexcept(false);
+forward_list<abc::IUnitOfMeasurement *> * getUnitOfMeasurements() noexcept(false);
+int unitOfMeasurementCodeExist(int code) noexcept(false);
+int unitOfMeasurementTitleExist(string &title) noexcept(false);
+int getUnitOfMeasurementCount() noexcept(false);
+};
+}
+}
+#endif

@@ -1,0 +1,32 @@
+#ifndef __$__iuommanager__bl
+#define __$__iuommanager__bl 123
+#include<iostream>
+#include<bl/iuom>
+#include<bl/uom>
+#include<bl/blexception>
+#include<map>
+#include<forward_list>
+namespace inventory
+{
+namespace business_layer
+{
+namespace abc
+{
+class IUnitOfMeasurementManager
+{
+public:
+virtual void addUnitOfMeasurement(const abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false)=0;
+virtual void updateUnitOfMeasurement(const abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false)=0;
+virtual void removeUnitOfMeasurementByCode(int code) noexcept(false)=0;
+virtual void removeUnitOfMeasurementByTitle(string &title) noexcept(false)=0;
+virtual abc::IUnitOfMeasurement * getUnitOfMeasurementByCode(int code) noexcept(false)=0;
+virtual abc::IUnitOfMeasurement * getUnitOfMeasurementByTitle(string &title) noexcept(false)=0;
+virtual forward_list<abc::IUnitOfMeasurement *> * getUnitOfMeasurements() noexcept(false)=0;
+virtual int unitOfMeasurementCodeExist(int code) noexcept(false)=0;
+virtual int unitOfMeasurementTitleExist(string &title) noexcept(false)=0;
+virtual int getUnitOfMeasurementCount() noexcept(false)=0;
+};
+}
+}
+}
+#endif
