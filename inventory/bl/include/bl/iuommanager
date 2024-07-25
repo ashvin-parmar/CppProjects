@@ -15,8 +15,8 @@ namespace abc
 class IUnitOfMeasurementManager
 {
 public:
-virtual void addUnitOfMeasurement(const abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false)=0;
-virtual void updateUnitOfMeasurement(const abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false)=0;
+virtual void addUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement)=0;
+virtual void updateUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false)=0;
 virtual void removeUnitOfMeasurementByCode(int code) noexcept(false)=0;
 virtual void removeUnitOfMeasurementByTitle(string &title) noexcept(false)=0;
 virtual abc::IUnitOfMeasurement * getUnitOfMeasurementByCode(int code) noexcept(false)=0;

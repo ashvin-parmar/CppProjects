@@ -7,5 +7,16 @@ namespace stringutils
 {
 string trimmed(const string &s);
 int compareStringIgnoreCase(const char *,const char *);
+
+bool isAlphaNum(char m);
+bool isValidateEmail(const string &email);
+bool isValidateIndianContactNumber(const string &contactNumber);
+bool isValidateGSTNumber(const string &gstNumber);
+bool isValidateUPIID(const string &upiID);
+
+string validateEmail(const string &email);
+string validateContactNumber(const string &contactNumber);
+string validateGSTNumber(const string &gstNumber);
+string validateUPIID(const string &upiID);
 }
 #endif

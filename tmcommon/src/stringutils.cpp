@@ -1,6 +1,8 @@
 #include<iostream>
 #include<common/stringutils>
 using namespace std;
+
+//String handling common functionality
 string stringutils::trimmed(const string &s)
 {
 int e,f,len;
@@ -43,4 +45,93 @@ if(c>=97 && c<=122) c=c-32;
 d=*b;
 if(d>=97 && d<=122) d=d-32;
 return c-d;
+}
+
+//Internal Helping functionality
+bool stringutils::isAlphaNum(char m)
+{
+return (m>=97 && m<=122) || (m>=65 && m<=90) || (m>=48 && m<=57);
+}
+bool stringutils::isValidateEmail(const string &email)
+{
+if(email.size()==0) return false;
+size_t at_pos= email.find('@');
+if (at_pos==std::string::npos || at_pos == 0 || at_pos == email.size() - 1) return false;
+size_t dot_pos = email.find('.', at_pos + 1);
+if(dot_pos==std::string::npos || dot_pos == email.size() - 1) return false;
+// Check for invalid characters before '@'
+for (size_t i=0; i<at_pos;++i) 
+{
+if(!isAlphaNum(email[i]) && email[i]!= '.' && email[i]!='-' && email[i]!='_') return false;
+}
+//Check for invalid characters after '@'
+for (size_t i=at_pos+1; i<email.size();++i) 
+{
+if(!isAlphaNum(email[i]) && email[i]!= '.' && email[i]!='-' && email[i]!='_') return false;
+}
+//Check for consecutive dots
+if (email.find("..")!=std::string::npos) return false;
+if (email.substr(dot_pos + 1).size() < 2) return false;
+return true;
+}
+bool stringutils::isValidateIndianContactNumber(const string &contactNumber)
+{
+if(contactNumber.size()<10 || contactNumber.size()>13 || contactNumber.size()==12) return false;
+int i=0;
+if(contactNumber.size()==13) 
+{
+if(contactNumber[i++]!='+') return false;
+if(contactNumber[i++]!='9' && contactNumber[i++]!='1') return false;
+}
+if(contactNumber.size()==11)
+{
+if(contactNumber[i++]!='0') return false;
+}
+for(;i<contactNumber.size();i++)
+{
+if(contactNumber[i]<48 || contactNumber[i]>57) return false;
+}
+return true;
+}
+bool stringutils::isValidateGSTNumber(const string &gstNumber)
+{
+if(gstNumber.size()!=15) return false;
+if(gstNumber[12]!='Z') return false;
+for(int i=0;i<15;i++)
+{
+if(i==12) continue;
+if(gstNumber[i]>57 || gstNumber[i]<48) return false;
+}
+return true;
+}
+bool stringutils::isValidateUPIID(const string &upiID)
+{
+if(upiID.find('@')==std::string::npos) return false;
+return true;
+}
+
+//Invoice Generator string handling
+string stringutils::validateEmail(const string &email)
+{
+string vEmail=trimmed(email);
+if(isValidateEmail(vEmail)) return vEmail;
+else return string("");
+}
+string stringutils::validateContactNumber(const string &contactNumber)
+{
+string vContactNumber=trimmed(contactNumber);
+if(!isValidateIndianContactNumber(vContactNumber)) return string("");
+return vContactNumber;
+}
+string stringutils::validateGSTNumber(const string &gstNumber)
+{
+string vGSTNumber=trimmed(gstNumber);
+if(!isValidateGSTNumber(vGSTNumber)) return string(""); 
+return vGSTNumber;
+}
+string stringutils::validateUPIID(const string &upiId)
+{
+string vUPIID=trimmed(upiId);
+if(!isValidateUPIID(vUPIID)) return string(""); 
+return vUPIID;
 }

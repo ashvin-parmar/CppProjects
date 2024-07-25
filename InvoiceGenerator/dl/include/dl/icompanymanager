@@ -1,0 +1,24 @@
+#ifndef __$__icompanymanager__dl
+#define __$__icompanymanager__dl 123
+#include<iostream>
+#include<dl/icompany>
+#include<dl/company>
+#include<dl/daoexception>
+using namespace std;
+namespace invoicegenerator
+{
+namespace data_layer
+{
+namespace abc
+{
+class ICompanyManager
+{
+public:
+static string FILE_NAME;
+virtual void addCompany(abc::ICompany *company) noexcept(false)=0;
+
+};
+}
+}
+}
+#endif

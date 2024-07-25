@@ -47,7 +47,7 @@ this->exceptions.insert(pair<string,string>(property,exception));
 }
 string BLException::getPropertyException(string property)
 {
-map<string,string>::iterator i=this->exceptions.find(property);
+ map<string,string>::iterator i=this->exceptions.find(property);
 if(i==this->exceptions.end()) return string("");
 return i->second;
 }

@@ -13,14 +13,28 @@ namespace inventory
 {
 namespace business_layer
 {
+class UnitOfMeasurementManagerTitleComparator
+{
+public:
+bool operator()(const string *left,const string *right);
+};
 class UnitOfMeasurementManager:public abc::IUnitOfMeasurementManager
 {
 private:
-map<string *,abc::IUnitOfMeasurement *> titleMap;
-map<int,abc::IUnitOfMeasurement *> codeMap;
+class DataModel
+{
 public:
-void addUnitOfMeasurement(const abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
-void updateUnitOfMeasurement(const abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
+map<string *,abc::IUnitOfMeasurement *,UnitOfMeasurementManagerTitleComparator> titleWiseMap;
+map<int,abc::IUnitOfMeasurement *> codeWiseMap;
+DataModel();
+~DataModel();
+void populateDataStructure();
+};
+static DataModel dataModel;
+public:
+UnitOfMeasurementManager();
+void addUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement);
+void updateUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
 void removeUnitOfMeasurementByCode(int code) noexcept(false);
 void removeUnitOfMeasurementByTitle(string &title) noexcept(false);
 abc::IUnitOfMeasurement * getUnitOfMeasurementByCode(int code) noexcept(false);
