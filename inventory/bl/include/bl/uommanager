@@ -38,7 +38,7 @@ void populateDataStructure();
 };
 static DataModel dataModel;
 public:
-UnitOfMeasurementManager() noexcept(false);
+UnitOfMeasurementManager();
 void addUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
 void updateUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
 void removeUnitOfMeasurementByCode(int code) noexcept(false);

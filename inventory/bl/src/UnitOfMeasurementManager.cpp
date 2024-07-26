@@ -27,7 +27,18 @@ UnitOfMeasurementManager::DataModel::populateDataStructure();
 }
 UnitOfMeasurementManager::DataModel::~DataModel()
 {
-
+_UnitOfMeasurement *unitOfMeasurement;
+map<string *,_UnitOfMeasurement *>::iterator i;
+i=dataModel.titleWiseMap.begin();
+while(i!=dataModel.titleWiseMap.end())
+{
+unitOfMeasurement=i->second;
+delete unitOfMeasurement->title;
+delete unitOfMeasurement;
+++i;
+}
+dataModel.titleWiseMap.clear();
+dataModel.codeWiseMap.clear();
 }
 void UnitOfMeasurementManager::DataModel::populateDataStructure()
 {
@@ -35,10 +46,12 @@ forward_list<inventory::data_layer::abc::IUnitOfMeasurement *> *list;
 inventory::data_layer::UnitOfMeasurementDAO unitOfMeasurementDAO;
 inventory::data_layer::abc::IUnitOfMeasurement *unitOfMeasurementDL;
 _UnitOfMeasurement *unitOfMeasurementBL;
-list=unitOfMeasurementDAO.getAll();
 forward_list<inventory::data_layer::abc::IUnitOfMeasurement *>::iterator i;
 string *title;
 int code;
+try
+{
+list=unitOfMeasurementDAO.getAll();
 for(i=list->begin();i!=list->end();++i)
 {
 unitOfMeasurementDL=*i;
@@ -53,8 +66,12 @@ delete unitOfMeasurementDL;
 }
 list->clear();
 delete list;
+}catch(inventory::data_layer::DAOException daoException)
+{
+// do nothing
 }
-UnitOfMeasurementManager::UnitOfMeasurementManager() noexcept(false)
+}
+UnitOfMeasurementManager::UnitOfMeasurementManager()
 {
 
 }
@@ -85,7 +102,6 @@ throw blException;
 }
 _UnitOfMeasurement *_unitOfMeasurement;
 string *t;
-cout<<"Reach try"<<endl;
 try
 {
 inventory::data_layer::abc::IUnitOfMeasurement *unitOfMeasurementDL;
@@ -93,9 +109,7 @@ inventory::data_layer::UnitOfMeasurementDAO unitOfMeasurementDAO;
 unitOfMeasurementDL=new inventory::data_layer::UnitOfMeasurement;
 unitOfMeasurementDL->setCode(0);
 unitOfMeasurementDL->setTitle(title);
-cout<<"Here its comes"<<endl;
 unitOfMeasurementDAO.add(unitOfMeasurementDL);
-cout<<"Code set."<<endl;
 code=unitOfMeasurementDL->getCode();
 t=new string(title);
 delete unitOfMeasurementDL;
@@ -106,7 +120,6 @@ dataModel.titleWiseMap.insert(pair<string *,_UnitOfMeasurement *>(t,_unitOfMeasu
 dataModel.codeWiseMap.insert(pair<int,_UnitOfMeasurement *>(code,_unitOfMeasurement));
 }catch(inventory::data_layer::DAOException daoException)
 {
-cout<<"Here exception generated"<<endl;
 blException.setGenericException(string(daoException.what()));
 throw blException;
 }

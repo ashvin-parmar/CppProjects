@@ -11,6 +11,7 @@ this->genericException="";
 BLException::BLException(const BLException &other)
 {
 this->genericException=other.genericException;
+this->exceptions=other.exceptions;
 }
 BLException::BLException(string genericException)
 {
@@ -19,6 +20,7 @@ this->genericException=genericException;
 BLException& BLException::operator=(const BLException &other)
 {
 this->genericException=other.genericException;
+this->exceptions=other.exceptions;
 return *this;
 }
 BLException::~BLException() throw()
