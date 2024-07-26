@@ -74,24 +74,36 @@ if (email.find("..")!=std::string::npos) return false;
 if (email.substr(dot_pos + 1).size() < 2) return false;
 return true;
 }
-bool stringutils::isValidateIndianContactNumber(const string &contactNumber)
+int stringutils::isValidateIndianContactNumber(const string &contactNumber)
 {
+
+//situation=0 invalid
+//situation=1 +91 formate
+//situation=2 leading with 0 formate
+//situation=3 10 digit contact number
+
 if(contactNumber.size()<10 || contactNumber.size()>13 || contactNumber.size()==12) return false;
 int i=0;
+int situation;
 if(contactNumber.size()==13) 
 {
-if(contactNumber[i++]!='+') return false;
-if(contactNumber[i++]!='9' && contactNumber[i++]!='1') return false;
+if(contactNumber[i++]!='+') return 0;
+if(contactNumber[i++]!='9' && contactNumber[i++]!='1') return 0;
+situation=1;
 }
 if(contactNumber.size()==11)
 {
-if(contactNumber[i++]!='0') return false;
+if(contactNumber[i++]!='0') return 0;
+situation=2;
 }
+if(i==0) situation=3;
 for(;i<contactNumber.size();i++)
 {
-if(contactNumber[i]<48 || contactNumber[i]>57) return false;
+if(contactNumber[i]<48 || contactNumber[i]>57) return 0;
 }
-return true;
+//Check for first digit if '0'
+if(contactNumber[0]=='0') return 0;
+return situation ;
 }
 bool stringutils::isValidateGSTNumber(const string &gstNumber)
 {
@@ -106,10 +118,15 @@ return true;
 }
 bool stringutils::isValidateUPIID(const string &upiID)
 {
-if(upiID.find('@')==std::string::npos) return false;
+size_t at_pos= upiID.find('@');
+if (at_pos==std::string::npos || at_pos == 0 || at_pos == upiID.size() - 1) return false;
+for(size_t i=0;i<upiID.size();i++)
+{
+if(i==at_pos) continue;
+if(!isAlphaNum(upiID[i])) return false;
+}
 return true;
 }
-
 //Invoice Generator string handling
 string stringutils::validateEmail(const string &email)
 {
@@ -117,10 +134,21 @@ string vEmail=trimmed(email);
 if(isValidateEmail(vEmail)) return vEmail;
 else return string("");
 }
+
+
 string stringutils::validateContactNumber(const string &contactNumber)
 {
 string vContactNumber=trimmed(contactNumber);
-if(!isValidateIndianContactNumber(vContactNumber)) return string("");
+int situation ;
+situation=isValidateIndianContactNumber(vContactNumber);
+if(situation==0) return string("");
+else if(situation==1)
+{
+vContactNumber.erase(0,3);
+}else if(situation==2)
+{
+vContactNumber.erase(0,1);
+}
 return vContactNumber;
 }
 string stringutils::validateGSTNumber(const string &gstNumber)

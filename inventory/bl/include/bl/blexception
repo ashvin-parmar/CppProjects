@@ -22,7 +22,7 @@ const char * what() const throw();
 int hasGenericException();
 void setGenericException(string genericException);
 string getGenericException();
-void addPropertyEXception(string property,string exception);
+void addPropertyException(string property,string exception);
 string getPropertyException(string property);
 int hasPropertyException(string property);
 int hasException();

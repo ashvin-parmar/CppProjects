@@ -21,19 +21,25 @@ bool operator()(const string *left,const string *right);
 class UnitOfMeasurementManager:public abc::IUnitOfMeasurementManager
 {
 private:
+class _UnitOfMeasurement
+{
+public:
+int code;
+string *title;
+};
 class DataModel
 {
 public:
-map<string *,abc::IUnitOfMeasurement *,UnitOfMeasurementManagerTitleComparator> titleWiseMap;
-map<int,abc::IUnitOfMeasurement *> codeWiseMap;
+map<string *,_UnitOfMeasurement *,UnitOfMeasurementManagerTitleComparator> titleWiseMap;
+map<int,_UnitOfMeasurement *> codeWiseMap;
 DataModel();
 ~DataModel();
 void populateDataStructure();
 };
 static DataModel dataModel;
 public:
-UnitOfMeasurementManager();
-void addUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement);
+UnitOfMeasurementManager() noexcept(false);
+void addUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
 void updateUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
 void removeUnitOfMeasurementByCode(int code) noexcept(false);
 void removeUnitOfMeasurementByTitle(string &title) noexcept(false);

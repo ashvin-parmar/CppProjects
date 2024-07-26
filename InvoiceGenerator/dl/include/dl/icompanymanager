@@ -16,6 +16,15 @@ class ICompanyManager
 public:
 static string FILE_NAME;
 virtual void addCompany(abc::ICompany *company) noexcept(false)=0;
+virtual void updateCompany(abc::ICompany *company) noexcept(false)=0;
+virtual void updateCompanyAddress(abc::ICompany *company) noexcept(false)=0;
+virtual void removeCompany(string &email) noexcept(false)=0;
+virtual void getAllCompany() noexcept(false)=0;
+virtual void resetPassword(const string &email) noexcept(false)=0;
+virtual void searchCompany(const string &email) noexcept(false)=0;
+virtual void showProfile(const string &email) noexcept(false)=0;
+
+
 
 };
 }

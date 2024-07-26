@@ -33,29 +33,85 @@ void UnitOfMeasurementManager::DataModel::populateDataStructure()
 {
 forward_list<inventory::data_layer::abc::IUnitOfMeasurement *> *list;
 inventory::data_layer::UnitOfMeasurementDAO unitOfMeasurementDAO;
-inventory::data_layer::abc::IUnitOfMeasurement *unitOfMeasurementBL;
-abc::IUnitOfMeasurement *unitOfMeasurement;
+inventory::data_layer::abc::IUnitOfMeasurement *unitOfMeasurementDL;
+_UnitOfMeasurement *unitOfMeasurementBL;
 list=unitOfMeasurementDAO.getAll();
 forward_list<inventory::data_layer::abc::IUnitOfMeasurement *>::iterator i;
+string *title;
+int code;
 for(i=list->begin();i!=list->end();++i)
 {
-unitOfMeasurementBL=*i;
-string title=unitOfMeasurementBL->getTitle();
-int code=unitOfMeasurementBL->getCode();
-unitOfMeasurement=new UnitOfMeasurement;
-unitOfMeasurement->setCode(code);
-unitOfMeasurement->setTitle(title);
-dataModel.titleWiseMap.insert(pair<string *,abc::IUnitOfMeasurement *>(&title,unitOfMeasurement));
-dataModel.codeWiseMap.insert(pair<int,abc::IUnitOfMeasurement *>(code,unitOfMeasurement));
-delete unitOfMeasurementBL;
+unitOfMeasurementDL=*i;
+title=new string(unitOfMeasurementDL->getTitle());
+code=unitOfMeasurementDL->getCode();
+unitOfMeasurementBL=new _UnitOfMeasurement;
+unitOfMeasurementBL->code=code;
+unitOfMeasurementBL->title=title;
+dataModel.titleWiseMap.insert(pair<string *,_UnitOfMeasurement *>(unitOfMeasurementBL->title,unitOfMeasurementBL));
+dataModel.codeWiseMap.insert(pair<int,_UnitOfMeasurement *>(code,unitOfMeasurementBL));
+delete unitOfMeasurementDL;
 }
+list->clear();
+delete list;
 }
-UnitOfMeasurementManager::UnitOfMeasurementManager()
+UnitOfMeasurementManager::UnitOfMeasurementManager() noexcept(false)
 {
 
 }
-void UnitOfMeasurementManager::addUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement)
+void UnitOfMeasurementManager::addUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false)
 {
+BLException blException;
+if(unitOfMeasurement==NULL)
+{
+blException.setGenericException("Unit of measurement required, Null encountered");
+throw blException;
+}
+const string vTitle=unitOfMeasurement->getTitle();
+string title=trimmed(vTitle);
+if(title.length()==0) blException.addPropertyException("title","Title required, length of title is zero");
+if(title.length()>50) blException.addPropertyException("title","Title should not exceed 50 characters");
+int code=unitOfMeasurement->getCode();
+if(code!=0) blException.addPropertyException("code","Code should be zero");
+if(blException.hasException())
+{
+throw blException;
+}
+map<string *,_UnitOfMeasurement *,UnitOfMeasurementManagerTitleComparator>::iterator i;
+i=dataModel.titleWiseMap.find(&title);
+if(i!=dataModel.titleWiseMap.end())
+{
+blException.addPropertyException("title","Given title exist");
+throw blException;
+}
+_UnitOfMeasurement *_unitOfMeasurement;
+string *t;
+cout<<"Reach try"<<endl;
+try
+{
+inventory::data_layer::abc::IUnitOfMeasurement *unitOfMeasurementDL;
+inventory::data_layer::UnitOfMeasurementDAO unitOfMeasurementDAO;
+unitOfMeasurementDL=new inventory::data_layer::UnitOfMeasurement;
+unitOfMeasurementDL->setCode(0);
+unitOfMeasurementDL->setTitle(title);
+cout<<"Here its comes"<<endl;
+unitOfMeasurementDAO.add(unitOfMeasurementDL);
+cout<<"Code set."<<endl;
+code=unitOfMeasurementDL->getCode();
+t=new string(title);
+delete unitOfMeasurementDL;
+_unitOfMeasurement=new _UnitOfMeasurement;
+_unitOfMeasurement->code=code;
+_unitOfMeasurement->title=t;
+dataModel.titleWiseMap.insert(pair<string *,_UnitOfMeasurement *>(t,_unitOfMeasurement));
+dataModel.codeWiseMap.insert(pair<int,_UnitOfMeasurement *>(code,_unitOfMeasurement));
+}catch(inventory::data_layer::DAOException daoException)
+{
+cout<<"Here exception generated"<<endl;
+blException.setGenericException(string(daoException.what()));
+throw blException;
+}
+
+/*
 const string vTitle=unitOfMeasurement->getTitle();
 string title=trimmed(vTitle);
 if(title.length()==0) throw BLException("Title required, length of title is zero");
@@ -81,6 +137,7 @@ _unitOfMeasurement.setCode(code);
 dataModel.titleWiseMap.insert(pair<string *,abc::IUnitOfMeasurement *>(&title,&_unitOfMeasurement));
 dataModel.codeWiseMap.insert(pair<int,abc::IUnitOfMeasurement *>(code,&_unitOfMeasurement));
 unitOfMeasurement->setCode(code);
+*/
 }
 void UnitOfMeasurementManager::updateUnitOfMeasurement(abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false)
 {

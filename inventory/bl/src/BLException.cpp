@@ -41,7 +41,7 @@ string BLException::getGenericException()
 {
 return this->genericException;
 }
-void BLException::addPropertyEXception(string property,string exception)
+void BLException::addPropertyException(string property,string exception)
 {
 this->exceptions.insert(pair<string,string>(property,exception));
 }

@@ -10,7 +10,7 @@ int compareStringIgnoreCase(const char *,const char *);
 
 bool isAlphaNum(char m);
 bool isValidateEmail(const string &email);
-bool isValidateIndianContactNumber(const string &contactNumber);
+int isValidateIndianContactNumber(const string &contactNumber);
 bool isValidateGSTNumber(const string &gstNumber);
 bool isValidateUPIID(const string &upiID);
 
