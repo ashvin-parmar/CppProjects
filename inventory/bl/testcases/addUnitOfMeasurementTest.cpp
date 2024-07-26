@@ -16,6 +16,7 @@ try
 {
 unitOfMeasurementManager.addUnitOfMeasurement(&unitOfMeasurement);
 cout<<title<<" Added"<<endl;
+cout<<"Remeber this code: "<<unitOfMeasurement->getCode()<<" for future reference."<<endl
 }catch(BLException blException)
 {
 cout<<"Some problem"<<endl;
