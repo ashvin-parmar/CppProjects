@@ -118,6 +118,7 @@ _unitOfMeasurement->code=code;
 _unitOfMeasurement->title=t;
 dataModel.titleWiseMap.insert(pair<string *,_UnitOfMeasurement *>(t,_unitOfMeasurement));
 dataModel.codeWiseMap.insert(pair<int,_UnitOfMeasurement *>(code,_unitOfMeasurement));
+unitOfMeasurement->setCode(code);
 }catch(inventory::data_layer::DAOException daoException)
 {
 blException.setGenericException(string(daoException.what()));
@@ -196,10 +197,7 @@ BLException blException;
 char arr[51];
 sprintf(arr,"%d",code);
 if(code<=0) blException.addPropertyException("code",string("Invalid code: ")+string(arr));
-if(blException.hasException())
-{
-throw blException;
-}
+if(blException.hasException()) throw blException;
 map<int,_UnitOfMeasurement *>::iterator i;
 i=dataModel.codeWiseMap.find(code);
 if(i==dataModel.codeWiseMap.end())
@@ -211,18 +209,13 @@ _UnitOfMeasurement *blUnitOfMeasurement;
 string *t;
 try
 {
-inventory::data_layer::abc::IUnitOfMeasurement *unitOfMeasurementDL;
 inventory::data_layer::UnitOfMeasurementDAO unitOfMeasurementDAO;
-unitOfMeasurementDL=new inventory::data_layer::UnitOfMeasurement;
+unitOfMeasurementDAO.remove(code);
+//Memory releasing
 blUnitOfMeasurement=i->second;
 t=blUnitOfMeasurement->title;
-unitOfMeasurementDL->setCode(code);
-unitOfMeasurementDL->setTitle(*t);
-unitOfMeasurementDAO.remove(unitOfMeasurementDL);
-//Memory releasing
 dataModel.codeWiseMap.erase(code);
 dataModel.titleWiseMap.erase(t);	//TitleWiseMapUpdate
-delete unitOfMeasurementDL;
 delete t;
 delete blUnitOfMeasurement;
 //Data erased from maps
@@ -232,10 +225,9 @@ blException.setGenericException(string(daoException.what()));
 throw blException;
 }
 }
-void UnitOfMeasurementManager::removeUnitOfMeasurementByTitle(string &title) noexcept(false)
+void UnitOfMeasurementManager::removeUnitOfMeasurementByTitle(string &vTitle) noexcept(false)
 {
 BLException blException;
-const string vTitle=unitOfMeasurement->getTitle();
 string title=trimmed(vTitle);
 if(title.length()==0) blException.addPropertyException("title","Title required, length of title is zero");
 if(title.length()>50) blException.addPropertyException("title","Title should not exceed 50 characters");
@@ -255,19 +247,14 @@ string *t;
 int code;
 try
 {
-inventory::data_layer::abc::IUnitOfMeasurement *unitOfMeasurementDL;
 inventory::data_layer::UnitOfMeasurementDAO unitOfMeasurementDAO;
-unitOfMeasurementDL=new inventory::data_layer::UnitOfMeasurement;
 blUnitOfMeasurement=j->second;
 code=blUnitOfMeasurement->code;
 t=blUnitOfMeasurement->title;
-unitOfMeasurementDL->setCode(code);
-unitOfMeasurementDL->setTitle(title);
-unitOfMeasurementDAO.remove(unitOfMeasurementDL);
+unitOfMeasurementDAO.remove(code);
 //Memory releasing
 dataModel.codeWiseMap.erase(code);
 dataModel.titleWiseMap.erase(t);	//TitleWiseMapUpdate
-delete unitOfMeasurementDL;
 delete t;
 delete blUnitOfMeasurement;
 //Data erased from maps
@@ -276,16 +263,53 @@ delete blUnitOfMeasurement;
 blException.setGenericException(string(daoException.what()));
 throw blException;
 }
-done done
 }
 abc::IUnitOfMeasurement * UnitOfMeasurementManager::getUnitOfMeasurementByCode(int code) noexcept(false)
 {
-return NULL;
-}
-abc::IUnitOfMeasurement * UnitOfMeasurementManager::getUnitOfMeasurementByTitle(string &title) noexcept(false)
+BLException blException;
+char arr[51];
+sprintf(arr,"%d",code);
+if(code<=0) blException.addPropertyException("code",string("Invalid code: ")+string(arr));
+if(blException.hasException()) throw blException;
+map<int,_UnitOfMeasurement *>::iterator i;
+i=dataModel.codeWiseMap.find(code);
+if(i==dataModel.codeWiseMap.end())
 {
-
-return NULL;
+blException.addPropertyException("code",string("Given code ")+string(arr)+string(" does not exist"));
+throw blException;
+}
+_UnitOfMeasurement *blUnitOfMeasurement;
+abc::IUnitOfMeasurement *unitOfMeasurement;
+blUnitOfMeasurement=i->second;
+unitOfMeasurement=new UnitOfMeasurement;
+unitOfMeasurement->setCode(blUnitOfMeasurement->code);
+unitOfMeasurement->setTitle(string(*(blUnitOfMeasurement->title)));
+return unitOfMeasurement;
+}
+abc::IUnitOfMeasurement * UnitOfMeasurementManager::getUnitOfMeasurementByTitle(string &vTitle) noexcept(false)
+{
+BLException blException;
+string title=trimmed(vTitle);
+if(title.length()==0) blException.addPropertyException("title","Title required, length of title is zero");
+if(title.length()>50) blException.addPropertyException("title","Title should not exceed 50 characters");
+if(blException.hasException())
+{
+throw blException;
+}
+map<string *,_UnitOfMeasurement *,UnitOfMeasurementManagerTitleComparator>::iterator j;
+j=dataModel.titleWiseMap.find(&title);
+if(j==dataModel.titleWiseMap.end())
+{
+blException.addPropertyException("title",string("Given titel ")+title+string(" does not exist"));
+throw blException;
+}
+_UnitOfMeasurement *blUnitOfMeasurement;
+abc::IUnitOfMeasurement *unitOfMeasurement;
+blUnitOfMeasurement=j->second;
+unitOfMeasurement=new UnitOfMeasurement;
+unitOfMeasurement->setCode(blUnitOfMeasurement->code);
+unitOfMeasurement->setTitle(string(*(blUnitOfMeasurement->title)));
+return unitOfMeasurement;
 }
 forward_list<abc::IUnitOfMeasurement *> * UnitOfMeasurementManager::getUnitOfMeasurements() noexcept(false)
 {
