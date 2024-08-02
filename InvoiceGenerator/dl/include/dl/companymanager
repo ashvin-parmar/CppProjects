@@ -5,6 +5,7 @@
 #include<dl/company>
 #include<dl/daoexception>
 #include<dl/icompanymanager>
+#include<forward_list>
 using namespace std;
 namespace invoicegenerator
 {
@@ -36,7 +37,14 @@ char password[101];
 };
 public:
 void addCompany(abc::ICompany *company) noexcept(false);
-
+void updateCompany(abc::ICompany *company) noexcept(false);
+void updateCompanyAddress(abc::ICompany *company) noexcept(false);
+void removeCompany(string &email) noexcept(false);
+forward_list<abc::ICompany *> *getAllCompany() noexcept(false);
+abc::ICompany * getCompany(string &email) noexcept(false);
+void resetPassword(string email,string previousPassword,string newPassWord) noexcept(false);
+int isCompanyExist(const string &email) noexcept(false);
+void showProfile(const string &email) noexcept(false);
 };
 }
 }

@@ -336,6 +336,7 @@ unitOfMeasurement->setCode(_unitOfMeasurement.code);
 unitOfMeasurement->setTitle(string(_unitOfMeasurement.title));
 i=list->insert_after(i,unitOfMeasurement);
 }
+dataFile.close();
 return list;
 }
 int UnitOfMeasurementDAO::getCount() noexcept(false)

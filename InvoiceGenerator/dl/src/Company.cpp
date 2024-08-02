@@ -43,47 +43,47 @@ Company::~Company()
 {
 //Nothing to do
 }
-void Company::setName(string &name)
+void Company::setName(string name)
 {
 this->name=name;
 }
-void Company::setStreet(string &street)
+void Company::setStreet(string street)
 {
 this->street=street;
 }
-void Company::setCity(string &city)
+void Company::setCity(string city)
 {
 this->city=city;
 }
-void Company::setState(string &state)
+void Company::setState(string state)
 {
 this->state=state;
 }
-void Company::setPinCode(int &pinCode)
+void Company::setPinCode(int pinCode)
 {
 this->pinCode=pinCode;
 }
-void Company::setContactNumber(string &contactNumber)
+void Company::setContactNumber(string contactNumber)
 {
 this->contactNumber=contactNumber;
 }
-void Company::setEmail(string &email)
+void Company::setEmail(string email)
 {
 this->email=email;
 }
-void Company::setGSTNumber(string &gstNumber)
+void Company::setGSTNumber(string gstNumber)
 {
 this->GSTNumber=gstNumber;
 }
-void Company::setUPIID(string &UPIID)
+void Company::setUPIID(string UPIID)
 {
 this->UPIID=UPIID;
 }
-void Company::setPassword(string &password)
+void Company::setPassword(string password)
 {
 this->password=password;	//Increption applied after learning increption process
 }
-void Company::setCountry(string &country)
+void Company::setCountry(string country)
 {
 this->country=country;
 }
@@ -123,7 +123,7 @@ string Company::getGSTNumber() const
 {
 return this->GSTNumber;
 }
-void Company::setCode(int &code)
+void Company::setCode(int code)
 {
 this->code=code;
 }

@@ -4,6 +4,7 @@
 #include<dl/icompany>
 #include<dl/company>
 #include<dl/daoexception>
+#include<forward_list>
 using namespace std;
 namespace invoicegenerator
 {
@@ -19,12 +20,11 @@ virtual void addCompany(abc::ICompany *company) noexcept(false)=0;
 virtual void updateCompany(abc::ICompany *company) noexcept(false)=0;
 virtual void updateCompanyAddress(abc::ICompany *company) noexcept(false)=0;
 virtual void removeCompany(string &email) noexcept(false)=0;
-virtual void getAllCompany() noexcept(false)=0;
-virtual void resetPassword(const string &email) noexcept(false)=0;
-virtual void searchCompany(const string &email) noexcept(false)=0;
+virtual forward_list<abc::ICompany *> *getAllCompany() noexcept(false)=0;
+virtual abc::ICompany * getCompany(string &email) noexcept(false)=0;
+virtual void resetPassword(string email,string previousPassword,string newPassword) noexcept(false)=0;
+virtual int isCompanyExist(const string &email) noexcept(false)=0;
 virtual void showProfile(const string &email) noexcept(false)=0;
-
-
 
 };
 }
