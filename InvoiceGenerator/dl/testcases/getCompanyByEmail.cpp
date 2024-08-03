@@ -18,7 +18,7 @@ string email;
 getline(cin,email);
 try
 {
-company=companyManager.getCompany(email);
+company=companyManager.getCompanyByEmail(email);
 getLine(140,'_');
 cout<<"----------Company Login Details----------"<<endl;
 printf("Company Name: %-80s    Company Code: %-15d\n",company->getName().c_str(),company->getCode());
@@ -31,12 +31,14 @@ printf("Pin Code: %-15d\n\n",company->getPinCode());
 
 cout<<"----------Bank Detail----------"<<endl;
 printf("GST Number: %-50s UPIID: %-50s\n",company->getGSTNumber().c_str(),company->getUPIID().c_str());
+cout<<"\nPassword: "<<company->getPassword()<<endl;
+
 getLine(140,'_');
 cout<<endl;
 delete company;
 }catch(DAOException daoException)
 {
-throw DAOException(daoException.what());
+cout<<daoException.what()<<endl;
 }
 return 0;
 }

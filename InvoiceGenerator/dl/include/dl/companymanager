@@ -39,9 +39,9 @@ public:
 void addCompany(abc::ICompany *company) noexcept(false);
 void updateCompany(abc::ICompany *company) noexcept(false);
 void updateCompanyAddress(abc::ICompany *company) noexcept(false);
-void removeCompany(string &email) noexcept(false);
+void removeCompany(string &email,string &password) noexcept(false);
 forward_list<abc::ICompany *> *getAllCompany() noexcept(false);
-abc::ICompany * getCompany(string &email) noexcept(false);
+abc::ICompany * getCompanyByEmail(string &email) noexcept(false);
 void resetPassword(string email,string previousPassword,string newPassWord) noexcept(false);
 int isCompanyExist(const string &email) noexcept(false);
 void showProfile(const string &email) noexcept(false);
