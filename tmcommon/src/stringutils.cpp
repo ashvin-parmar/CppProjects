@@ -108,10 +108,10 @@ return situation ;
 bool stringutils::isValidateGSTNumber(const string &gstNumber)
 {
 if(gstNumber.size()!=15) return false;
-if(gstNumber[12]!='Z') return false;
+if(gstNumber[13]!='Z') return false;
 for(int i=0;i<15;i++)
 {
-if(i==12) continue;
+if(i==13) continue;
 if(gstNumber[i]>57 || gstNumber[i]<48) return false;
 }
 return true;

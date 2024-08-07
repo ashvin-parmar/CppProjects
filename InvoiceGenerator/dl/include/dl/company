@@ -1,7 +1,7 @@
 #ifndef __$__company__dl 
 #define __$__company__dl 344
 #include<iostream>
-#include<dl/icompany>
+#include<dl/zcompany>
 using namespace std;
 namespace invoicegenerator
 {

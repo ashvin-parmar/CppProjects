@@ -1,0 +1,52 @@
+#ifndef __$__invoicemanager__dl
+#define __$__invoicemanager__dl 213
+#include<iostream>
+#include<dl/zinvoice>
+#include<time.h>
+#include<forward_list>
+using namespace std;
+namespace invoicegenerator
+{
+namespace data_layer
+{
+class Invoice:public abc::IInvoice
+{
+class Header
+{
+public:
+int numberOfInvoice;
+int lastGeneratedInvoiceCode;
+};
+class _Invoice
+{
+public:
+int invoiceCode);
+char email[81]);
+int amountPaid;
+int amountDue;
+double discount;
+double tax;
+char * date;
+
+virtual void setAmountPaid(int amountPaid)=0;
+virtual void setAmountDue(int amountDue)=0;
+virtual void setDiscount(double discount)=0;
+virtual void setTax(double tax)=0;
+virtual void setData()=0;
+
+
+};
+public:
+
+
+
+
+};
+class Item:public abc::IItem
+{
+
+
+};
+}
+}
+#endif

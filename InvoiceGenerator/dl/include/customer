@@ -1,0 +1,53 @@
+#ifndef __$__customer__dl 
+#define __$__customer__dl 344
+#include<iostream>
+#include<dl/zcustomer>
+using namespace std;
+namespace invoicegenerator
+{
+namespace data_layer
+{
+class Customer:public abc::ICustomer
+{
+int customerCode;
+string customerName;
+string contactNumber;
+string email;
+string street;
+string city;
+string state;
+string country;
+int pinCode;
+public:
+Customer();
+Customer(const Customer&other);
+virtual ~Customer();
+void setCustomerCode(int customerCode);
+void setCustomerName(string customerName);
+void setContactNumber(string contactNumber);
+void setEmail(string email);
+void setStreet(string street);
+void setCity(string city);
+void setState(string state);
+void setCountry(string country);
+void setPinCode(int pinCode);
+int getCode() const;
+string getcustomerName() const;
+string getStreet() const;
+string getCity() const;
+string getState() const;
+string getEmail() const;
+string getContactNumber() const;
+string getCountry() const;
+int getPinCode() const;
+abc::ICustomer & operator=(const abc::ICustomer &other);
+int operator==(const abc::ICustomer &other);
+int operator<=(const abc::ICustomer &other);
+int operator>=(const abc::ICustomer &other);
+int operator!=(const abc::ICustomer &other);
+int operator<(const abc::ICustomer &other);
+int operator>(const abc::ICustomer &other);
+};
+}
+}
+#endif

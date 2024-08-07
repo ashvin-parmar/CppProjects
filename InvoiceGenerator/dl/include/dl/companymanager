@@ -1,10 +1,10 @@
 #ifndef __$__companymanager__dl
 #define __$__companymanager__dl 213
 #include<iostream>
-#include<dl/icompany>
+#include<dl/zcompany>
 #include<dl/company>
 #include<dl/daoexception>
-#include<dl/icompanymanager>
+#include<dl/zcompanymanager>
 #include<forward_list>
 using namespace std;
 namespace invoicegenerator

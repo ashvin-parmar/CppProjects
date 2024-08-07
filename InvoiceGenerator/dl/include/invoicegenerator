@@ -1,0 +1,48 @@
+#ifndef __$__invoicegenerator__dl
+#define __$__invoicegenerator__dl 213
+#include<iostream>
+#include<dl/zinvoice>
+#include<dl/invoice>
+#include<dl/zinvoicegenerator>
+#include<dl/daoexception>
+#include<dl/zinvoicegenerator>
+#include<forward_list>
+using namespace std;
+namespace invoicegenerator
+{
+namespace data_layer
+{
+class InvoiceGenerator:public abc::IInvoiceGenerator
+{
+class Header
+{
+public:
+int lastGeneratedCode;
+int numberOfRecords;
+};
+class _InvoiceGenerator
+{
+public:
+_Item _item;
+string email;
+int code;
+int amountPaid;
+int amountDue;
+double discount;
+double tax;
+};
+class _Item
+{
+public:
+char itemName[101];
+int itemQuantity;
+int netRate;
+};
+public:
+
+
+
+};
+}
+}
+#endif
