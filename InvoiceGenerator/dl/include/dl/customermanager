@@ -39,7 +39,7 @@ void updateCustomerAddressByEmail(abc::ICustomer *customer) noexcept(false);
 void removeCustomer(string &email) noexcept(false);
 forward_list<abc::ICustomer *> *getAllCustomer() noexcept(false);
 abc::ICustomer * getCustomerByEmail(string &email) noexcept(false);
-int isCustomerExist(const string &email) noexcept(false);
+int isCustomerWithEmailExist(const string &email) noexcept(false);
 void showCustomerProfile(const string &email) noexcept(false);
 };
 }

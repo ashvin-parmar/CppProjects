@@ -31,7 +31,6 @@ printf("Pin Code: %-15d\n\n",company->getPinCode());
 
 cout<<"----------Bank Detail----------"<<endl;
 printf("GST Number: %-50s UPIID: %-50s\n",company->getGSTNumber().c_str(),company->getUPIID().c_str());
-cout<<"\nPassword: "<<company->getPassword()<<endl;
 
 getLine(140,'_');
 cout<<endl;

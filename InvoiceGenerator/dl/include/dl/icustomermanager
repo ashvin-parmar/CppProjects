@@ -22,7 +22,7 @@ virtual void updateCustomerAddressByEmail(abc::ICustomer *customer) noexcept(fal
 virtual void removeCustomer(string &email) noexcept(false)=0;
 virtual forward_list<abc::ICustomer *> *getAllCustomer() noexcept(false)=0;
 virtual abc::ICustomer * getCustomerByEmail(string &email) noexcept(false)=0;
-virtual int isCustomerExist(const string &email) noexcept(false)=0;
+virtual int isCustomerWithEmailExist(const string &email) noexcept(false)=0;
 virtual void showCustomerProfile(const string &email) noexcept(false)=0;
 };
 }

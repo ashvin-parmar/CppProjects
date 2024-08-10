@@ -435,7 +435,7 @@ return customer;
 dataFile.close();
 throw DAOException("Invalid email");
 }
-int CustomerManager::isCustomerExist(const string &vEmail) noexcept(false)
+int CustomerManager::isCustomerWithEmailExist(const string &vEmail) noexcept(false)
 {
 string email=validateEmail(vEmail);
 if(email.size()==0) return 0;

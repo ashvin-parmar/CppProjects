@@ -1,9 +1,9 @@
 #include<iostream>
 #include<dl/icompany>
 #include<dl/company>
+using namespace std;
 using namespace invoicegenerator;
 using namespace data_layer;
-using namespace std;
 Company::Company()
 {
 this->code=0;

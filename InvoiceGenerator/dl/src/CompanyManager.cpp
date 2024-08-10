@@ -3,6 +3,8 @@
 #include<dl/icompanymanager>
 #include<dl/companymanager>
 #include<dl/daoexception>
+#include<dl/customer>
+#include<dl/customermanager>
 #include<fstream>
 #include<string.h>
 #include<common/stringutils>
@@ -21,6 +23,10 @@ string contactNumber=validateContactNumber(company->getContactNumber());
 if(contactNumber.size()==0) throw DAOException("Invalid contact number");
 string email=validateEmail(company->getEmail());
 if(email.size()==0 || email.size()>80) throw DAOException("Invalid email");
+int exist;
+CustomerManager customerManager;
+exist=customerManager.isCustomerWithEmailExist(email);
+if(exist) throw DAOException("A customer exist with given email, Use a different email for company use only");
 // done done: Later conveting password in hashing algoritm 
 string password=trimmed(company->getPassword());
 if(password.size()==0) throw DAOException("Please enter password, Empty password");
@@ -150,6 +156,10 @@ string contactNumber=validateContactNumber(company->getContactNumber());
 if(contactNumber.size()==0) throw DAOException("Invalid contact number");
 string email=validateEmail(company->getEmail());
 if(email.size()==0 || email.size()>80) throw DAOException("Invalid email");
+int exist;
+CustomerManager customerManager;
+exist=customerManager.isCustomerWithEmailExist(email);
+if(exist) throw DAOException("A customer exist with given email, Use a different email for company use only");
 // done done: Later conveting password in hashing algoritm 
 string password=trimmed(company->getPassword());
 if(password.size()==0) throw DAOException("Please enter password, Empty password");
