@@ -1,0 +1,85 @@
+#ifndef __$__invoice__dl
+#define __$__invoice__dl 213
+#include<iostream>
+#include<dl/iinvoice>
+#include<time.h>
+#include<forward_list>
+using namespace std;
+namespace invoicegenerator
+{
+namespace data_layer
+{
+class Item:public abc::IItem
+{
+string itemName;
+int itemCode;
+int quantity;
+double netRate;
+public:
+Item()
+Item(const Item &other)
+Item(string itemName,int itemCode, int quantity, double netRate);
+virtual ~Item();
+void setItemName(string itemName)=0;
+void setItemCode(int itemCode)=0;
+void setQuantity(int quantity)=0;
+void setNetRate(double netRate)=0;
+string getItemName()=0;
+int getItemCode()=0;
+int getQuantity()=0;
+double getNetRate()=0;
+abc::IItem& operator=(const abc::IItem &other)=0;
+int operator==(const abc::IItem &other)=0;
+int operator<=(const abc::IItem &other)=0;
+int operator>=(const abc::IItem &other)=0;
+int operator!=(const abc::IItem &other)=0;
+int operator<(const abc::IItem &other)=0;
+int operator>(const abc::IItem &other)=0;
+};
+class Invoice:public abc::IInvoice
+{
+int invoiceCode;
+string companyEmail;
+string customerEmail;
+time_t date;
+forward_list<abc::IItem *> *list;
+int numberOfItems;
+double amountPaid;
+double amountDue;
+double discount;
+double tax;
+public:
+Invoice();
+Invoice(const Invoice &other);
+virtual ~Invoice();
+void setInvoiceCode(int invoiceCode)=0;
+void setCompanyEmail(string companyEmail)=0;
+void setCustomerEmail(string customerEmail)=0;
+void setDate(time_t )=0;
+void setNumberOfItems(int numberOfItems)=0;
+void setItems(foward_list<abc::IItem *> *items)=0;
+void setAmountPaid(double amountPaid)=0;
+void setAmountDue(double amountDue)=0;
+void setDiscount(double discount)=0;
+void setTax(double tax)=0;
+int getInvoiceCode()=0;
+string getCustomerEmail()=0;
+string getCampanyEmail()=0;
+time_t getDate()=0;
+int getNumberOfItems()=0;
+forward_list<abc::IItems *> *getItems()=0;
+double getAmountPaid()=0;
+double getAmountDue()=0;
+double getDiscount()=0;
+double getTax()=0;
+abc::IInvoice& operator=(const abc::IInvoice &other)=0;
+int operator==(const abc::IInvoice &other)=0;
+int operator<=(const abc::IInvoice &other)=0;
+int operator>=(const abc::IInvoice &other)=0;
+int operator!=(const abc::IInvoice &other)=0;
+int operator<(const abc::IInvoice &other)=0;
+int operator>(const abc::IInvoice &other)=0;
+};
+}
+}
+#endif

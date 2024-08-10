@@ -1,7 +1,6 @@
 #include<iostream>
 #include<common/stringutils>
 using namespace std;
-
 //String handling common functionality
 string stringutils::trimmed(const string &s)
 {

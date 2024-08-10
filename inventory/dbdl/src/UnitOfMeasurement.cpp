@@ -1,0 +1,69 @@
+#include<dbdl/iuom>
+#include<dbdl/uom>
+using namespace inventory;
+using namespace data_layer_db;
+UnitOfMeasurement::UnitOfMeasurement()
+{
+this->code=0;
+this->title="";
+}
+UnitOfMeasurement::UnitOfMeasurement(const UnitOfMeasurement &other)
+{
+this->code=other.code;
+this->title=other.title;
+}
+UnitOfMeasurement::UnitOfMeasurement(int code,string title)
+{
+this->code=code;
+this->title=title;
+}
+void UnitOfMeasurement::setCode(int code)
+{
+this->code=code;
+}
+void UnitOfMeasurement::setTitle(string title)
+{
+this->title=title;
+}
+string UnitOfMeasurement::getTitle() const
+{
+return this->title;
+}
+int UnitOfMeasurement::getCode() const
+{
+return this->code;
+}
+abc::IUnitOfMeasurement& UnitOfMeasurement::operator=(const abc::IUnitOfMeasurement &other)
+{
+this->code=other.getCode();
+this->title=other.getTitle();
+return *this;
+}
+int UnitOfMeasurement::operator<(const abc::IUnitOfMeasurement &other)
+{
+return this->code<other.getCode();
+}
+int UnitOfMeasurement::operator>(const abc::IUnitOfMeasurement &other)
+{
+return this->code>other.getCode();
+}
+int UnitOfMeasurement::operator<=(const abc::IUnitOfMeasurement &other)
+{
+return this->code<=other.getCode();
+}
+int UnitOfMeasurement::operator>=(const abc::IUnitOfMeasurement &other)
+{
+return this->code>=other.getCode();
+}
+int UnitOfMeasurement::operator==(const abc::IUnitOfMeasurement &other)
+{
+return this->code==other.getCode();
+}
+int UnitOfMeasurement::operator!=(const abc::IUnitOfMeasurement &other)
+{
+return this->code!=other.getCode();
+}
+UnitOfMeasurement::~UnitOfMeasurement()
+{
+//Do nothing
+}

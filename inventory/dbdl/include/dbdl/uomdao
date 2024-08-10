@@ -1,0 +1,31 @@
+#ifndef __$__uomdao__dbdl
+#define __$__uomdao__dbdl 423
+#include<iostream>
+#include<dbdl/iuom>
+#include<dbdl/uom>
+#include<dbdl/daoexception>
+#include<dbdl/iuomdao>
+#include<forward_list>
+#include<string.h>
+#include<common/stringutils>
+using namespace std;
+namespace inventory
+{
+namespace data_layer_db
+{
+class UnitOfMeasurementDAO:public abc::IUnitOfMeasurementDAO
+{
+public:
+void add(abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
+void update(abc::IUnitOfMeasurement *unitOfMeasurement) noexcept(false);
+void remove(int code) noexcept(false);
+abc::IUnitOfMeasurement *getByTitle(string title) noexcept(false);
+abc::IUnitOfMeasurement *getByCode(int code) noexcept(false);
+forward_list<abc::IUnitOfMeasurement *> * getAll() noexcept(false);
+int getCount() noexcept(false);
+int titleExist(string title) noexcept(false);
+int codeExist(int code) noexcept(false);
+};
+}
+}
+#endif

@@ -1,7 +1,7 @@
 #ifndef __$__customer__dl 
 #define __$__customer__dl 344
 #include<iostream>
-#include<dl/zcustomer>
+#include<dl/icustomer>
 using namespace std;
 namespace invoicegenerator
 {
@@ -31,8 +31,8 @@ void setCity(string city);
 void setState(string state);
 void setCountry(string country);
 void setPinCode(int pinCode);
-int getCode() const;
-string getcustomerName() const;
+int getCustomerCode() const;
+string getCustomerName() const;
 string getStreet() const;
 string getCity() const;
 string getState() const;

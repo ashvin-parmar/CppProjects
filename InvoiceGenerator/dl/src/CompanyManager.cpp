@@ -255,9 +255,81 @@ _company.code=code;
 dataFile.write((char *)&_company,sizeof(_Company));
 dataFile.close();
 }
-void CompanyManager::updateCompanyAddress(abc::ICompany *company) noexcept(false)
+void CompanyManager::updateCompanyAddressByCode(abc::ICompany *company) noexcept(false)
 {
-//To be implement
+if(company==NULL) throw DAOException("Required company data, NULL encountered");
+int code=company->getCode();
+if(code<=0) throw DAOException("Invalid company code");
+string password=trimmed(company->getPassword());
+if(password.size()==0) throw DAOException("Please enter password, Empty password");
+if(password.size()>100) throw DAOException("Password size can not exceed 100 characters");
+string street=trimmed(company->getStreet());
+if(street.size()==0) throw DAOException("Please enter street address");
+if(street.size()>50) throw DAOException("Street address can not exceed 50 character");
+string city=trimmed(company->getCity());
+if(city.size()==0) throw DAOException("Please enter city address");
+if(city.size()>50) throw DAOException("City address can not exceed 50 character");
+string state=trimmed(company->getState());
+if(state.size()==0) throw DAOException("Please enter state address");
+if(state.size()>50) throw DAOException("State address can not exceed 50 character");
+string country=trimmed(company->getCountry());
+if(country.size()==0) throw DAOException("Please enter country address");
+if(country.size()>50) throw DAOException("Country address can not exceed 50 character");
+int pinCode=company->getPinCode();
+if(pinCode>999999 || pinCode<100000) throw DAOException("Please enter correct Pin Code");
+//Other All Type Of Validation
+Header header;
+_Company _company;
+fstream dataFile(FILE_NAME,ios::in | ios::out | ios::binary);
+if(dataFile.fail())
+{
+throw DAOException("Invalid Company code data");
+return;
+}
+dataFile.seekg(0,ios::beg);
+dataFile.read((char *)&header,sizeof(Header));
+if(dataFile.fail())
+{
+dataFile.close();
+throw DAOException("Invalid Company code detail");
+}
+if(header.numberOfRecords==0 || code>header.lastGeneratedCode)
+{
+dataFile.close();
+throw DAOException("Invalid company code detail");
+}
+int pos;
+int found=0;
+while(true)
+{
+pos=dataFile.tellg();
+dataFile.read((char *)&_company,sizeof(_Company));
+if(dataFile.fail()) break;
+if(_company.code==code)
+{
+if(compareStringIgnoreCase(_company.password,password.c_str())!=0)
+{
+dataFile.close();
+throw DAOException("Incorrect password");
+}
+found=1;
+break;
+}
+}
+if(!found)
+{
+dataFile.close();
+throw DAOException("Company with given code not exist");
+}
+dataFile.clear();
+dataFile.seekp(pos,ios::beg);
+strcpy(_company.street,street.c_str());
+strcpy(_company.city,city.c_str());
+strcpy(_company.state,state.c_str());
+strcpy(_company.country,country.c_str());
+_company.pinCode=pinCode;
+dataFile.write((char *)&_company,sizeof(_Company));
+dataFile.close();
 }
 void CompanyManager::removeCompany(string &vEmail,string &vPassword) noexcept(false)
 {
@@ -266,7 +338,7 @@ if(email.size()==0) throw DAOException("Required email, email size cannot be zer
 if(email.size()>80) throw DAOException("Email size cannot exceed 80 characters");
 string password=trimmed(vPassword);
 if(password.size()==0) throw DAOException("Required password, password size cannot be zero");
-if(email.size()>80) throw DAOException("Password size cannot exceed 100 characters");
+if(password.size()>100) throw DAOException("Password size cannot exceed 100 characters");
 _Company _company;
 Header header;
 fstream dataFile(FILE_NAME,ios::in | ios::binary);
@@ -419,7 +491,7 @@ company->setGSTNumber(string(_company.GSTNumber));
 company->setUPIID(string(_company.UPIID));
 company->setPinCode(_company.pinCode);
 company->setCode(_company.code);
-company->setPassword(string(_company.password));		//To be removed done
+//company->setPassword(string(_company.password));		//To be removed done
 dataFile.close();
 return company;
 }
@@ -485,7 +557,7 @@ strcpy(_company.password,newPassword.c_str());
 dataFile.write((char *)&_company,sizeof(_Company));
 dataFile.close();
 }
-int CompanyManager::isCompanyExist(const string &vEmail) noexcept(false)
+int CompanyManager::isCompanyWithEmailExist(const string &vEmail) noexcept(false)
 {
 string email=validateEmail(vEmail);
 if(email.size()==0) return 0;

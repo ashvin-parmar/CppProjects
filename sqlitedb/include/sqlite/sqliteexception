@@ -1,0 +1,18 @@
+#ifndef __$__sqliteexception__
+#define __$__sqliteexception__ 2134
+#include<iostream>
+namespace sqlitedb
+{
+class SQLiteException
+{
+string messege;
+public:
+SQLiteException();
+SQLiteException(string messege);
+SQLiteException(const SQLiteException &other);
+SQLiteException& operator=(const SQLiteException &other);
+virtual ~SQLiteException() throw();
+const char * what() const throw();
+};
+}
+#endif
