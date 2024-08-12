@@ -3,6 +3,9 @@
 #include<iostream>
 #include<forward_list>
 #include<time.h>
+#define ITEM_MAX_QUANTITY 50
+#define TAX_DEFAULT 0.05000
+#define DISCOUNT_DEFAULT 0.10000
 using namespace std;
 namespace invoicegenerator
 {
@@ -37,7 +40,7 @@ virtual void setCompanyEmail(string companyEmail)=0;
 virtual void setCustomerEmail(string customerEmail)=0;
 virtual void setDate(time_t )=0;
 virtual void setNumberOfItems(int numberOfItems)=0;
-virtual void setItemList(forward_list<IItem *> *items)=0;
+virtual void setItemList(forward_list<IItem *> &items)=0;
 virtual void setAmountPaid(double amountPaid)=0;
 virtual void setAmountDue(double amountDue)=0;
 virtual void setDiscount(double discount)=0;
@@ -47,7 +50,7 @@ virtual string getCustomerEmail() const=0;
 virtual string getCompanyEmail() const=0;
 virtual time_t getDate() const=0;
 virtual int getNumberOfItems() const=0;
-virtual forward_list<IItem *> *getItemList() const=0;
+virtual forward_list<IItem *> * getItemList() const=0;
 virtual double getAmountPaid() const=0;
 virtual double getAmountDue() const=0;
 virtual double getDiscount() const=0;

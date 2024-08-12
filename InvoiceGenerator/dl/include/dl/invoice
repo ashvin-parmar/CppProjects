@@ -67,7 +67,7 @@ string getCustomerEmail() const;
 string getCompanyEmail() const;
 time_t getDate() const;
 int getNumberOfItems() const;
-forward_list<abc::IItem *> *getItemList() const;
+forward_list<abc::IItem *> * getItemList() const;
 double getAmountPaid() const;
 double getAmountDue() const;
 double getDiscount() const;

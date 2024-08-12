@@ -613,21 +613,17 @@ company=companyManager.getCompanyByEmail(email);
 {
 throw DAOException(daoException.what());
 }
-for(int i=0;i<120;i++) cout<<"_";
-cout<<endl;
-cout<<"----------Company Login Details----------"<<endl;
+cout<<"                           ----------Company Details----------"<<endl;
 printf("Company Name: %-80s    Company Code: %-15d\n",company->getName().c_str(),company->getCode());
-printf("Email: %-80s           Contact Number: %-15s\n\n",company->getEmail().c_str(),company->getContactNumber().c_str());
+printf("Email: %-80s           Contact Number: %-15s\n",company->getEmail().c_str(),company->getContactNumber().c_str());
 
-cout<<"----------Company Address----------"<<endl;
+cout<<"                           ----------Company Address----------"<<endl;
 printf("Street:  %-50s    City   : %-50s\n",company->getStreet().c_str(),company->getCity().c_str());
 printf("State :  %-50s    Country: %-50s\n",company->getState().c_str(),company->getCountry().c_str());
-printf("Pin Code: %-15d\n\n",company->getPinCode());
+printf("Pin Code: %-15d\n",company->getPinCode());
 
-cout<<"----------Bank Detail----------"<<endl;
+cout<<"                           ----------Company Bank Detail----------"<<endl;
 printf("GST Number: %-50s UPIID: %-50s\n",company->getGSTNumber().c_str(),company->getUPIID().c_str());
-for(int i=0;i<120;i++) cout<<"_";
-cout<<endl;
 cout<<endl;
 delete company;
 }

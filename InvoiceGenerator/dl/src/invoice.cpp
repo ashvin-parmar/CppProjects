@@ -102,7 +102,7 @@ this->companyEmail="";
 this->customerEmail="";
 this->date=0;
 this->numberOfItems=0;
-this->itemList=new forward_list<abc::IItem *>;
+this->itemList=NULL;
 this->amountPaid=0;
 this->amountDue=0;
 this->discount=0;
@@ -214,9 +214,9 @@ int Invoice::getNumberOfItems() const
 {
 return this->numberOfItems;
 }
-forward_list<abc::IItem *> *Invoice::getItemList() const
+forward_list<abc::IItem *> * Invoice::getItemList() const
 {
-return this->itemList;
+return (this->itemList);
 }
 double Invoice::getAmountPaid() const
 {
