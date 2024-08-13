@@ -67,7 +67,9 @@ numberOfItems++;
 double discount=invoice->getDiscount();
 double tax=invoice->getTax();
 if(tax<=0) tax=TAX_DEFAULT;	
+else if(tax>=1) throw DAOException("Tax (in %) can never be more than equal to 1");
 if(discount<=0) discount=DISCOUNT_DEFAULT;
+else if(discount>=1) throw DAOException("Discount (in %) can never be more than equal to 1");
 double amountPaid=invoice->getAmountPaid();
 double amountDue=0;
 double taxAmount=totalAmount*tax;
@@ -77,7 +79,7 @@ if(amountPaid<0) throw DAOException("Paid amount can never be negative");
 if(amountPaid>totalAmount) 
 {
 char amount[10];
-sprintf(amount,"%d rs",amountPaid-totalAmount);
+sprintf(amount,"%lf rs",amountPaid-totalAmount);
 throw DAOException("You paid extra money of amount "+string(amount)+" more than total amount");
 }
 InvoiceManager::Header header;
@@ -196,19 +198,450 @@ invoice->setAmountDue(amountDue);
 }
 void InvoiceManager::updateInvoiceByInvoiceCode(abc::IInvoice *invoice) noexcept(false)
 {
-
+if(invoice==NULL) throw DAOException("Required invoice data, NULL encountered");
+int invoiceCode=invoice->getInvoiceCode();
+if(invoiceCode<=0) throw DAOException("Invalid invoice code");
+string companyEmail=validateEmail(invoice->getCompanyEmail());
+if(companyEmail.size()==0 || companyEmail.size()>80) throw DAOException("Invalid Company Email");
+int exist;
+CompanyManager companyManager;
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) throw DAOException("Company with given email is not exist");
+string customerEmail=validateEmail(invoice->getCustomerEmail());
+if(customerEmail.size()==0 || customerEmail.size()>80) throw DAOException("Invalid Customer Email");
+CustomerManager customerManager;
+exist=customerManager.isCustomerWithEmailExist(customerEmail);
+if(!exist) throw DAOException("Customer with given email is not exist, First to add customer");
+time_t t;
+forward_list<abc::IItem *> *itemList;
+itemList=invoice->getItemList();
+if(itemList==NULL) throw DAOException("Required item list");
+forward_list<abc::IItem *>::iterator ii=itemList->begin();
+if(ii==itemList->end()) throw DAOException("Required items, Invoice with zero items are not allowed");
+//Variables declared
+int numberOfItems=0;
+double totalAmount=0;
+abc::IItem *item;
+string itemName;
+int itemCode;
+double netRate;
+int quantity;
+for(;ii!=itemList->end();++ii)
+{
+item=*ii;
+itemName=item->getItemName();
+int size=itemName.size();
+if(size==0 ) throw DAOException("Item name Required");
+if(size>150) throw DAOException("Item name size cannot exceed 150 characters");
+itemCode=item->getItemCode();
+if(itemCode<=0) throw DAOException(string("Invalid item code Against item:")+itemName);
+netRate=item->getNetRate();
+if(netRate<=0) throw DAOException(itemName+string(" item rate can never be zero or negative"));
+quantity=item->getQuantity();
+if(quantity<=0) throw DAOException(itemName+string(" quantity cannot be zero or negative"));
+if(quantity>ITEM_MAX_QUANTITY) throw DAOException(itemName+string(" item max quantity (50) reached"));
+totalAmount+=(item->getNetRate()*item->getQuantity());
+numberOfItems++;
+}
+double discount=invoice->getDiscount();
+double tax=invoice->getTax();
+if(tax<=0) tax=TAX_DEFAULT;	
+else if(tax>=1) throw DAOException("Tax (in %) can never be more than equal to 1");
+if(discount<=0) discount=DISCOUNT_DEFAULT;
+else if(discount>=1) throw DAOException("Discount (in %) can never be more than equal to 1");
+double amountPaid=invoice->getAmountPaid();
+double amountDue=0;
+double taxAmount=totalAmount*tax;
+double discountAmount=totalAmount*discount;
+totalAmount=totalAmount+taxAmount-discountAmount;
+if(amountPaid<0) throw DAOException("Paid amount can never be negative");
+if(amountPaid>totalAmount) 
+{
+char amount[10];
+sprintf(amount,"%d rs",amountPaid-totalAmount);
+throw DAOException("You paid extra money of amount "+string(amount)+" more than total amount");
+}
+InvoiceManager::Header header;
+_Invoice _invoice;
+_Item _item;
+fstream dataFile(INVOICE_FILE_NAME,ios::in | ios::binary);
+if(dataFile.fail())
+{
+throw DAOException("Invalid invoice code");
+}
+dataFile.seekg(0,ios::beg);
+dataFile.read((char *)&header,sizeof(Header));
+if(dataFile.fail())
+{
+dataFile.close();
+throw DAOException("Invalid invoice code");
+}
+if(header.numberOfRecords==0)
+{
+dataFile.close();
+throw DAOException("Invalid invoice code");
+}
+dataFile.clear();
+dataFile.seekg(sizeof(Header),ios::beg);
+int found=0;
+while(1)
+{
+dataFile.read((char *)&_invoice,sizeof(_Invoice));
+if(dataFile.fail()) break;
+if(_invoice.invoiceCode==invoiceCode)
+{
+found=1;
+break;
+}
+dataFile.seekg(sizeof(_Item)*_invoice.numberOfItems,ios::cur);
+}
+if(!found)
+{
+dataFile.close();
+throw DAOException("Invalid invoice code");
+}
+dataFile.clear();
+fstream tmpFile("tmp.tmp",ios::out | ios::binary);
+if(tmpFile.fail()) 
+{
+dataFile.close();
+throw DAOException("Unable to open file");
+}
+tmpFile.write((char *)&header,sizeof(Header));
+dataFile.seekp(sizeof(Header),ios::beg);
+while(1)
+{
+dataFile.read((char *)&_invoice,sizeof(_Invoice));
+if(dataFile.fail()) break;
+if(_invoice.invoiceCode!=invoiceCode)
+{
+tmpFile.write((char *)&_invoice,sizeof(_Invoice));
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+dataFile.read((char *)&_item,sizeof(_Item));
+if(dataFile.fail()) break;
+tmpFile.write((char *)&_item,sizeof(_Item));
+}
+}
+else
+{
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+dataFile.read((char *)&_item,sizeof(_Item));
+if(dataFile.fail()) break;
+}
+strcpy(_invoice.companyEmail,companyEmail.c_str());
+strcpy(_invoice.customerEmail,customerEmail.c_str());
+time(&t);
+_invoice.date=t;
+_invoice.amountPaid=amountPaid;
+_invoice.tax=tax;
+_invoice.discount=discount;
+amountDue=totalAmount-amountPaid;
+_invoice.amountDue=amountDue;
+_invoice.numberOfItems=numberOfItems;
+tmpFile.write((char *)&_invoice,sizeof(_Invoice));
+for(ii=itemList->begin();ii!=itemList->end();++ii)
+{
+item=*ii;
+itemName=item->getItemName();
+itemCode=item->getItemCode();
+netRate=item->getNetRate();
+quantity=item->getQuantity();
+sprintf(_item.itemName,itemName.c_str());
+_item.itemCode=itemCode;
+_item.quantity=quantity;
+_item.netRate=netRate;
+tmpFile.write((char *)&_item,sizeof(_Item));
+}
+invoice->setAmountDue(amountDue);
+}
+if(dataFile.fail()) break;
+}
+tmpFile.clear();
+dataFile.clear();
+dataFile.close();
+tmpFile.close();
+dataFile.open(INVOICE_FILE_NAME,ios::out | ios::binary);
+tmpFile.open("tmp.tmp",ios::in | ios::binary);
+tmpFile.seekp(0,ios::beg);
+dataFile.seekg(0,ios::beg);
+tmpFile.read((char *)&header,sizeof(Header));
+if(tmpFile.fail()) throw DAOException("ERROR: Unable to read");
+dataFile.write((char *)&header,sizeof(Header));
+while(1)
+{
+tmpFile.read((char *)&_invoice,sizeof(_Invoice));
+if(tmpFile.fail()) break;
+dataFile.write((char *)&_invoice,sizeof(_Invoice));
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+tmpFile.read((char *)&_item,sizeof(_Item));
+if(tmpFile.fail()) break;
+dataFile.write((char *)&_item,sizeof(_Item));
+}
+if(tmpFile.fail()) break;
+}
+dataFile.close();
+tmpFile.close();
+tmpFile.open("tmp.tmp",ios::out | ios::binary);
+tmpFile.close();
 }
 void InvoiceManager::removeInvoiceByInvoiceCode(int invoiceCode) noexcept(false)
 {
-
-}
-void InvoiceManager::removeInvoiceByCustomerEmail(string &customerEmail) noexcept(false)
+if(invoiceCode<=0) throw DAOException("Invalid invoice code");
+fstream dataFile(INVOICE_FILE_NAME,ios::in | ios::binary);
+if(dataFile.fail())
 {
-
+throw DAOException("Invalid invoice code");
 }
-void InvoiceManager::removeInvoiceByCompanyEmail(string &companyEmail) noexcept(false)
+InvoiceManager::Header header;
+dataFile.read((char *)&header,sizeof(Header));
+if(dataFile.fail())
 {
-
+dataFile.close();
+throw DAOException("Invalid invoice code");
+}
+if(header.numberOfRecords==0 || invoiceCode>header.lastGeneratedInvoiceCode)
+{
+dataFile.close();
+throw DAOException("Invalid invoice code");
+}
+dataFile.clear();
+dataFile.seekg(sizeof(header),ios::beg);
+_Item _item;
+_Invoice _invoice;
+fstream tmpFile("tmp.tmp",ios::out | ios::binary);
+header.numberOfRecords--;
+tmpFile.write((char *)&header,sizeof(Header));
+while(true)
+{
+dataFile.read((char *)&_invoice,sizeof(_Invoice));
+if(dataFile.fail()) break;
+if(_invoice.invoiceCode!=invoiceCode)
+{
+tmpFile.write((char *)&_invoice,sizeof(_Invoice));
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+dataFile.read((char *)&_item,sizeof(_Item));
+if(dataFile.fail()) break;
+tmpFile.write((char *)&_item,sizeof(_Item));
+}
+}
+else
+{
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+dataFile.read((char *)&_item,sizeof(_Item));
+if(dataFile.fail()) break;
+}
+}
+if(dataFile.fail()) break;
+}
+dataFile.close();
+tmpFile.close();
+dataFile.open(INVOICE_FILE_NAME,ios::out | ios::binary);
+if(dataFile.fail()) throw DAOException("ERROR: failed to open file");
+tmpFile.open("tmp.tmp",ios::in | ios::binary);
+if(tmpFile.fail()) throw DAOException("ERROR: failed to open file");
+tmpFile.seekg(0,ios::beg);
+dataFile.seekp(0,ios::beg);	
+tmpFile.read((char *)&header,sizeof(Header));
+if(tmpFile.fail()) throw DAOException("ERROR: failed to read header");
+dataFile.write((char *)&header,sizeof(Header));
+while(true)
+{
+tmpFile.read((char *)&_invoice,sizeof(_Invoice));
+if(tmpFile.fail()) break;
+dataFile.write((char *)&_invoice,sizeof(_Invoice));
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+tmpFile.read((char *)&_item,sizeof(_Item));
+if(tmpFile.fail()) break;
+dataFile.write((char *)&_item,sizeof(_Item));
+}
+if(tmpFile.fail()) break;
+}
+dataFile.close();
+tmpFile.close();
+tmpFile.open("tmp.tmp",ios::out | ios::binary);
+tmpFile.close();
+}
+void InvoiceManager::removeInvoiceByCustomerEmail(string &vCustomerEmail) noexcept(false)
+{
+string customerEmail=validateEmail(vCustomerEmail);
+if(customerEmail.size()<=0 || customerEmail.size()>81) throw DAOException("Invalid email");
+int exist;
+CustomerManager customerManager;
+exist=customerManager.isCustomerWithEmailExist(customerEmail);
+if(!exist) throw DAOException("Customer with given email does not exist");
+fstream dataFile(INVOICE_FILE_NAME,ios::in | ios::binary);
+if(dataFile.fail())
+{
+throw DAOException("Invoice not available");
+}
+InvoiceManager::Header header;
+dataFile.read((char *)&header,sizeof(Header));
+if(dataFile.fail())
+{
+dataFile.close();
+throw DAOException("Invoice not available");
+}
+if(header.numberOfRecords==0 )
+{
+dataFile.close();
+throw DAOException("Invoice not available");
+}
+dataFile.clear();
+dataFile.seekg(sizeof(header),ios::beg);
+_Item _item;
+_Invoice _invoice;
+fstream tmpFile("tmp.tmp",ios::out | ios::binary);
+tmpFile.write((char *)&header,sizeof(Header));
+while(true)
+{
+dataFile.read((char *)&_invoice,sizeof(_Invoice));
+if(dataFile.fail()) break;
+if(compareStringIgnoreCase(_invoice.customerEmail,customerEmail.c_str())!=0)
+{
+tmpFile.write((char *)&_invoice,sizeof(_Invoice));
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+dataFile.read((char *)&_item,sizeof(_Item));
+if(dataFile.fail()) break;
+tmpFile.write((char *)&_item,sizeof(_Item));
+}
+}
+else
+{
+header.numberOfRecords--;
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+dataFile.read((char *)&_item,sizeof(_Item));
+if(dataFile.fail()) break;
+}
+}
+if(dataFile.fail()) break;
+}
+tmpFile.clear();
+tmpFile.seekp(0,ios::beg);
+tmpFile.write((char *)&header,sizeof(Header));
+dataFile.close();
+tmpFile.close();
+dataFile.open(INVOICE_FILE_NAME,ios::out | ios::binary);
+if(dataFile.fail()) throw DAOException("ERROR: failed to open file");
+tmpFile.open("tmp.tmp",ios::in | ios::binary);
+if(tmpFile.fail()) throw DAOException("ERROR: failed to open file");
+tmpFile.seekg(0,ios::beg);
+dataFile.seekp(0,ios::beg);	
+tmpFile.read((char *)&header,sizeof(Header));
+if(tmpFile.fail()) throw DAOException("ERROR: failed to read header");
+dataFile.write((char *)&header,sizeof(Header));
+while(true)
+{
+tmpFile.read((char *)&_invoice,sizeof(_Invoice));
+if(tmpFile.fail()) break;
+dataFile.write((char *)&_invoice,sizeof(_Invoice));
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+tmpFile.read((char *)&_item,sizeof(_Item));
+if(tmpFile.fail()) break;
+dataFile.write((char *)&_item,sizeof(_Item));
+}
+if(tmpFile.fail()) break;
+}
+dataFile.close();
+tmpFile.close();
+tmpFile.open("tmp.tmp",ios::out | ios::binary);
+tmpFile.close();
+}
+void InvoiceManager::removeInvoiceByCompanyEmail(string &vCompanyEmail) noexcept(false)
+{
+string companyEmail=validateEmail(vCompanyEmail);
+if(companyEmail.size()<=0 || companyEmail.size()>81) throw DAOException("Invalid company email");
+int exist;
+CompanyManager companyManager;
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) throw DAOException("Company with given email does not exist");
+fstream dataFile(INVOICE_FILE_NAME,ios::in | ios::binary);
+if(dataFile.fail())
+{
+throw DAOException("Invoice not available");
+}
+InvoiceManager::Header header;
+dataFile.read((char *)&header,sizeof(Header));
+if(dataFile.fail())
+{
+dataFile.close();
+throw DAOException("Invoice not available");
+}
+if(header.numberOfRecords==0 )
+{
+dataFile.close();
+throw DAOException("Invoice not available");
+}
+dataFile.clear();
+dataFile.seekg(sizeof(header),ios::beg);
+_Item _item;
+_Invoice _invoice;
+fstream tmpFile("tmp.tmp",ios::out | ios::binary);
+tmpFile.write((char *)&header,sizeof(Header));
+while(true)
+{
+dataFile.read((char *)&_invoice,sizeof(_Invoice));
+if(dataFile.fail()) break;
+if(compareStringIgnoreCase(_invoice.companyEmail,companyEmail.c_str())!=0)
+{
+tmpFile.write((char *)&_invoice,sizeof(_Invoice));
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+dataFile.read((char *)&_item,sizeof(_Item));
+if(dataFile.fail()) break;
+tmpFile.write((char *)&_item,sizeof(_Item));
+}
+}
+else
+{
+header.numberOfRecords--;
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+dataFile.read((char *)&_item,sizeof(_Item));
+if(dataFile.fail()) break;
+}
+}
+if(dataFile.fail()) break;
+}
+tmpFile.clear();
+tmpFile.seekp(0,ios::beg);
+tmpFile.write((char *)&header,sizeof(Header));
+dataFile.close();
+tmpFile.close();
+dataFile.open(INVOICE_FILE_NAME,ios::out | ios::binary);
+if(dataFile.fail()) throw DAOException("ERROR: failed to open file");
+tmpFile.open("tmp.tmp",ios::in | ios::binary);
+if(tmpFile.fail()) throw DAOException("ERROR: failed to open file");
+tmpFile.seekg(0,ios::beg);
+dataFile.seekp(0,ios::beg);	
+tmpFile.read((char *)&header,sizeof(Header));
+if(tmpFile.fail()) throw DAOException("ERROR: failed to read header");
+dataFile.write((char *)&header,sizeof(Header));
+while(true)
+{
+tmpFile.read((char *)&_invoice,sizeof(_Invoice));
+if(tmpFile.fail()) break;
+dataFile.write((char *)&_invoice,sizeof(_Invoice));
+for(int i=0;i<_invoice.numberOfItems;i++)
+{
+tmpFile.read((char *)&_item,sizeof(_Item));
+if(tmpFile.fail()) break;
+dataFile.write((char *)&_item,sizeof(_Item));
+}
+if(tmpFile.fail()) break;
+}
+dataFile.close();
+tmpFile.close();
+tmpFile.open("tmp.tmp",ios::out | ios::binary);
+tmpFile.close();
 }
 forward_list<abc::IInvoice *> *InvoiceManager::getAllInvoice() noexcept(false)
 {
@@ -271,11 +704,11 @@ invoiceListIterator=invoiceList->insert_after(invoiceListIterator,invoice);
 dataFile.close();
 return invoiceList;
 }
-abc::IInvoice * InvoiceManager::getInvoiceByCustomerEmail(string &customerEmail) noexcept(false)
+forward_list<abc::IInvoice *> * InvoiceManager::getInvoiceByCustomerEmail(string &customerEmail) noexcept(false)
 {
 return NULL;
 }
-abc::IInvoice * InvoiceManager::getInvoiceByCompanyEmail(string &companyEmail) noexcept(false)
+forward_list<abc::IInvoice *> * InvoiceManager::getInvoiceByCompanyEmail(string &companyEmail) noexcept(false)
 {
 return NULL;
 }

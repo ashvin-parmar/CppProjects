@@ -47,7 +47,7 @@ sprintf(date,"%d/%d/%d\n",now->tm_mday,now->tm_mon+1,now->tm_year+1900);
 cout<<"Invoice Code: "<<invoice->getInvoiceCode()<<"                Date: "<<date<<endl;
 
 itemList=invoice->getItemList();
-cout<<"-----------------------------------Item List----------------------------------"<<endl;
+cout<<"--------------------------------------------------------Item List-----------------------------------------------"<<endl;
 char sentence[1000];
 sprintf(sentence,"| %-5s | %-50s | %-10s | %-10s | %-10s | %-15s |\n","S.No","Item Name","Item Code","Quantity","Price","Total Price");
 cout<<sentence;
@@ -65,14 +65,14 @@ delete item;
 }
 itemList->clear();
 delete itemList;
-cout<<"------------------------------------------------------------------------------"<<endl;
+cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
 cout<<"Total Amount: "<<totalAmount<<endl;
 double taxAmount=totalAmount*invoice->getTax();
 cout<<"Tax Applied: "<<invoice->getTax()*100<<" Percent                  Tax Amount: "<<taxAmount<<endl;
 double discountAmount=totalAmount*invoice->getDiscount();
 cout<<"Discount applied: "<<invoice->getDiscount()*100<<" Percent              Discount Amount: "<<discountAmount<<endl;
 cout<<"Final Amount: "<<totalAmount+taxAmount-discountAmount<<endl;
-cout<<"---------------------------------------------------------------------"<<endl;
+cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
 cout<<"Amount paid: "<<invoice->getAmountPaid()<<endl;
 cout<<"Amount Due: "<<invoice->getAmountDue()<<endl;
 getLine(140,'_');

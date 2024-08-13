@@ -64,8 +64,8 @@ invoice.setTax(tax);
 invoice.setDiscount(discount);
 invoice.setItemList(list);
 
-if(tax!=0) tax=TAX_DEFAULT;
-if(discount!=0) discount=DISCOUNT_DEFAULT;
+if(tax<=0) tax=TAX_DEFAULT;
+if(discount<=0) discount=DISCOUNT_DEFAULT;
 
 cout<<"Total Amount: "<<totalAmount<<endl;
 double taxAmount=totalAmount*tax;
