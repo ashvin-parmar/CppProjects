@@ -27,6 +27,7 @@ virtual forward_list<abc::IInvoice *> * getInvoiceByCompanyEmail(string &company
 virtual abc::IInvoice * getInvoiceByInvoiceCode(int invoiceCode) noexcept(false)=0;
 virtual int isInvoiceWithCompanyEmailExist(const string &CompanyEmail) noexcept(false)=0;
 virtual int isInvoiceWithCustomerEmailExist(const string &customerEmail) noexcept(false)=0;
+virtual int isInvoiceWithInvoiceCodeExist(const int invoiceCode) noexcept(false)=0;
 };
 }
 }
