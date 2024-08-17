@@ -15,6 +15,7 @@
 #include<string.h>
 #include<forward_list>
 #include<common/stringutils>
+#include<cmath>
 using namespace stringutils;
 using namespace invoicegenerator;
 using namespace data_layer;
@@ -75,6 +76,7 @@ double amountDue=0;
 double taxAmount=totalAmount*tax;
 double discountAmount=totalAmount*discount;
 totalAmount=totalAmount+taxAmount-discountAmount;
+totalAmount=round(totalAmount*100.0)/100.0;
 if(amountPaid<0) throw DAOException("Paid amount can never be negative");
 if(amountPaid>totalAmount) 
 {
@@ -99,8 +101,8 @@ _invoice.date=t;
 _invoice.amountPaid=amountPaid;
 _invoice.tax=tax;
 _invoice.discount=discount;
-amountDue=totalAmount-amountPaid;
-_invoice.amountDue=amountDue;
+amountDue=(totalAmount-amountPaid);
+_invoice.amountDue=(amountDue);
 _invoice.numberOfItems=numberOfItems;
 dFile.write((char *)&header,sizeof(Header));
 dFile.write((char *)&_invoice,sizeof(_Invoice));
@@ -254,6 +256,7 @@ double amountDue=0;
 double taxAmount=totalAmount*tax;
 double discountAmount=totalAmount*discount;
 totalAmount=totalAmount+taxAmount-discountAmount;
+totalAmount=round(totalAmount*100.0)/100.0;
 if(amountPaid<0) throw DAOException("Paid amount can never be negative");
 if(amountPaid>totalAmount) 
 {

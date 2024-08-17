@@ -45,6 +45,7 @@ abc::ICompany * getCompanyByEmail(string &email) noexcept(false);
 void resetPassword(string email,string previousPassword,string newPassWord) noexcept(false);
 int isCompanyWithEmailExist(const string &email) noexcept(false);
 void showProfile(const string &email) noexcept(false);
+int verification(const string email,const string password) noexcept(false);
 };
 }
 }

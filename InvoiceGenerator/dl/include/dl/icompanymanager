@@ -25,6 +25,7 @@ virtual abc::ICompany * getCompanyByEmail(string &email) noexcept(false)=0;
 virtual void resetPassword(string email,string previousPassword,string newPassword) noexcept(false)=0;
 virtual int isCompanyWithEmailExist(const string &email) noexcept(false)=0;
 virtual void showProfile(const string &email) noexcept(false)=0;
+virtual int verification(const string email,const string password) noexcept(false)=0;
 
 };
 }

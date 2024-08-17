@@ -367,7 +367,7 @@ if(header.numberOfRecords==0)
 dataFile.close();
 throw DAOException(string("Invalid email")+email);
 }
-
+int found=0;
 dataFile.seekg(sizeof(header),ios::beg);
 while(true)
 {
@@ -380,8 +380,14 @@ if(compareStringIgnoreCase(_company.password,password.c_str())!=0)
 dataFile.close();
 throw DAOException("Incorrect Password");
 }
+found=1;
 break;
 }
+}
+if(!found)
+{
+dataFile.close();
+throw DAOException("Invalid email or password");
 }
 dataFile.clear();
 dataFile.seekg(sizeof(header),ios::beg);
@@ -626,4 +632,55 @@ cout<<"                           ----------Company Bank Detail----------"<<endl
 printf("GST Number: %-50s UPIID: %-50s\n",company->getGSTNumber().c_str(),company->getUPIID().c_str());
 cout<<endl;
 delete company;
+}
+int CompanyManager::verification(const string vEmail,const string vPassword) noexcept(false)
+{
+string email=trimmed(vEmail);
+if(email.size()==0) throw DAOException("Required email, email size cannot be zero");
+if(email.size()>80) throw DAOException("Email size cannot exceed 80 characters");
+string password=trimmed(vPassword);
+if(password.size()==0) throw DAOException("Required password, password size cannot be zero");
+if(password.size()>100) throw DAOException("Password size cannot exceed 100 characters");
+_Company _company;
+Header header;
+fstream dataFile(FILE_NAME,ios::in | ios::binary);
+if(dataFile.fail())
+{
+throw DAOException("Invalid email or password");
+}
+dataFile.read((char *)&header,sizeof(Header));
+if(dataFile.fail())
+{
+dataFile.close();
+throw DAOException("Invalid email or password");
+}
+if(header.numberOfRecords==0)
+{
+dataFile.close();
+throw DAOException("Invalid email or password");
+}
+int found=0;
+dataFile.seekg(sizeof(header),ios::beg);
+while(true)
+{
+dataFile.read((char *)&_company,sizeof(_Company));
+if(dataFile.fail()) break;
+if(compareStringIgnoreCase(_company.email,email.c_str())==0)
+{
+if(compareStringIgnoreCase(_company.password,password.c_str())!=0)
+{
+dataFile.close();
+throw DAOException("Incorrect Password");
+}
+found=1;
+break;
+}
+}
+if(!found)
+{
+dataFile.close();
+throw DAOException("Invalid email or password");
+}
+dataFile.close();
+return 1;
 }

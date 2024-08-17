@@ -3,4 +3,4 @@
 using namespace std;
 using namespace invoicegenerator;
 using namespace data_layer;
-string abc::ICompanyManager::FILE_NAME="company.dat";
+string abc::ICompanyManager::FILE_NAME="E:\\CppProject\\invoicegenerator\\dl\\data\\company.dat";

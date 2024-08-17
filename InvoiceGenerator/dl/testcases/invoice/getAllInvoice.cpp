@@ -5,6 +5,7 @@
 #include<dl/customermanager>
 #include<dl/invoice>
 #include<dl/invoicemanager>
+#include<iomanip>
 using namespace invoicegenerator;
 using namespace data_layer;
 void getLine(int size,char m)
@@ -14,6 +15,8 @@ cout<<endl;
 }
 int main()
 {
+cout<<fixed;
+cout<<setprecision(2);
 InvoiceManager invoiceManager;
 CustomerManager customerManager;
 CompanyManager companyManager;
@@ -23,7 +26,6 @@ forward_list<abc::IInvoice *> *invoiceList;
 forward_list<abc::IItem *> *itemList;
 forward_list<abc::IInvoice *>::iterator invoiceListIterator;
 forward_list<abc::IItem *>::iterator itemListIterator;
-
 try
 {
 invoiceList=invoiceManager.getAllInvoice();

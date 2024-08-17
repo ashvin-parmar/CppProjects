@@ -25,7 +25,6 @@ getline(cin,email);
  
 cout<<"Enter Contact Number: ";
 getline(cin,contactNumber);
-cout<<"Contact Number: "<<contactNumber<<endl; 
  
 cout<<"------------------Address------------------"<<endl;
 cout<<"Enter Street: ";
@@ -33,6 +32,7 @@ getline(cin,street);
  
 cout<<"Enter City: ";
 getline(cin,city);
+
 cout<<"Enter Pincode: ";
 cin>>pinCode;
 cin.ignore(100,'\n');

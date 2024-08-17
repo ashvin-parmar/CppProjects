@@ -2,10 +2,14 @@
 #include<dl/invoice>
 #include<dl/invoicemanager>
 #include<forward_list>
+#include<cmath>
+#include<iomanip>
 using namespace invoicegenerator;
 using namespace data_layer;
 int main()
 {
+cout<<fixed;
+cout<<setprecision(2);
 string companyEmail;
 cout<<"Enter company email: ";
 getline(cin,companyEmail);
@@ -72,7 +76,10 @@ double taxAmount=totalAmount*tax;
 cout<<"Tax Applied: "<<tax*100<<" Percent                  Tax Amount: "<<taxAmount<<endl;
 double discountAmount=totalAmount*discount;
 cout<<"Discount applied: "<<discount*100<<" Percent              Discount Amount: "<<discountAmount<<endl;
-cout<<"Final Amount: "<<totalAmount+taxAmount-discountAmount<<endl;
+totalAmount=(totalAmount+taxAmount-discountAmount);
+totalAmount=round(totalAmount*100.0)/100.0;
+
+cout<<"Final Amount: "<<totalAmount<<endl;
 
 double amountPaid;
 cout<<"Enter amount paid: ";

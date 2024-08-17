@@ -1,56 +1,11 @@
+Admin
+email
+password
 
 
 
-
-Company		Invoice 		Item 		customer 		Invoice generator
+Company		customer 	Invoice        	Item 			Invoice generator
 	
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-string customerName;
-string street;
-string city;
-string state;
-int pinCode;
-string country;
-
-string email;
-string contactNumber;
-
-int amountPaid;
-int amountDue;
-
-double discount;
-double tax;
-
-map<string *,ItemManagement *> items;
-
-
-CLASS 	ItemManagement
-{
-string itemName;
-int item quantity;
-int net Rate;
-public:
-};
-
-
-
-
-Find the data of customer if find then go to next step for creating invoice, if data of customer not available then add there data in file.
 
 
