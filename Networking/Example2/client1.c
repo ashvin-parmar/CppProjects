@@ -27,6 +27,8 @@ send(clientSocketDescriptor,request,sizeof(request),0);
 printf("Request sent\n");
 recv(clientSocketDescriptor,response,sizeof(response),0);
 printf("%s\n",response);
+recv(clientSocketDescriptor,response,sizeof(response),0);
+printf("%s\n",response);
 
 WSACleanup();
 return 0;
