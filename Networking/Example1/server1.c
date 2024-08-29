@@ -15,7 +15,7 @@ int len;
 int successCode;
 
 ver=MAKEWORD(1,1);		//Two byte version formate
-WSAStartup(ver,&wsaData);	//Windows startup
+WSAStartup(ver,&wsaData);	//Windows startup	(Intialize library)
 
 serverSocketDescriptor=socket(AF_INET,SOCK_STREAM,0);
 	//AF_INET: IPV4/IPV6 Best connection port
