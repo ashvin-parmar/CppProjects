@@ -1,0 +1,1 @@
+g++ -static eg2.cpp -o eg2.exe -I ..\tmwp\include -L ..\tmwp\lib -l tmwp -l ws2_32
