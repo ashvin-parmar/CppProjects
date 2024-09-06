@@ -14,7 +14,8 @@ public:
 virtual void setCustomerCode(int customerCode)=0;
 virtual void setCustomerName(string customerName)=0;
 virtual void setContactNumber(string contactNumber)=0;
-virtual void setEmail(string email)=0;
+virtual void setCustomerEmail(string customerEmail)=0;
+virtual void setCompanyEmail(string companyEmail)=0;
 virtual void setStreet(string street)=0;
 virtual void setCity(string city)=0;
 virtual void setState(string state)=0;
@@ -23,7 +24,8 @@ virtual void setPinCode(int pinCode)=0;
 
 virtual int getCustomerCode() const=0;
 virtual string getCustomerName() const=0;
-virtual string getEmail() const=0;
+virtual string getCustomerEmail() const=0;
+virtual string getCompanyEmail() const=0;
 virtual string getContactNumber() const=0;
 virtual string getStreet() const=0;
 virtual string getCity() const=0;

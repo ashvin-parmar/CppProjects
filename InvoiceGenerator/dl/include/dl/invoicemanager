@@ -45,14 +45,14 @@ public:
 void addInvoice(abc::IInvoice *invoice) noexcept(false);
 void updateInvoiceByInvoiceCode(abc::IInvoice *invoice) noexcept(false);
 void removeInvoiceByInvoiceCode(int invoiceCode) noexcept(false);
-void removeInvoiceByCustomerEmail(string &customerEmail) noexcept(false);
+void removeInvoiceByCustomerEmail(string &companyEmail,string &customerEmail) noexcept(false);
 void removeInvoiceByCompanyEmail(string &companyEmail) noexcept(false);
 forward_list<abc::IInvoice *> *getAllInvoice() noexcept(false);
-forward_list<abc::IInvoice *> * getInvoiceByCustomerEmail(string &customerEmail) noexcept(false);
+forward_list<abc::IInvoice *> * getInvoiceByCustomerEmail(string &companyEmail,string &customerEmail) noexcept(false);
 forward_list<abc::IInvoice *> * getInvoiceByCompanyEmail(string &companyEmail) noexcept(false);
 abc::IInvoice * getInvoiceByInvoiceCode(int invoiceCode) noexcept(false);
 int isInvoiceWithCompanyEmailExist(const string &CompanyEmail) noexcept(false);
-int isInvoiceWithCustomerEmailExist(const string &customerEmail) noexcept(false);
+int isInvoiceWithCustomerEmailExist(const string &companyEmail,const string &customerEmail) noexcept(false);
 int isInvoiceWithInvoiceCodeExist(const int invoiceCode) noexcept(false);
 };
 }

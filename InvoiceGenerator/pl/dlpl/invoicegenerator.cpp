@@ -95,14 +95,15 @@ string country;
 string UPIID;
 string GSTNumber;
 cout<<"------------------Detail------------------"<<endl;
-cout<<"Enter Company Name: ";
-getline(cin,name);
-cout<<"Enter Email: ";
-getline(cin,email);
 int code;
 cout<<"Enter code: ";
 cin>>code;
 cin.ignore(1000,'\n');
+
+cout<<"Enter Company Name: ";
+getline(cin,name);
+cout<<"Enter Email: ";
+getline(cin,email);
 cout<<"Enter Contact Number: ";
 getline(cin,contactNumber);
 cout<<"Contact Number: "<<contactNumber<<endl; 
@@ -265,7 +266,7 @@ invoice=*invoiceListIterator;
 cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
 companyManager.showProfile(invoice->getCompanyEmail());
 cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
-customerManager.showCustomerProfile(invoice->getCustomerEmail());
+customerManager.showCustomerProfile(invoice->getCompanyEmail(),invoice->getCustomerEmail());
 cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
 time_t t;
 t=invoice->getDate();
@@ -371,18 +372,17 @@ cout<<"Company Address updated"<<endl;
 {
 cout<<daoException.what()<<endl;
 }
-
 }
 void showCompanyProfile(string email)
 {
 CompanyManager companyManager;
 companyManager.showProfile(email);
 }
-void addCustomer()
+void addCustomer(string &companyEmail)
 {
 Customer customer;
 string customerName;
-string email;
+string customerEmail;
 string contactNumber;
 string street;
 string city;
@@ -394,8 +394,8 @@ cout<<"------------------Detail------------------"<<endl;
 cout<<"Enter Customer Name: ";
 getline(cin,customerName);
  
-cout<<"Enter Email: ";
-getline(cin,email);
+cout<<"Enter Customer Email: ";
+getline(cin,customerEmail);
  
 cout<<"Enter Contact Number: ";
 getline(cin,contactNumber);
@@ -415,9 +415,9 @@ cout<<"Enter State: ";
 getline(cin,state);
 cout<<"Enter Country: ";
 getline(cin,country);
-
+customer.setCompanyEmail(companyEmail);
 customer.setCustomerName(customerName);
-customer.setEmail(email);
+customer.setCustomerEmail(customerEmail);
 customer.setContactNumber(contactNumber);
 customer.setStreet(street);
 customer.setCity(city);
@@ -434,13 +434,12 @@ cout<<"Remember this code for future reference."<<endl;
 {
 cout<<daoException.what()<<endl;
 }
-
 }
-void editCustomer()
+void editCustomer(string &companyEmail)
 {
 Customer customer;
 string customerName;
-string email;
+string customerEmail;
 string contactNumber;
 string street;
 string city;
@@ -457,8 +456,8 @@ cout<<"Enter code: ";
 cin>>customerCode;
 cin.ignore(1000,'\n');
 
-cout<<"Enter Email: ";
-getline(cin,email);
+cout<<"Enter Customer Email: ";
+getline(cin,customerEmail);
 
 
 cout<<"Enter Contact Number: ";
@@ -483,7 +482,8 @@ getline(cin,country);
 
 customer.setCustomerCode(customerCode);
 customer.setCustomerName(customerName);
-customer.setEmail(email);
+customer.setCustomerEmail(customerEmail);
+customer.setCompanyEmail(companyEmail);
 customer.setContactNumber(contactNumber);
 customer.setStreet(street);
 customer.setCity(city);
@@ -495,17 +495,17 @@ CustomerManager customerManager;
 customerManager.updateCustomer(&customer);
 cout<<"Customer updated"<<endl;
 }
-void editCustomerAddress()
+void editCustomerAddress(string &companyEmail)
 {
 Customer customer;
-string email;
+string customerEmail;
 string street;
 string city;
 int pinCode;
 string state;
 string country;
-cout<<"Enter Email: ";
-getline(cin,email);
+cout<<"Enter Customer Email: ";
+getline(cin,customerEmail);
 
 cout<<"------------------Address------------------"<<endl;
 cout<<"Enter Street: ";
@@ -522,7 +522,8 @@ getline(cin,state);
 cout<<"Enter Country: ";
 getline(cin,country);
 
-customer.setEmail(email);
+customer.setCompanyEmail(companyEmail);
+customer.setCustomerEmail(customerEmail);
 customer.setStreet(street);
 customer.setCity(city);
 customer.setPinCode(pinCode);
@@ -539,27 +540,31 @@ cout<<"Customer updated"<<endl;
 cout<<daoException.what()<<endl;
 }
 }
-void removeCustomer()
+void removeCustomer(string &companyEmail)
 {
 Customer customer;
 CustomerManager customerManager;
-string email;
-cout<<"Enter email: ";
-getline(cin,email);
+string customerEmail;
+cout<<"Enter customer email: ";
+getline(cin,customerEmail);
 try
 {
-customerManager.removeCustomer(email);
+customerManager.removeCustomer(companyEmail,customerEmail);
 cout<<"Customer removed"<<endl;
 }catch(DAOException &daoException)
 {
 cout<<daoException.what()<<endl;
 }
 }
-void viewCustomer()
+void viewCustomer(string &companyEmail)
 {
 cout<<"To be implement"<<endl;
 }
-void getAllCustomers()
+void getAllCustomersOfCompany(string &companyEmail)	//To be done later
+{
+cout<<"To be implement"<<endl;
+}
+void getAllCustomers()			
 {
 CustomerManager customerManager;
 abc::ICustomer *customer;
@@ -576,7 +581,7 @@ for(i=customerList->begin();i!=customerList->end();++i)
 customer=*i;
 cout<<"----------Customer Login Details----------"<<endl;
 printf("Customer Name: %-80s    Customer Code: %-15d\n",customer->getCustomerName().c_str(),customer->getCustomerCode());
-printf("Email: %-80s           Contact Number: %-15s\n\n",customer->getEmail().c_str(),customer->getContactNumber().c_str());
+printf("Customer Email: %-80s           Contact Number: %-15s\n\n",customer->getCustomerEmail().c_str(),customer->getContactNumber().c_str());
 
 cout<<"----------Customer Address----------"<<endl;
 printf("Street:  %-50s    City   : %-50s\n",customer->getStreet().c_str(),customer->getCity().c_str());
@@ -595,19 +600,19 @@ delete customerList;
 cout<<daoException.what()<<endl;
 }
 }
-void getCustomer()
+void getCustomer(string &companyEmail)
 {
 abc::ICustomer *customer;
 CustomerManager customerManager;
-string email;
-cout<<"Enter email: ";
-getline(cin,email);
+string customerEmail;
+cout<<"Enter customer email: ";
+getline(cin,customerEmail);
 try
 {
-customer=customerManager.getCustomerByEmail(email);
+customer=customerManager.getCustomerByEmail(companyEmail,customerEmail);
 cout<<"----------Customer Login Details----------"<<endl;
 printf("Customer Name: %-80s    Customer Code: %-15d\n",customer->getCustomerName().c_str(),customer->getCustomerCode());
-printf("Email: %-80s           Contact Number: %-15s\n\n",customer->getEmail().c_str(),customer->getContactNumber().c_str());
+printf("Customer Email: %-80s           Contact Number: %-15s\n\n",customer->getCustomerEmail().c_str(),customer->getContactNumber().c_str());
 
 cout<<"----------Customer Address----------"<<endl;
 printf("Street:  %-50s    City   : %-50s\n",customer->getStreet().c_str(),customer->getCity().c_str());
@@ -622,7 +627,7 @@ delete customer;
 cout<<daoException.what()<<endl;
 }
 }
-void getAllCustomerInvoice()
+void getAllCustomerInvoice(string &companyEmail)
 {
 string customerEmail;
 cout<<"Enter customer email: ";
@@ -638,11 +643,14 @@ forward_list<abc::IInvoice *>::iterator invoiceListIterator;
 forward_list<abc::IItem *>::iterator itemListIterator;
 try
 {
-invoiceList=invoiceManager.getInvoiceByCustomerEmail(customerEmail);
+invoiceList=invoiceManager.getInvoiceByCustomerEmail(companyEmail,customerEmail);
 getLine(140,'_');
+
 cout<<"List of All Invoices of Customer with email "<<customerEmail<<endl;
 getLine(140,'_');
-customerManager.showCustomerProfile(customerEmail);
+companyManager.showProfile(invoice->getCompanyEmail());
+getLine(140,'_');
+customerManager.showCustomerProfile(companyEmail,customerEmail);
 getLine(140,'_');
 invoiceListIterator=invoiceList->begin();
 if(invoiceListIterator==invoiceList->end())
@@ -656,8 +664,6 @@ return ;
 for(;invoiceListIterator!=invoiceList->end();++invoiceListIterator)
 {
 invoice=*invoiceListIterator;
-cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
-companyManager.showProfile(invoice->getCompanyEmail());
 cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
 time_t t;
 t=invoice->getDate();
@@ -706,7 +712,7 @@ delete invoiceList;
 cout<<daoException.what()<<endl;
 }
 }
-void RemoveCustomerInvoice()
+void RemoveCustomerInvoice(string &companyEmail)
 {
 string customerEmail;
 cout<<"Enter customer email: ";
@@ -714,7 +720,7 @@ getline(cin,customerEmail);
 InvoiceManager invoiceManager;
 try
 {
-invoiceManager.removeInvoiceByCustomerEmail(customerEmail);
+invoiceManager.removeInvoiceByCustomerEmail(companyEmail,customerEmail);
 cout<<"All invoice of customer with email "<<customerEmail<<" are removed"<<endl;
 }catch(DAOException &daoException)
 {
@@ -737,7 +743,7 @@ cout<<"Invoice removed with invoice code "<<invoiceCode<<endl;
 cout<<daoException.what()<<endl;
 }
 }
-void isCustomerInvoiceExist()
+void isCustomerInvoiceExist(string &companyEmail)
 {
 InvoiceManager invoiceManager;
 string customerEmail;
@@ -747,7 +753,7 @@ getline(cin,customerEmail);
 int exist;
 try
 {
-exist=invoiceManager.isInvoiceWithCustomerEmailExist(customerEmail);
+exist=invoiceManager.isInvoiceWithCustomerEmailExist(companyEmail,customerEmail);
 if(exist) cout<<"Invoice with given customer email are exist"<<endl;
 else cout<<"Invoice with given customer email are not exist"<<endl;
 }catch(DAOException &daoException)
@@ -991,7 +997,7 @@ for(;invoiceListIterator!=invoiceList->end();++invoiceListIterator)
 {
 invoice=*invoiceListIterator;
 cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
-customerManager.showCustomerProfile(invoice->getCustomerEmail());
+customerManager.showCustomerProfile(companyEmail,invoice->getCustomerEmail());
 cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
 time_t t;
 t=invoice->getDate();
@@ -1061,7 +1067,7 @@ getLine(140,'_');
 companyManager.showProfile(invoice->getCompanyEmail());
 getLine(140,'_');
 cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
-customerManager.showCustomerProfile(invoice->getCustomerEmail());
+customerManager.showCustomerProfile(invoice->getCompanyEmail(),invoice->getCustomerEmail());
 cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;
 time_t t;
 t=invoice->getDate();
@@ -1133,7 +1139,7 @@ else cout<<"Invoice with given company email are not exist"<<endl;
 throw daoException;
 }
 }
-void manageCompany(string &email)
+void manageCompany(string &companyEmail)
 {
 int ch;
 while(true)
@@ -1151,10 +1157,10 @@ try
 switch(ch)
 {
 case 1 :
-showCompanyProfile(email);
+showCompanyProfile(companyEmail);
 break;
 case 2 : 
-editCompanyAddress(email);
+editCompanyAddress(companyEmail);
 break;
 default: 
 cout<<"Invalid choice"<<endl;
@@ -1165,7 +1171,7 @@ cout<<daoException.what()<<endl;
 }
 }
 }
-void manageCustomer()
+void manageCustomer(string &companyEmail)
 {
 int ch;
 while(true)
@@ -1191,34 +1197,34 @@ try
 switch(ch)
 {
 case 1 :
-addCustomer();
+addCustomer(companyEmail);
 break;
 case 2 : 
-editCustomer();
+editCustomer(companyEmail);
 break;
 case 3 :
-editCustomerAddress();
+editCustomerAddress(companyEmail);
 break;
 case 4 :
-removeCustomer();
+removeCustomer(companyEmail);
 break;
 case 5 :
-viewCustomer();
+viewCustomer(companyEmail);
 break;
 case 6 :
-getAllCustomers();
+getAllCustomersOfCompany(companyEmail);	//To be done later
 break;
 case 7 :
-getCustomer();
+getCustomer(companyEmail);
 break;
 case 8 :
-getAllCustomerInvoice();
+getAllCustomerInvoice(companyEmail);
 break;
 case 9 :
-RemoveCustomerInvoice();
+RemoveCustomerInvoice(companyEmail);
 break;
 case 10 :
-isCustomerInvoiceExist();
+isCustomerInvoiceExist(companyEmail);
 break;
 default: 
 cout<<"Invalid choice"<<endl;
@@ -1323,7 +1329,7 @@ case 1 :
 manageCompany(companyEmail);
 break;
 case 2 :
-manageCustomer();
+manageCustomer(companyEmail);
 break;
 case 3 :
 manageInvoice(companyEmail);

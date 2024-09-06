@@ -25,7 +25,8 @@ public:
 int customerCode;
 char customerName[51];
 char contactNumber[15];
-char email[81];
+char customerEmail[81];
+char companyEmail[81];
 char street[51];
 char city[51];
 char state[51];
@@ -36,11 +37,11 @@ public:
 void addCustomer(abc::ICustomer *customer) noexcept(false);
 void updateCustomer(abc::ICustomer *customer) noexcept(false);
 void updateCustomerAddressByEmail(abc::ICustomer *customer) noexcept(false);
-void removeCustomer(string &email) noexcept(false);
+void removeCustomer(string &companyEmail,string &customerEmail) noexcept(false);
 forward_list<abc::ICustomer *> *getAllCustomer() noexcept(false);
-abc::ICustomer * getCustomerByEmail(string &email) noexcept(false);
-int isCustomerWithEmailExist(const string &email) noexcept(false);
-void showCustomerProfile(const string &email) noexcept(false);
+abc::ICustomer * getCustomerByEmail(string &companyEmail,string &customerEmail) noexcept(false);
+int isCustomerWithEmailExist(const string &companyEmail,const string &customerEmail) noexcept(false);
+void showCustomerProfile(const string &companyEmail,const string &customerEmail) noexcept(false);
 };
 }
 }

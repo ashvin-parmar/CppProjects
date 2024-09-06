@@ -22,10 +22,10 @@ if(name.size()>50) throw DAOException("Name should not exeed 50 character");
 string contactNumber=validateContactNumber(company->getContactNumber());
 if(contactNumber.size()==0) throw DAOException("Invalid contact number");
 string email=validateEmail(company->getEmail());
-if(email.size()==0 || email.size()>80) throw DAOException("Invalid email");
+if(email.size()==0 || email.size()>80) throw DAOException("Invalid company email");
 int exist;
 CustomerManager customerManager;
-exist=customerManager.isCustomerWithEmailExist(email);
+exist=customerManager.isCustomerWithEmailExist(email,email);
 if(exist) throw DAOException("A customer exist with given email, Use a different email for company use only");
 // done done: Later conveting password in hashing algoritm 
 string password=trimmed(company->getPassword());
@@ -158,7 +158,7 @@ string email=validateEmail(company->getEmail());
 if(email.size()==0 || email.size()>80) throw DAOException("Invalid email");
 int exist;
 CustomerManager customerManager;
-exist=customerManager.isCustomerWithEmailExist(email);
+exist=customerManager.isCustomerWithEmailExist(email,email);
 if(exist) throw DAOException("A customer exist with given email, Use a different email for company use only");
 // done done: Later conveting password in hashing algoritm 
 string password=trimmed(company->getPassword());

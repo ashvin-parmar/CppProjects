@@ -32,7 +32,7 @@ if(!exist) throw DAOException("Company with given email is not exist");
 string customerEmail=validateEmail(invoice->getCustomerEmail());
 if(customerEmail.size()==0 || customerEmail.size()>80) throw DAOException("Invalid Customer Email");
 CustomerManager customerManager;
-exist=customerManager.isCustomerWithEmailExist(customerEmail);
+exist=customerManager.isCustomerWithEmailExist(companyEmail,customerEmail);
 if(!exist) throw DAOException("Customer with given email is not exist, First to add customer");
 time_t t;
 forward_list<abc::IItem *> *itemList;
@@ -212,7 +212,7 @@ if(!exist) throw DAOException("Company with given email is not exist");
 string customerEmail=validateEmail(invoice->getCustomerEmail());
 if(customerEmail.size()==0 || customerEmail.size()>80) throw DAOException("Invalid Customer Email");
 CustomerManager customerManager;
-exist=customerManager.isCustomerWithEmailExist(customerEmail);
+exist=customerManager.isCustomerWithEmailExist(companyEmail,customerEmail);
 if(!exist) throw DAOException("Customer with given email is not exist, First to add customer");
 time_t t;
 forward_list<abc::IItem *> *itemList;
@@ -470,13 +470,19 @@ tmpFile.close();
 tmpFile.open("tmp.tmp",ios::out | ios::binary);
 tmpFile.close();
 }
-void InvoiceManager::removeInvoiceByCustomerEmail(string &vCustomerEmail) noexcept(false)
+void InvoiceManager::removeInvoiceByCustomerEmail(string &vCompanyEmail,string &vCustomerEmail) noexcept(false)
 {
+string companyEmail=validateEmail(vCompanyEmail);
+if(companyEmail.size()<=0 || companyEmail.size()>81) throw DAOException("Invalid company email");
+int exist;
+CompanyManager companyManager;
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) throw DAOException("Company with given email does not exist");
+
 string customerEmail=validateEmail(vCustomerEmail);
 if(customerEmail.size()<=0 || customerEmail.size()>81) throw DAOException("Invalid email");
-int exist;
 CustomerManager customerManager;
-exist=customerManager.isCustomerWithEmailExist(customerEmail);
+exist=customerManager.isCustomerWithEmailExist(companyEmail,customerEmail);
 if(!exist) throw DAOException("Customer with given email does not exist");
 fstream dataFile(INVOICE_FILE_NAME,ios::in | ios::binary);
 if(dataFile.fail())
@@ -505,7 +511,7 @@ while(true)
 {
 dataFile.read((char *)&_invoice,sizeof(_Invoice));
 if(dataFile.fail()) break;
-if(compareStringIgnoreCase(_invoice.customerEmail,customerEmail.c_str())!=0)
+if(!(compareStringIgnoreCase(_invoice.customerEmail,customerEmail.c_str())==0 && compareStringIgnoreCase(_invoice.companyEmail,companyEmail.c_str())==0))
 {
 tmpFile.write((char *)&_invoice,sizeof(_Invoice));
 for(int i=0;i<_invoice.numberOfItems;i++)
@@ -707,14 +713,21 @@ invoiceListIterator=invoiceList->insert_after(invoiceListIterator,invoice);
 dataFile.close();
 return invoiceList;
 }
-forward_list<abc::IInvoice *> * InvoiceManager::getInvoiceByCustomerEmail(string &vCustomerEmail) noexcept(false)
+forward_list<abc::IInvoice *> * InvoiceManager::getInvoiceByCustomerEmail(string &vCompanyEmail,string &vCustomerEmail) noexcept(false)
 {
-string customerEmail=validateEmail(vCustomerEmail);
-if(customerEmail.size()<=0 || customerEmail.size()>81) throw DAOException("Invalid customer email");
+string companyEmail=validateEmail(vCompanyEmail);
+if(companyEmail.size()<=0 || companyEmail.size()>81) throw DAOException("Invalid company email");
 int exist;
+CompanyManager companyManager;
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) throw DAOException("Company with given email does not exist");
+
+string customerEmail=validateEmail(vCustomerEmail);
+if(customerEmail.size()<=0 || customerEmail.size()>81) throw DAOException("Invalid email");
 CustomerManager customerManager;
-exist=customerManager.isCustomerWithEmailExist(customerEmail);
+exist=customerManager.isCustomerWithEmailExist(companyEmail,customerEmail);
 if(!exist) throw DAOException("Customer with given email does not exist");
+
 fstream dataFile(INVOICE_FILE_NAME,ios::in | ios::binary);
 if(dataFile.fail())
 {
@@ -745,7 +758,7 @@ while(true)
 {
 dataFile.read((char *)&_invoice,sizeof(_Invoice));
 if(dataFile.fail()) break;
-if(compareStringIgnoreCase(_invoice.customerEmail,customerEmail.c_str())==0)
+if(compareStringIgnoreCase(_invoice.customerEmail,customerEmail.c_str())==0 && compareStringIgnoreCase(_invoice.companyEmail,companyEmail.c_str())==0)
 {
 int numberOfItems;
 invoice=new Invoice;
@@ -1004,13 +1017,18 @@ if(dataFile.fail()) break;
 dataFile.close();
 return 0;
 }
-int InvoiceManager::isInvoiceWithCustomerEmailExist(const string &vCustomerEmail) noexcept(false)
+int InvoiceManager::isInvoiceWithCustomerEmailExist(const string &vCompanyEmail,const string &vCustomerEmail) noexcept(false)
 {
+string companyEmail=validateEmail(vCompanyEmail);
+if(companyEmail.size()<=0 || companyEmail.size()>81) return 0;
+int exist;
+CompanyManager companyManager;
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) return 0;
 string customerEmail=validateEmail(vCustomerEmail);
 if(customerEmail.size()<=0 || customerEmail.size()>81) return 0;
-int exist;
 CustomerManager customerManager;
-exist=customerManager.isCustomerWithEmailExist(customerEmail);
+exist=customerManager.isCustomerWithEmailExist(companyEmail,customerEmail);
 if(!exist) return 0;
 fstream dataFile(INVOICE_FILE_NAME,ios::in | ios::binary);
 if(dataFile.fail())
@@ -1037,7 +1055,7 @@ while(true)
 {
 dataFile.read((char *)&_invoice,sizeof(_Invoice));
 if(dataFile.fail()) break;
-if(compareStringIgnoreCase(_invoice.customerEmail,customerEmail.c_str())==0)
+if(compareStringIgnoreCase(_invoice.customerEmail,customerEmail.c_str())==0 && compareStringIgnoreCase(_invoice.companyEmail,companyEmail.c_str())==0)
 {
 dataFile.close();
 return 1;
@@ -1103,34 +1121,3 @@ if(dataFile.fail()) break;
 dataFile.close();
 return 0;
 }
-
-/*
-void CustomerManager::showCustomerProfile(const string &vEmail) noexcept(false)
-{
-CustomerManager customerManager;
-abc::ICustomer *customer;
-string email=vEmail;
-try
-{
-customer=customerManager.getCustomerByEmail(email);
-}catch(DAOException daoException)
-{
-throw DAOException(daoException.what());
-}
-for(int i=0;i<120;i++) cout<<"_";
-cout<<endl;
-cout<<"----------Customer Login Details----------"<<endl;
-printf("Customer Name: %-80s    Customer Code: %-15d\n",customer->getCustomerName().c_str(),customer->getCustomerCode());
-printf("Email: %-80s           Contact Number: %-15s\n\n",customer->getEmail().c_str(),customer->getContactNumber().c_str());
-
-cout<<"----------Customer Address----------"<<endl;
-printf("Street:  %-50s    City   : %-50s\n",customer->getStreet().c_str(),customer->getCity().c_str());
-printf("State :  %-50s    Country: %-50s\n",customer->getState().c_str(),customer->getCountry().c_str());
-printf("Pin Code: %-15d\n\n",customer->getPinCode());
-
-for(int i=0;i<120;i++) cout<<"_";
-cout<<endl;
-cout<<endl;
-delete customer;
-}
-*/

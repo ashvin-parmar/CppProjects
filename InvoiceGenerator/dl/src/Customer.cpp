@@ -9,7 +9,8 @@ Customer::Customer()
 this->customerCode=0;
 this->customerName="";
 this->contactNumber="";
-this->email="";
+this->customerEmail="";
+this->companyEmail="";
 this->street="";
 this->city="";
 this->state="";
@@ -21,7 +22,8 @@ Customer::Customer(const Customer &other)
 this->customerCode=other.customerCode;
 this->customerName=other.customerName;
 this->contactNumber=other.contactNumber;
-this->email=other.email;
+this->customerEmail=other.customerEmail;
+this->companyEmail=other.companyEmail;
 this->street=other.street;
 this->city=other.city;
 this->state=other.state;
@@ -44,9 +46,13 @@ void Customer::setContactNumber(string contactNumber)
 {
 this->contactNumber=contactNumber;
 }
-void Customer::setEmail(string email)
+void Customer::setCustomerEmail(string customerEmail)
 {
-this->email=email;
+this->customerEmail=customerEmail;
+}
+void Customer::setCompanyEmail(string companyEmail)
+{
+this->companyEmail=companyEmail;
 }
 void Customer::setStreet(string street)
 {
@@ -88,9 +94,13 @@ string Customer::getState() const
 {
 return this->state;
 }
-string Customer::getEmail() const
+string Customer::getCustomerEmail() const
 {
-return this->email;
+return this->customerEmail;
+}
+string Customer::getCompanyEmail() const
+{
+return this->companyEmail;
 }
 string Customer::getContactNumber() const
 {
@@ -109,7 +119,8 @@ abc::ICustomer & Customer::operator=(const abc::ICustomer &other)
 this->customerCode=other.getCustomerCode();
 this->customerName=other.getCustomerName();
 this->contactNumber=other.getContactNumber();
-this->email=other.getEmail();
+this->customerEmail=other.getCustomerEmail();
+this->companyEmail=other.getCompanyEmail();
 this->street=other.getStreet();
 this->city=other.getCity();
 this->state=other.getState();

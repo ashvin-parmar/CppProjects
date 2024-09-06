@@ -23,8 +23,19 @@ if(customerName.size()==0) throw DAOException("Customer Name required, Name size
 if(customerName.size()>50) throw DAOException("Customer Name should not exeed 50 character");
 string contactNumber=validateContactNumber(customer->getContactNumber());
 if(contactNumber.size()==0) throw DAOException("Invalid contact number");
-string email=validateEmail(customer->getEmail());
-if(email.size()==0 || email.size()>80) throw DAOException("Invalid email");
+
+string companyEmail=validateEmail(customer->getCompanyEmail());
+if(companyEmail.size()==0 || companyEmail.size()>80) throw DAOException("Invalid company email");
+int exist;
+CompanyManager companyManager;
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) throw DAOException("Company with given email is not exist");
+
+string customerEmail=validateEmail(customer->getCustomerEmail());
+if(customerEmail.size()==0 || customerEmail.size()>80) throw DAOException("Invalid customer email");
+exist=companyManager.isCompanyWithEmailExist(customerEmail);
+if(exist) throw DAOException("A Company with given email is already exist, use another email for customer use.");
+
 string street=trimmed(customer->getStreet());
 if(street.size()==0) throw DAOException("Please enter street address");
 if(street.size()>50) throw DAOException("Street address can not exceed 50 character");
@@ -39,11 +50,7 @@ if(country.size()==0) throw DAOException("Please enter country address");
 if(country.size()>50) throw DAOException("Country address can not exceed 50 character");
 int pinCode=customer->getPinCode();
 if(pinCode>999999 || pinCode<100000) throw DAOException("Please enter correct Pin Code");
-//Other All Type Of Validation
-int exist;
-CompanyManager companyManager;
-exist=companyManager.isCompanyWithEmailExist(email);
-if(exist) throw DAOException("A company exist with given email, Use another email for customer use");
+//Other All Type Of Validation	
 CustomerManager::Header header;
 _Customer _customer;
 fstream dataFile(CUSTOMER_FILE_NAME,ios::in | ios::out | ios::binary);
@@ -53,7 +60,8 @@ ofstream dFile(CUSTOMER_FILE_NAME,ios::app | ios::binary);
 header.numberOfRecords=1;
 header.lastGeneratedCustomerCode=1;
 strcpy(_customer.customerName,customerName.c_str());
-strcpy(_customer.email,email.c_str());
+strcpy(_customer.customerEmail,customerEmail.c_str());
+strcpy(_customer.companyEmail,companyEmail.c_str());
 strcpy(_customer.contactNumber,contactNumber.c_str());
 strcpy(_customer.street,street.c_str());
 strcpy(_customer.city,city.c_str());
@@ -75,7 +83,8 @@ dataFile.seekp(0,ios::beg);
 header.lastGeneratedCustomerCode=1;
 header.numberOfRecords=1;
 strcpy(_customer.customerName,customerName.c_str());
-strcpy(_customer.email,email.c_str());
+strcpy(_customer.customerEmail,customerEmail.c_str());
+strcpy(_customer.companyEmail,companyEmail.c_str());
 strcpy(_customer.contactNumber,contactNumber.c_str());
 strcpy(_customer.street,street.c_str());
 strcpy(_customer.city,city.c_str());
@@ -93,22 +102,29 @@ while(true)
 {
 dataFile.read((char *)&_customer,sizeof(_Customer));
 if(dataFile.fail()) break;
-if(compareStringIgnoreCase(_customer.email,email.c_str())==0)
+if(compareStringIgnoreCase(_customer.customerEmail,customerEmail.c_str())==0)
+{
+if(compareStringIgnoreCase(_customer.companyEmail,companyEmail.c_str())==0)
 {
 dataFile.close();
-throw DAOException(string("Customer already exist with email "+email));
+throw DAOException(string("Customer already exist with email "+customerEmail));
+}
 }
 if(compareStringIgnoreCase(_customer.contactNumber,contactNumber.c_str())==0)
 {
+if(compareStringIgnoreCase(_customer.companyEmail,companyEmail.c_str())==0)
+{
 dataFile.close();
-throw DAOException(string("Customer already exist with contact number "+contactNumber));
+throw DAOException(string("Customer already exist with email "+customerEmail));
+}
 }
 }
 dataFile.clear();
 header.lastGeneratedCustomerCode++;
 header.numberOfRecords++;
 strcpy(_customer.customerName,customerName.c_str());
-strcpy(_customer.email,email.c_str());
+strcpy(_customer.customerEmail,customerEmail.c_str());
+strcpy(_customer.companyEmail,companyEmail.c_str());
 strcpy(_customer.contactNumber,contactNumber.c_str());
 strcpy(_customer.street,street.c_str());
 strcpy(_customer.city,city.c_str());
@@ -134,12 +150,18 @@ if(customerName.size()==0) throw DAOException("Customer name required, Name size
 if(customerName.size()>50) throw DAOException("Customer Name should not exeed 50 character");
 string contactNumber=validateContactNumber(customer->getContactNumber());
 if(contactNumber.size()==0) throw DAOException("Invalid contact number");
-string email=validateEmail(customer->getEmail());
-if(email.size()==0 || email.size()>80) throw DAOException("Invalid email");
+string companyEmail=validateEmail(customer->getCompanyEmail());
+if(companyEmail.size()==0 || companyEmail.size()>80) throw DAOException("Invalid company email");
 int exist;
 CompanyManager companyManager;
-exist=companyManager.isCompanyWithEmailExist(email);
-if(exist) throw DAOException("A company exist with given email, Use another email for customer use");
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) throw DAOException("Company with given email is not exist");
+
+string customerEmail=validateEmail(customer->getCustomerEmail());
+if(customerEmail.size()==0 || customerEmail.size()>80) throw DAOException("Invalid customer email");
+exist=companyManager.isCompanyWithEmailExist(customerEmail);
+if(exist) throw DAOException("A Company with given email is already exist, use another email for customer use.");
+
 string street=trimmed(customer->getStreet());
 if(street.size()==0) throw DAOException("Please enter street address");
 if(street.size()>50) throw DAOException("Street address can not exceed 50 character");
@@ -199,12 +221,12 @@ while(true)
 {
 dataFile.read((char *)&_customer,sizeof(_Customer));
 if(dataFile.fail()) break;
-if(compareStringIgnoreCase(_customer.email,email.c_str())==0 && _customer.customerCode!=customerCode)
+if(compareStringIgnoreCase(_customer.customerEmail,customerEmail.c_str())==0 && _customer.customerCode!=customerCode && compareStringIgnoreCase(_customer.companyEmail,companyEmail.c_str())==0)
 {
 dataFile.close();
-throw DAOException(string("Customer already exist with email "+email));
+throw DAOException(string("Customer already exist with email "+customerEmail));
 }
-if(compareStringIgnoreCase(_customer.contactNumber,contactNumber.c_str())==0 && _customer.customerCode!=customerCode)
+if(compareStringIgnoreCase(_customer.contactNumber,contactNumber.c_str())==0 && _customer.customerCode!=customerCode && compareStringIgnoreCase(_customer.companyEmail,companyEmail.c_str())==0)
 {
 dataFile.close();
 throw DAOException(string("Customer already exist with contact number "+contactNumber));
@@ -213,7 +235,8 @@ throw DAOException(string("Customer already exist with contact number "+contactN
 dataFile.clear();
 dataFile.seekp(pos,ios::beg);
 strcpy(_customer.customerName,customerName.c_str());
-strcpy(_customer.email,email.c_str());
+strcpy(_customer.customerEmail,customerEmail.c_str());
+strcpy(_customer.companyEmail,companyEmail.c_str());
 strcpy(_customer.contactNumber,contactNumber.c_str());
 strcpy(_customer.street,street.c_str());
 strcpy(_customer.city,city.c_str());
@@ -226,8 +249,12 @@ dataFile.close();
 }
 void CustomerManager::updateCustomerAddressByEmail(abc::ICustomer *customer) noexcept(false)
 {
-string email=validateEmail(customer->getEmail());
-if(email.size()==0 || email.size()>80) throw DAOException("Invalid email");
+string customerEmail=validateEmail(customer->getCustomerEmail());
+if(customerEmail.size()==0 || customerEmail.size()>80) throw DAOException("Invalid customer email");
+
+string companyEmail=validateEmail(customer->getCompanyEmail());
+if(companyEmail.size()==0 || companyEmail.size()>80) throw DAOException("Invalid company email");
+
 // done done: Later conveting password in hashing algoritm 
 string street=trimmed(customer->getStreet());
 if(street.size()==0) throw DAOException("Please enter street address");
@@ -271,7 +298,7 @@ while(true)
 pos=dataFile.tellg();
 dataFile.read((char *)&_customer,sizeof(_Customer));
 if(dataFile.fail()) break;
-if(compareStringIgnoreCase(_customer.email,email.c_str())==0)
+if(compareStringIgnoreCase(_customer.customerEmail,customerEmail.c_str())==0 && compareStringIgnoreCase(_customer.companyEmail,companyEmail.c_str())==0)
 {
 found=1;
 break;
@@ -280,7 +307,7 @@ break;
 if(!found)
 {
 dataFile.close();
-throw DAOException("Invalid Email");
+throw DAOException("Invalid Email OR Company Email");
 }
 dataFile.clear();
 dataFile.seekp(pos,ios::beg);
@@ -292,28 +319,37 @@ _customer.pinCode=pinCode;
 dataFile.write((char *)&_customer,sizeof(_Customer));
 dataFile.close();
 }
-void CustomerManager::removeCustomer(string &vEmail) noexcept(false)
+void CustomerManager::removeCustomer(string &vCompanyEmail,string &vCustomerEmail) noexcept(false)
 {
-string email=trimmed(vEmail);
-if(email.size()==0) throw DAOException("Required email, email size cannot be zero");
-if(email.size()>80) throw DAOException("Email size cannot exceed 80 characters");
+string companyEmail=validateEmail(vCompanyEmail);
+if(companyEmail.size()==0) throw DAOException("Required email, email size cannot be zero");
+if(companyEmail.size()>80) throw DAOException("Email size cannot exceed 80 characters");
+int exist;
+CompanyManager companyManager;
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) throw DAOException("Company with given email is not exist");
+
+string customerEmail=validateEmail(vCustomerEmail);
+if(customerEmail.size()==0) throw DAOException("Required email, email size cannot be zero");
+if(customerEmail.size()>80) throw DAOException("Email size cannot exceed 80 characters");
+
 _Customer _customer;
 Header header;
 fstream dataFile(CUSTOMER_FILE_NAME,ios::in | ios::binary);
 if(dataFile.fail())
 {
-throw DAOException(string("Invalid email")+email);
+throw DAOException(string("Invalid email")+customerEmail);
 }
 dataFile.read((char *)&header,sizeof(Header));
 if(dataFile.fail())
 {
 dataFile.close();
-throw DAOException(string("Invalid email")+email);
+throw DAOException(string("Invalid email")+customerEmail);
 }
 if(header.numberOfRecords==0)
 {
 dataFile.close();
-throw DAOException(string("Invalid email")+email);
+throw DAOException(string("Invalid email")+customerEmail);
 }
 dataFile.clear();
 dataFile.seekg(sizeof(header),ios::beg);
@@ -324,7 +360,7 @@ while(true)
 {
 dataFile.read((char *)&_customer,sizeof(_Customer));
 if(dataFile.fail()) break;
-if(compareStringIgnoreCase(_customer.email,email.c_str())!=0)
+if(!(compareStringIgnoreCase(_customer.customerEmail,customerEmail.c_str())==0 && compareStringIgnoreCase(_customer.companyEmail,companyEmail.c_str())==0))
 {
 tmpFile.write((char *)&_customer,sizeof(_customer));
 }
@@ -378,7 +414,8 @@ dataFile.read((char *)&_customer,sizeof(_Customer));
 if(dataFile.fail()) break;
 customer=new Customer;
 customer->setCustomerName(string(_customer.customerName));
-customer->setEmail(string(_customer.email));
+customer->setCustomerEmail(string(_customer.customerEmail));
+customer->setCompanyEmail(string(_customer.companyEmail));
 customer->setContactNumber(string(_customer.contactNumber));
 customer->setStreet(string(_customer.street));
 customer->setCity(string(_customer.city));
@@ -391,11 +428,21 @@ listi=customerList->insert_after(listi,customer);
 dataFile.close();
 return customerList;
 }
-abc::ICustomer * CustomerManager::getCustomerByEmail(string &vEmail) noexcept(false)
+abc::ICustomer * CustomerManager::getCustomerByEmail(string &vCompanyEmail,string &vCustomerEmail) noexcept(false)
 {
-string email=validateEmail(vEmail);
-if(email.size()==0) throw DAOException("Invalid Email");
-if(email.size()>80) throw DAOException("Email can not exceed 80 characters");
+
+string companyEmail=validateEmail(vCompanyEmail);
+if(companyEmail.size()==0) throw DAOException("Required email, email size cannot be zero");
+if(companyEmail.size()>80) throw DAOException("Email size cannot exceed 80 characters");
+int exist;
+CompanyManager companyManager;
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) throw DAOException("Company with given email is not exist");
+
+string customerEmail=validateEmail(vCustomerEmail);
+if(customerEmail.size()==0) throw DAOException("Required email, email size cannot be zero");
+if(customerEmail.size()>80) throw DAOException("Email size cannot exceed 80 characters");
+
 ifstream dataFile(CUSTOMER_FILE_NAME,ios::in | ios::binary);
 if(dataFile.fail()) throw DAOException("Invalid customer email");
 Header header;
@@ -416,11 +463,12 @@ while(1)
 {
 dataFile.read((char *)&_customer,sizeof(_Customer));
 if(dataFile.fail()) break;
-if(compareStringIgnoreCase(_customer.email,email.c_str())==0)
+if(compareStringIgnoreCase(_customer.customerEmail,customerEmail.c_str())==0 && compareStringIgnoreCase(_customer.companyEmail,companyEmail.c_str())==0)
 {
 customer=new Customer;
 customer->setCustomerName(string(_customer.customerName));
-customer->setEmail(string(_customer.email));
+customer->setCustomerEmail(string(_customer.customerEmail));
+customer->setCompanyEmail(string(_customer.companyEmail));
 customer->setContactNumber(string(_customer.contactNumber));
 customer->setStreet(string(_customer.street));
 customer->setCity(string(_customer.city));
@@ -435,11 +483,20 @@ return customer;
 dataFile.close();
 throw DAOException("Invalid email");
 }
-int CustomerManager::isCustomerWithEmailExist(const string &vEmail) noexcept(false)
+int CustomerManager::isCustomerWithEmailExist(const string &vCompanyEmail,const string &vCustomerEmail) noexcept(false)
 {
-string email=validateEmail(vEmail);
-if(email.size()==0) return 0;
-if(email.size()>80) return 0;
+string companyEmail=validateEmail(vCompanyEmail);
+if(companyEmail.size()==0) return 0;
+if(companyEmail.size()>80) return 0;
+int exist;
+CompanyManager companyManager;
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) return 0;
+
+string customerEmail=validateEmail(vCustomerEmail);
+if(customerEmail.size()==0)return 0;
+if(customerEmail.size()>80) return 0;
+
 ifstream dataFile(CUSTOMER_FILE_NAME,ios::in | ios::binary);
 if(dataFile.fail()) return 0;
 Header header;
@@ -460,7 +517,7 @@ while(1)
 {
 dataFile.read((char *)&_customer,sizeof(_Customer));
 if(dataFile.fail()) break;
-if(compareStringIgnoreCase(_customer.email,email.c_str())==0)
+if(compareStringIgnoreCase(_customer.customerEmail,customerEmail.c_str())==0 && compareStringIgnoreCase(_customer.companyEmail,companyEmail.c_str())==0)
 {
 dataFile.close();
 return 1;
@@ -469,21 +526,30 @@ return 1;
 dataFile.close();
 return 0;
 }
-void CustomerManager::showCustomerProfile(const string &vEmail) noexcept(false)
+void CustomerManager::showCustomerProfile(const string &vCompanyEmail,const string &vCustomerEmail) noexcept(false)
 {
 CustomerManager customerManager;
 abc::ICustomer *customer;
-string email=vEmail;
+string companyEmail=validateEmail(vCompanyEmail);
+if(companyEmail.size()==0) throw DAOException("Required email, email size cannot be zero");
+if(companyEmail.size()>80) throw DAOException("Email size cannot exceed 80 characters");
+int exist;
+CompanyManager companyManager;
+exist=companyManager.isCompanyWithEmailExist(companyEmail);
+if(!exist) throw DAOException("Company with given email is not exist");
+string customerEmail=validateEmail(vCustomerEmail);
+if(customerEmail.size()==0) throw DAOException("Required email, email size cannot be zero");
+if(customerEmail.size()>80) throw DAOException("Email size cannot exceed 80 characters");
 try
 {
-customer=customerManager.getCustomerByEmail(email);
+customer=customerManager.getCustomerByEmail(companyEmail,customerEmail);
 }catch(DAOException daoException)
 {
 throw DAOException(daoException.what());
 }
 cout<<"                           ----------Customer Details----------"<<endl;
 printf("Customer Name: %-80s    Customer Code: %-15d\n",customer->getCustomerName().c_str(),customer->getCustomerCode());
-printf("Email: %-80s           Contact Number: %-15s\n\n",customer->getEmail().c_str(),customer->getContactNumber().c_str());
+printf("Email: %-80s           Contact Number: %-15s\n\n",customer->getCustomerEmail().c_str(),customer->getContactNumber().c_str());
 
 cout<<"                           ----------Customer Address----------"<<endl;
 printf("Street:  %-50s    City   : %-50s\n",customer->getStreet().c_str(),customer->getCity().c_str());
