@@ -5,11 +5,11 @@ class TMWebProjector
 private: 
 int portNumber;
 char *url;
-void (*ptrOnRequest)(void);
+void (*ptrOnRequest)(int ,char *[]);
 public:
 TMWebProjector(int portNumber);
 ~TMWebProjector();
 void start();
-void onRequest(const char *,void (*ptrOnRequest)(void));
+void onRequest(const char *,void (*ptrOnRequest)(int ,char *[]));
 };
 }

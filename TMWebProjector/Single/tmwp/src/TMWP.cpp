@@ -9,6 +9,8 @@ typedef struct _request
 char *resource;
 char *method;
 char isClientSideTechnologyResource;
+int dataCount;
+char **data;
 char *mimeType;
 }REQUEST;
 int extensionEquals(const char *left,const char *right)
@@ -87,9 +89,55 @@ int len=strlen(bytes);
 for(i=0;bytes[i]!=' ' && bytes[i]!='\0';i++) method[i]=bytes[i];
 method[i]='\0';
 i+=2;
-for(j=0;bytes[i]!=' ' && bytes[i]!='\0';j++,i++) resource[j]=bytes[i];
+
+int dataCount=0;
+char **data=NULL;
+if(strcmp(method,"GET")==0)
+{
+for(j=0;bytes[i]!=' ' && bytes[i]!='\0';j++,i++) 
+{
+if(bytes[i]=='?') break;
+resource[j]=bytes[i];
+}
 resource[j]='\0';
+if(bytes[i]=='?')
+{
+i++;
+dataCount=0;
+int si=i;
+while(bytes[i]!=' ')
+{
+if(bytes[i]=='&') dataCount++;
+i++;
+}
+dataCount++;
+data=(char **)malloc(sizeof(char *)*dataCount);
+int *cp=(int *)malloc(sizeof(int)*dataCount);
+i=si;
+int j=0;
+while(bytes[i]!=' ')
+{
+if(bytes[i]=='&') cp[j++]=i;
+i++;
+}
+cp[j]=i;
+i=si;
+j=0;
+int howManyToPick;
+while(j<dataCount)
+{
+howManyToPick=cp[j]-i;
+data[j]=(char *)malloc(sizeof(char)*(howManyToPick+1));
+memcpy(data[j],bytes+i,howManyToPick*sizeof(char));
+data[j][howManyToPick]='\0';
+i=cp[j]+1;
+j++;
+}
+}
+}//Method is GET ends here
 REQUEST *request=(REQUEST *)malloc(sizeof(REQUEST));
+request->data=data;
+request->dataCount=dataCount;
 request->method=(char *)malloc(sizeof(char)*(strlen(method)+1));
 strcpy(request->method,method);
 if(resource[0]=='\0')
@@ -117,7 +165,7 @@ this->portNumber=portNumber;
 this->ptrOnRequest=NULL;
 this->url=NULL;
 }
-void TMWebProjector::onRequest(const char *url,void (*ptrOnRequest)(void))
+void TMWebProjector::onRequest(const char *url,void (*ptrOnRequest)(int ,char *[]))
 {
 if(this->url) delete [] this->url;
 this->url=NULL;
@@ -126,7 +174,7 @@ if(url==NULL || ptrOnRequest==NULL) return;
 this->url=new char[strlen(url)+1];
 strcpy(this->url,url);
 this->ptrOnRequest=ptrOnRequest;
-printf("URL ASSIGENed: (%s), p2f: %d\n",this->url,this->ptrOnRequest);
+//printf("URL ASSIGENed: (%s), p2f: %d\n",this->url,this->ptrOnRequest);
 }
 TMWebProjector::~TMWebProjector()
 {
@@ -212,7 +260,7 @@ f=fopen("index.htm","rb");
 if(f==NULL)
 {
 printf("Sending 404 page\n");
-strcpy(responseBuffer,"HTTP/1.1 200 OK\nContent-Type:text/html\nContent-Length:163\n\n<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource / not found</h2></body></html>");
+strcpy(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 163\nConnection: close\n\n<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource / not found</h2></body></html>");
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 closesocket(clientSocketDescriptor);
 }
@@ -222,7 +270,7 @@ fseek(f,0,2);
 length=ftell(f);
 fseek(f,0,0);
 printf("Size of length: %d\n",length);
-sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type:text/html\nContent-Length: %d\nKeep-Alive: Timeout=5, max=1000\n\n",length);
+sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",length);
 byteExtracted=send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 cn=0;
 while(cn<length)
@@ -247,7 +295,7 @@ if(f==NULL)
 printf("Sending 404 page\n");
 char tmp[501];
 sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource /%s not found</h2></body></html>",request->resource);
-sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type:text/html\nContent-Length:%d\n\n",strlen(tmp));
+sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",strlen(tmp));
 strcat(responseBuffer,tmp);
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 closesocket(clientSocketDescriptor);
@@ -258,7 +306,7 @@ fseek(f,0,2);
 length=ftell(f);
 fseek(f,0,0);
 printf("Size of length: %d\n",length);
-sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: %s\nContent-Length: %d\nKeep-Alive: Timeout=5, max=1000\n\n",request->mimeType,length);
+sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: %s\nContent-Length: %d\nConnection: close\n\n",request->mimeType,length);
 byteExtracted=send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 cn=0;
 while(cn<length)
@@ -283,7 +331,7 @@ if(this->url==NULL || this->ptrOnRequest==NULL)
 printf("Sending 404 page\n");
 char tmp[501];
 sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource /%s not found</h2></body></html>",request->resource);
-sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type:text/html\nContent-Length:%d\n\n",strlen(tmp));
+sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",strlen(tmp));
 strcat(responseBuffer,tmp);
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 }
@@ -293,11 +341,16 @@ int ii=0;
 if(this->url[0]=='/') ii=1;
 if(strcmp(this->url+ii,request->resource)==0)
 {
-this->ptrOnRequest();
+this->ptrOnRequest(request->dataCount,request->data);
+if(request->data!=NULL)
+{
+for(int k=0;k<request->dataCount;k++) free(request->data[k]);
+free(request->data);
+}
 printf("Request Processed Successfully\n");
 char tmp[501];
-sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource /%s Processed</h2></body></html>",request->resource);
-sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type:text/html\nContent-Length:%d\n\n",strlen(tmp));
+sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:Green'>Registerd SuccessFullly</h2></body></html>",request->resource);
+sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",strlen(tmp));
 strcat(responseBuffer,tmp);
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 }
@@ -306,7 +359,7 @@ else
 printf("Sending 404 page\n");
 char tmp[501];
 sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource /%s not found</h2></body></html>",request->resource);
-sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type:text/html\nContent-Length:%d\n\n",strlen(tmp));
+sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",strlen(tmp));
 strcat(responseBuffer,tmp);
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 }
