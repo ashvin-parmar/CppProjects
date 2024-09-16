@@ -1,0 +1,28 @@
+#ifndef __URL_DECODER__
+#define __URL_DECODER__ 42
+#include<iostream>
+using namespace std;
+namespace urldecoder
+{
+class URLDecoder
+{
+private:
+string decodedURL;
+string encodedURL;
+char toHexDigit(char c);
+char toDigitHex(char c);
+public:
+URLDecoder();
+URLDecoder(const string &encodedURL);
+URLDecoder(const URLDecoder &other);
+URLDecoder & operator=(const URLDecoder &other);
+string decode(const string &encodedURL);
+string encode(const string &decodedURL);
+//Setter-Getter
+void setEncodedURL(string &encodedURL);
+void setDecodedURL(string &decodedURL);
+string getEncodedURL();
+string getDecodedURL();
+};
+}
+#endif

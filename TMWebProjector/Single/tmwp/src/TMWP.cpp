@@ -11,6 +11,7 @@ char *method;
 char isClientSideTechnologyResource;
 int dataCount;
 char **data;
+char **dataVariable;
 char *mimeType;
 }REQUEST;
 int extensionEquals(const char *left,const char *right)
@@ -92,6 +93,7 @@ i+=2;
 
 int dataCount=0;
 char **data=NULL;
+char **dataVariable=NULL;
 if(strcmp(method,"GET")==0)
 {
 for(j=0;bytes[i]!=' ' && bytes[i]!='\0';j++,i++) 
