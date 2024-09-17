@@ -89,7 +89,7 @@ decodedURL.push_back('%');
 } 
 else if (c == '+') 
 {
-decodedURL.push_back(' ');
+decodedURL.push_back('+');
 } 
 else 
 {
@@ -107,7 +107,7 @@ if(c == ' ')
 {
 encodedURL.push_back('+');
 }
-else if (std::isxdigit(c)) 
+else if(isxdigit(c)) 
 {
 encodedURL.push_back(c);
 }

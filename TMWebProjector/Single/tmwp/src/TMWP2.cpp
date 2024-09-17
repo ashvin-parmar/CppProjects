@@ -83,17 +83,13 @@ strcpy(mimeType,"image/x-icon");
 }
 return mimeType;
 }
-REQUEST * parseRequest(char *reqData)
+REQUEST * parseRequest(const char *bytes)
 {
+printf("BYTES: %s\n",bytes);
 char resource[1001];
 char method[11];
 int i,j;
-int len=strlen(reqData);
-URLDecoder url(reqData);
-string decodedURL=url.getDecodedURL();
-char *bytes;
-bytes=(char *)malloc(sizeof(char)*len);
-strcpy(bytes,decodedURL.c_str());
+int len=strlen(bytes);
 for(i=0;bytes[i]!=' ' && bytes[i]!='\0';i++) method[i]=bytes[i];
 method[i]='\0';
 i+=2;
@@ -142,18 +138,14 @@ howManyToPick=cp[j]-i;
 if(j%2!=0)
 {
 data[k]=(char *)malloc(sizeof(char)*(howManyToPick+1));
-for(int l=0;l<howManyToPick;l++)
-{
-if(bytes[i+l]=='+') data[k][l]=(char)(' ');
-else data[k][l]=bytes[i+l]; 
-}
+memcpy(data[k],(const void *)(bytes+i),sizeof(char)*howManyToPick);
 data[k][howManyToPick]='\0';
 k++;
 }
 else
 {
 dataVariable[k]=(char *)malloc(sizeof(char)*(howManyToPick+1));
-strncpy(dataVariable[k],bytes+i,howManyToPick);
+memcpy(dataVariable[k],(const void *)(bytes+i),sizeof(char)*howManyToPick);
 dataVariable[k][howManyToPick]='\0';
 }
 i=cp[j]+1;
@@ -272,7 +264,10 @@ else if(byteExtracted==0)
 else 
 {
 requestBuffer[byteExtracted]='\0';	//Request taken from browser are not contain termination
-REQUEST *request=parseRequest(requestBuffer);
+URLDecoder url(requestBuffer);
+string decodedURL=url.getDecodedURL();
+
+REQUEST *request=parseRequest(decodedURL.c_str());
 if(request->isClientSideTechnologyResource=='Y')
 {
 cout<<"clientSideTech"<<endl;

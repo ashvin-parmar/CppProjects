@@ -1,1 +1,36 @@
-#ifndef __
+#ifndef __SQLITE_DB_H
+#define __SQLITE_DB_H
+namespace sqlitedb
+{
+class Rows
+{
+forward_list<Row *> rows;
+public:
+int hasMoreRows();
+void getRow();
+}
+class SQLiteDB
+{
+private:
+string filename;
+public:
+SQLiteDB();
+SQLiteDB(string filename);
+SQLiteDB(const SQLiteDB &other);
+
+SQLiteDB & operator=(const SQLiteDB &other);
+
+
+void open(string filename) noexcept(false);
+void close() noexcept(false);
+
+void createTable(string sql) noexcept(false);
+
+void executeInsert(string sql) noexcept(false);
+void executeUpdate(string sql) noexcept(false);
+void executeDelete(string sql) noexcept(false);
+
+
+}
+
+}
