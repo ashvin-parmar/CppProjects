@@ -24,12 +24,16 @@ public:
     void setRequest(REQUEST* request);
     void setData(std::map<std::string*, std::string *>::iterator start,std::map<std::string*,std::string *>::iterator end);
 
-    std::map<std::string*, std::string*>& getData() ;
+    std::map<std::string*, std::string*>* getData() ;
     REQUEST* getRequest() ;
 
 private:
     REQUEST* request;
-    std::map<std::string*, std::string*> data;
+    std::map<std::string*, std::string*> *data;
+};
+class Response
+{
+
 };
 
 class TMWebProjector
@@ -37,12 +41,12 @@ class TMWebProjector
 private: 
 int portNumber;
 char *url;
-void (*ptrOnRequest)(void *);
+void (*ptrOnRequest)(Request &,Response &);
 public:
 TMWebProjector(int portNumber);
 ~TMWebProjector();
 void start();
-void onRequest(const char *,void (*ptrOnRequest)(void *));
+void onRequest(const char *,void (*ptrOnRequest)(Request &,Response &));
 };
 }
 #endif
