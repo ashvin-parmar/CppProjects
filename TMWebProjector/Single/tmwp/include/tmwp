@@ -1,15 +1,48 @@
+#ifndef __tmwp__
+#define __tmwp__
+#include<iostream>
+#include<map>
+#include<stdio.h>
 namespace tmwp
 {
+typedef struct __request
+{
+char *resource;
+char *method;
+char isClientSideTechnologyResource;
+char *mimeType;
+}REQUEST;
+
+class Request 
+{
+public:
+    Request();
+    Request(const char* data);
+    Request(const Request& other);
+    Request& operator=(const Request& other);
+
+    void setRequest(REQUEST* request);
+    void setData(std::map<std::string*, std::string *>::iterator start,std::map<std::string*,std::string *>::iterator end);
+
+    std::map<std::string*, std::string*>& getData() ;
+    REQUEST* getRequest() ;
+
+private:
+    REQUEST* request;
+    std::map<std::string*, std::string*> data;
+};
+
 class TMWebProjector
 {
 private: 
 int portNumber;
 char *url;
-void (*ptrOnRequest)(int ,char *[],char *[]);
+void (*ptrOnRequest)(void *);
 public:
 TMWebProjector(int portNumber);
 ~TMWebProjector();
 void start();
-void onRequest(const char *,void (*ptrOnRequest)(int ,char *[],char *[]));
+void onRequest(const char *,void (*ptrOnRequest)(void *));
 };
 }
+#endif
