@@ -33,10 +33,16 @@ std::string get(const char *dataVariable);
 class Response
 {
 std::string messege;
-REQUEST *request;
+int clientSocketDescriptor;
 public:
+Response();
+Response(const Response &other);
+Response(int clientSocketDescriptor);
+Response& operator=(const Response &other);
+void setClientSocket(int clientSocketDescriptor);
 void write(std::string messege);
 void sendResponse();
+virtual ~Response();
 };
 
 class TMWebProjector

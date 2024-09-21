@@ -1,1 +1,1 @@
-g++ -static eg6.cpp -o eg6.exe -I ..\tmwp\include -L ..\tmwp\lib -l tmwp -l ws2_32
+g++ -static eg7.cpp -o eg7.exe -I ..\tmwp\include -L ..\tmwp\lib -l tmwp -l ws2_32

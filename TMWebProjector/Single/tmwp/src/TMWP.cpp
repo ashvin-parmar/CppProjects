@@ -135,18 +135,55 @@ string Request::get(const char *dataVariable)
 {
 string dataVar(dataVariable);
 cout<<"dataVaribelt: "<<dataVariable<<endl;
+map<string *,string *,int (*)(string *,string *)> data(dataComparator);//donedone
+data.insert(this->data->begin(),this->data->end());
 map<string *,string *>::iterator i;
-i=this->data->find(&dataVar);
-if(i==this->data->end()) return string("");
+i=data.find(&dataVar);
+if(i==data.end()) return string("");
 else return string(*i->second);
+}
+Response::Response()
+{
+this->clientSocketDescriptor=0;
+this->messege="";
+}
+Response::Response(const Response &other)
+{
+this->clientSocketDescriptor=other.clientSocketDescriptor;
+this->messege=other.messege;
+}
+Response::Response(int clientSocketDescriptor)
+{
+this->clientSocketDescriptor=clientSocketDescriptor;
+}
+Response& Response::operator=(const Response &other)
+{
+this->clientSocketDescriptor=other.clientSocketDescriptor;
+this->messege=other.messege;
+return *this;
+}
+Response::~Response()
+{
+//Do nothing
+closesocket(clientSocketDescriptor);
+}
+void Response::setClientSocket(int clientSocketDescriptor)
+{
+this->clientSocketDescriptor=clientSocketDescriptor;
 }
 void Response::write(string messege)
 {
-
+this->messege+=messege;
 }
 void Response::sendResponse()
 {
-
+string a;
+char tmp[501];
+sprintf(tmp,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",this->messege.size());
+a=tmp;
+a+=this->messege;
+if(clientSocketDescriptor==0) return;
+send(this->clientSocketDescriptor,a.c_str(),a.size(),0);
 }
 int extensionEquals(const char *left,const char *right)
 {
@@ -414,7 +451,6 @@ requestBuffer[byteExtracted]='\0';	//Request taken from browser are not contain 
 URLDecoder url(requestBuffer);
 Request rq;
 parseRequest(url.getDecodedURL().c_str(),rq);
-Response rs;
 REQUEST *request;
 request=rq.getRequest();
 if(request->isClientSideTechnologyResource=='Y')
@@ -496,6 +532,8 @@ closesocket(clientSocketDescriptor);
 }
 else
 {
+Response rs;
+rs.setClientSocket(clientSocketDescriptor);
 cout<<"serverSideResource"<<endl;
 if(this->url==NULL || this->ptrOnRequest==NULL) 
 {
@@ -514,7 +552,6 @@ if(strcmp(this->url+ii,request->resource)==0)
 {
 this->ptrOnRequest(rq,rs);
 printf("Request Processed Successfully\n");
-//donedonedone
 }
 else
 {
