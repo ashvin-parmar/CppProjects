@@ -2,18 +2,152 @@
 #include<stdio.h>
 #include<windows.h>
 #include<iostream>
+#include<urldecoder>
+#include<map>
 using namespace std;
 using namespace tmwp;
-typedef struct _request
+using namespace urldecoder;
+int dataComparator(std::string *a,std::string *b)
 {
-char *resource;
-char *method;
-char isClientSideTechnologyResource;
-int dataCount;
-char **data;
-char **dataVariable;
-char *mimeType;
-}REQUEST;
+return (*a)<(*b);
+}
+void parseRequest(const char *bytes,Request &rq);
+Request::Request()
+{
+this->request=(REQUEST *)malloc(sizeof(REQUEST));
+this->request->method=NULL;
+this->request->resource=NULL;
+this->request->mimeType=NULL;
+this->request->isClientSideTechnologyResource='0';
+this->data=new map<string *,string *>;
+}
+Request::Request(const char *request)
+{
+this->request=(REQUEST *)malloc(sizeof(REQUEST));
+this->request->resource=NULL;
+this->request->method=NULL;
+this->request->mimeType=NULL;
+this->request->isClientSideTechnologyResource='0';
+this->data=new map<string *,string *>;
+parseRequest(request,*this);
+}
+Request& Request::operator=(const Request &other)
+{
+if(this->request->method!=NULL) free(this->request->method);
+if(this->request->resource) free(this->request->resource);
+if(this->request->mimeType) free(this->request->mimeType);
+map<string *,string *>::iterator i;
+for(i=this->data->begin();i!=this->data->end();i++) 
+{
+delete i->first;
+delete i->second;
+}
+for(i=other.data->begin();i!=other.data->end();i++)
+{
+this->data->insert(pair<string *,string *>(new string(i->first->c_str()),new string(i->second->c_str())));
+}
+this->request->method=(char *)malloc(sizeof(char)*strlen(other.request->method)+1);
+strcpy(this->request->method,other.request->method);
+this->request->isClientSideTechnologyResource=other.request->isClientSideTechnologyResource;
+this->request->resource=NULL;
+this->request->mimeType=NULL;
+if(other.request->resource==NULL) return *this;
+this->request->resource=(char *)malloc(sizeof(char)*strlen(other.request->resource)+1);
+strcpy(this->request->resource,other.request->resource);
+if(other.request->mimeType==NULL) return *this;
+this->request->mimeType=(char *)malloc(sizeof(char)*strlen(other.request->mimeType)+1);
+strcpy(this->request->mimeType,other.request->mimeType);
+return *this;
+}
+Request::~Request()
+{
+if(this->request->method) free(this->request->method);
+if(this->request->resource) free(this->request->resource);
+if(this->request->mimeType) free(this->request->mimeType);
+free(this->request);
+map<string *,string *>::iterator i;
+for(i=this->data->begin();i!=this->data->end();i++) 
+{
+delete i->first;
+delete i->second;
+}
+delete this->data;
+}
+void Request::setRequest(REQUEST *request)
+{
+if(this->request->method) free(this->request->method);
+if(this->request->resource) free(this->request->resource);
+if(this->request->mimeType) free(this->request->mimeType);
+this->request->method=(char *)malloc(sizeof(char)*strlen(request->method)+1);
+strcpy(this->request->method,request->method);
+this->request->resource=NULL;
+this->request->mimeType=NULL;
+this->request->isClientSideTechnologyResource=request->isClientSideTechnologyResource;
+if(request->resource==NULL) return ;
+this->request->resource=(char *)malloc(sizeof(char)*strlen(request->resource)+1);
+strcpy(this->request->resource,request->resource);
+if(request->mimeType==NULL) return ;
+this->request->mimeType=(char *)malloc(sizeof(char)*strlen(request->mimeType)+1);
+strcpy(this->request->mimeType,request->mimeType);
+}
+void Request::setData(map<string *,string *>::iterator start,map<string *,string *>::iterator end)
+{
+map<string *,string *>::iterator i;
+for(i=this->data->begin();i!=this->data->end();i++) 
+{
+delete i->first;
+delete i->second;
+}
+for(i=start;i!=end;i++)
+{
+this->data->insert(pair<string *,string *>(new string(*i->first),new string(*i->second)));
+}
+}
+map<string *,string *> * Request::getData() 
+{
+map<string *,string *> *data;
+data=new map<string *,string *>;
+map<string *,string *>::iterator i;
+for(i=this->data->begin();i!=this->data->end();i++)
+{
+data->insert(pair<string *,string *>(new string(*i->first),new string(*i->second)));
+}
+return data;
+}
+REQUEST *Request::getRequest() 
+{
+REQUEST *request;
+request=(REQUEST *)malloc(sizeof(REQUEST));
+request->method=(char *)malloc(sizeof(char)*(strlen(this->request->method)+1));
+strcpy(request->method,this->request->method);
+request->isClientSideTechnologyResource=this->request->isClientSideTechnologyResource;
+request->resource=NULL;
+request->mimeType=NULL;
+if(this->request->resource==NULL) return request;
+request->resource=(char *)malloc(sizeof(char)*(strlen(this->request->resource)+1));
+strcpy(request->resource,this->request->resource);
+if(this->request->mimeType==NULL) return request;
+request->mimeType=(char *)malloc(sizeof(char)*(strlen(this->request->mimeType)+1));
+strcpy(request->mimeType,this->request->mimeType);
+return request;
+}
+string Request::get(const char *dataVariable)
+{
+string dataVar(dataVariable);
+cout<<"dataVaribelt: "<<dataVariable<<endl;
+map<string *,string *>::iterator i;
+i=this->data->find(&dataVar);
+if(i==this->data->end()) return string("");
+else return string(*i->second);
+}
+void Response::write(string messege)
+{
+
+}
+void Response::sendResponse()
+{
+
+}
 int extensionEquals(const char *left,const char *right)
 {
 int a,b;
@@ -81,8 +215,10 @@ strcpy(mimeType,"image/x-icon");
 }
 return mimeType;
 }
-REQUEST * parseRequest(char *bytes)
+void parseRequest(const char *bytes,Request &rq)
 {
+map<string *,string *,int (*)(string *,string *)> dataMap(dataComparator);
+printf("BYTES: %s\n",bytes);
 char resource[1001];
 char method[11];
 int i,j;
@@ -90,7 +226,6 @@ int len=strlen(bytes);
 for(i=0;bytes[i]!=' ' && bytes[i]!='\0';i++) method[i]=bytes[i];
 method[i]='\0';
 i+=2;
-
 int dataCount=0;
 char **data=NULL;
 char **dataVariable=NULL;
@@ -114,32 +249,44 @@ i++;
 }
 dataCount++;
 data=(char **)malloc(sizeof(char *)*dataCount);
-int *cp=(int *)malloc(sizeof(int)*dataCount);
+dataVariable=(char **)malloc(sizeof(char *)*dataCount);
+int *cp=(int *)malloc(sizeof(int)*(dataCount*2));
 i=si;
 int j=0;
 while(bytes[i]!=' ')
 {
+if(bytes[i]=='=') cp[j++]=i;
 if(bytes[i]=='&') cp[j++]=i;
 i++;
 }
 cp[j]=i;
 i=si;
 j=0;
+int k=0;
 int howManyToPick;
-while(j<dataCount)
+while(k<dataCount)
 {
 howManyToPick=cp[j]-i;
-data[j]=(char *)malloc(sizeof(char)*(howManyToPick+1));
-memcpy(data[j],bytes+i,howManyToPick*sizeof(char));
-data[j][howManyToPick]='\0';
+if(j%2!=0)
+{
+data[k]=(char *)malloc(sizeof(char)*(howManyToPick+1));
+memcpy(data[k],(const void *)(bytes+i),sizeof(char)*howManyToPick);
+data[k][howManyToPick]='\0';
+dataMap.insert(pair<string *,string *>(new string(dataVariable[k]),new string(data[k])));
+k++;
+}
+else
+{
+dataVariable[k]=(char *)malloc(sizeof(char)*(howManyToPick+1));
+memcpy(dataVariable[k],(const void *)(bytes+i),sizeof(char)*howManyToPick);
+dataVariable[k][howManyToPick]='\0';
+}
 i=cp[j]+1;
 j++;
 }
 }
 }//Method is GET ends here
 REQUEST *request=(REQUEST *)malloc(sizeof(REQUEST));
-request->data=data;
-request->dataCount=dataCount;
 request->method=(char *)malloc(sizeof(char)*(strlen(method)+1));
 strcpy(request->method,method);
 if(resource[0]=='\0')
@@ -156,10 +303,27 @@ request->isClientSideTechnologyResource=isClientSideResource(resource);
 request->mimeType=getMIMEType(resource);
 }
 printf("Request arrived: (%s)\n",resource);
-//cout<<"method: ("<<method<<")"<<endl;
-//cout<<"resource: ("<<resource<<")"<<endl;
-//cout<<"mimeType: ("<<request->mimeType<<")"<<endl;
-return request;
+
+//Releasing memory
+if(data!=NULL)
+{
+for(int k=0;k<dataCount;k++) free(data[k]);
+free(data);
+}
+rq.setData(dataMap.begin(),dataMap.end());
+map<string *,string *>::iterator z;
+for(z=dataMap.begin();z!=dataMap.end();z++) 
+{
+delete z->first;
+delete z->second;
+}
+rq.setRequest(request);
+printf("Here check for request data: \n");
+
+if(request->resource) free(request->resource);
+if(request->mimeType) free(request->mimeType);
+if(request->method) free(request->method);
+free(request);
 }
 TMWebProjector::TMWebProjector(int portNumber)
 {
@@ -167,7 +331,7 @@ this->portNumber=portNumber;
 this->ptrOnRequest=NULL;
 this->url=NULL;
 }
-void TMWebProjector::onRequest(const char *url,void (*ptrOnRequest)(int ,char *[]))
+void TMWebProjector::onRequest(const char *url,void (*ptrOnRequest)(Request &,Response &))
 {
 if(this->url) delete [] this->url;
 this->url=NULL;
@@ -247,7 +411,12 @@ else if(byteExtracted==0)
 else 
 {
 requestBuffer[byteExtracted]='\0';	//Request taken from browser are not contain termination
-REQUEST *request=parseRequest(requestBuffer);
+URLDecoder url(requestBuffer);
+Request rq;
+parseRequest(url.getDecodedURL().c_str(),rq);
+Response rs;
+REQUEST *request;
+request=rq.getRequest();
 if(request->isClientSideTechnologyResource=='Y')
 {
 cout<<"clientSideTech"<<endl;
@@ -343,18 +512,9 @@ int ii=0;
 if(this->url[0]=='/') ii=1;
 if(strcmp(this->url+ii,request->resource)==0)
 {
-this->ptrOnRequest(request->dataCount,request->data);
-if(request->data!=NULL)
-{
-for(int k=0;k<request->dataCount;k++) free(request->data[k]);
-free(request->data);
-}
+this->ptrOnRequest(rq,rs);
 printf("Request Processed Successfully\n");
-char tmp[501];
-sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:Green'>Registerd SuccessFullly</h2></body></html>",request->resource);
-sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",strlen(tmp));
-strcat(responseBuffer,tmp);
-send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
+//donedonedone
 }
 else
 {
@@ -366,8 +526,11 @@ strcat(responseBuffer,tmp);
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 }
 }
-closesocket(clientSocketDescriptor);
 }//server part else ends here
+if(request->resource) free(request->resource);
+if(request->mimeType) free(request->mimeType);
+if(request->method) free(request->method);
+if(request) free(request);
 }//else part ends here
 }// while loop ends
 closesocket(serverSocketDescriptor);
