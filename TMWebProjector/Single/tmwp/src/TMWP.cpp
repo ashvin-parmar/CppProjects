@@ -7,6 +7,13 @@
 using namespace std;
 using namespace tmwp;
 using namespace urldecoder;
+struct __request
+{
+char *resource;
+char *method;
+char isClientSideTechnologyResource;
+char *mimeType;
+};
 int dataComparator(std::string *a,std::string *b)
 {
 return (*a)<(*b);
@@ -134,13 +141,17 @@ return request;
 string Request::get(const char *dataVariable)
 {
 string dataVar(dataVariable);
-cout<<"dataVaribelt: "<<dataVariable<<endl;
-map<string *,string *,int (*)(string *,string *)> data(dataComparator);//donedone
+map<string *,string *,int (*)(string *,string *)> data(dataComparator);
 data.insert(this->data->begin(),this->data->end());
 map<string *,string *>::iterator i;
 i=data.find(&dataVar);
 if(i==data.end()) return string("");
-else return string(*i->second);
+else 
+{
+string a=(*i->second);
+for(int i=0;i<a.size();i++) if(a[i]=='+') a[i]=' ';
+return a;
+}
 }
 Response::Response()
 {
@@ -184,6 +195,7 @@ a=tmp;
 a+=this->messege;
 if(clientSocketDescriptor==0) return;
 send(this->clientSocketDescriptor,a.c_str(),a.size(),0);
+this->messege=""; 	//Empty this messege string after sending response
 }
 int extensionEquals(const char *left,const char *right)
 {
@@ -255,7 +267,7 @@ return mimeType;
 void parseRequest(const char *bytes,Request &rq)
 {
 map<string *,string *,int (*)(string *,string *)> dataMap(dataComparator);
-printf("BYTES: %s\n",bytes);
+//printf("BYTES: %s\n",bytes);
 char resource[1001];
 char method[11];
 int i,j;
@@ -308,6 +320,16 @@ if(j%2!=0)
 {
 data[k]=(char *)malloc(sizeof(char)*(howManyToPick+1));
 memcpy(data[k],(const void *)(bytes+i),sizeof(char)*howManyToPick);
+/*
+char a[1]={' '};
+for(int q=0;q<i+howManyToPick;q++)		//Because data can be any out of keyboard words
+{
+//if(bytes[i+q]=='+') data[k][q]=(char)' ';
+if(bytes[i+q]=='+') memcpy(data[k]+q,(const void *)a,sizeof(char));
+//else data[k][q]=bytes[i+q];
+else memcpy(data[k]+q,(const void *)(bytes+i+q),sizeof(char));
+}
+*/
 data[k][howManyToPick]='\0';
 dataMap.insert(pair<string *,string *>(new string(dataVariable[k]),new string(data[k])));
 k++;
@@ -339,8 +361,7 @@ strcpy(request->resource,resource);
 request->isClientSideTechnologyResource=isClientSideResource(resource);
 request->mimeType=getMIMEType(resource);
 }
-printf("Request arrived: (%s)\n",resource);
-
+//printf("Request arrived: (%s)\n",resource);
 //Releasing memory
 if(data!=NULL)
 {
@@ -355,7 +376,7 @@ delete z->first;
 delete z->second;
 }
 rq.setRequest(request);
-printf("Here check for request data: \n");
+//printf("Here check for request data: \n");
 
 if(request->resource) free(request->resource);
 if(request->mimeType) free(request->mimeType);
@@ -436,7 +457,7 @@ WSACleanup();
 return ;
 }
 byteExtracted=recv(clientSocketDescriptor,requestBuffer,8192,0);
-printf("Request Byte Extracted : %d\n",byteExtracted);
+//printf("Request Byte Extracted : %d\n",byteExtracted);
 if(byteExtracted<0)
 {
 // Something to done here, Implemeted later on
@@ -476,7 +497,7 @@ else
 fseek(f,0,2);
 length=ftell(f);
 fseek(f,0,0);
-printf("Size of length: %d\n",length);
+//printf("Size of length: %d\n",length);
 sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",length);
 byteExtracted=send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 cn=0;
@@ -495,7 +516,7 @@ closesocket(clientSocketDescriptor);
 }
 else		//if request->resource!=NULL
 {
-printf("Resource not null\n");
+//printf("Resource not null\n");
 f=fopen(request->resource,"rb");
 if(f==NULL)
 {
@@ -512,7 +533,7 @@ else
 fseek(f,0,2);
 length=ftell(f);
 fseek(f,0,0);
-printf("Size of length: %d\n",length);
+//printf("Size of length: %d\n",length);
 sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: %s\nContent-Length: %d\nConnection: close\n\n",request->mimeType,length);
 byteExtracted=send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 cn=0;

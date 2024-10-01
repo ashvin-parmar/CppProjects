@@ -2,16 +2,10 @@
 #define __tmwp__
 #include<iostream>
 #include<map>
-#include<stdio.h>
+struct __request;
+typedef struct __request REQUEST;
 namespace tmwp
 {
-typedef struct __request
-{
-char *resource;
-char *method;
-char isClientSideTechnologyResource;
-char *mimeType;
-}REQUEST;
 class Request 
 {
 private:
@@ -25,7 +19,6 @@ Request& operator=(const Request& other);
 virtual ~Request();
 void setRequest(REQUEST* request);
 void setData(std::map<std::string*, std::string *>::iterator start,std::map<std::string*,std::string *>::iterator end);
-
 std::map<std::string*,std::string*>* getData();
 REQUEST* getRequest() ;
 std::string get(const char *dataVariable);
@@ -44,7 +37,6 @@ void write(std::string messege);
 void sendResponse();
 virtual ~Response();
 };
-
 class TMWebProjector
 {
 private: 
