@@ -386,11 +386,25 @@ free(request);
 TMWebProjector::TMWebProjector(int portNumber)
 {
 this->portNumber=portNumber;
-this->ptrOnRequest=NULL;
-this->url=NULL;
+//this->ptrOnRequest=NULL;
+//this->url=NULL;
+}
+int TMWebProjector::isRequestURLExist(string url)
+{
+map<string,void *>::iterator i=this->urlRequest.find(url);
+if(i==this->urlRequest.end()) return 0;
+else return 1;
 }
 void TMWebProjector::onRequest(const char *url,void (*ptrOnRequest)(Request &,Response &))
 {
+if(url==NULL || ptrOnRequest==NULL) return;
+int ii=0;
+if(url[0]=='/') ii=1;
+if(isRequestURLExist(url+ii)) return;
+this->urlRequest.insert(pair<string,void *>(string(url+ii),(void *)ptrOnRequest));
+
+printf("URL ASSIGENed: (%s), p2f: %d\n",url,ptrOnRequest);
+/*
 if(this->url) delete [] this->url;
 this->url=NULL;
 this->ptrOnRequest=NULL;
@@ -398,11 +412,11 @@ if(url==NULL || ptrOnRequest==NULL) return;
 this->url=new char[strlen(url)+1];
 strcpy(this->url,url);
 this->ptrOnRequest=ptrOnRequest;
-//printf("URL ASSIGENed: (%s), p2f: %d\n",this->url,this->ptrOnRequest);
+*/
 }
 TMWebProjector::~TMWebProjector()
 {
-if(this->url) delete [] this->url;
+//if(this->url) delete [] this->url;
 }
 void TMWebProjector::start()
 {
@@ -556,25 +570,14 @@ else
 Response rs;
 rs.setClientSocket(clientSocketDescriptor);
 cout<<"serverSideResource"<<endl;
-if(this->url==NULL || this->ptrOnRequest==NULL) 
-{
-printf("Sending 404 page\n");
-char tmp[501];
-sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource /%s not found</h2></body></html>",request->resource);
-sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",strlen(tmp));
-strcat(responseBuffer,tmp);
-send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
-}
-else
-{
 int ii=0;
-if(this->url[0]=='/') ii=1;
-if(strcmp(this->url+ii,request->resource)==0)
+for(pair<string,void *> p:this->urlRequest)
 {
-this->ptrOnRequest(rq,rs);
-printf("Request Processed Successfully\n");
+printf("URL ASSIGENed: (%s), p2f: %d\n",p.first.c_str(),(void (*)(Request &,Response &))p.second);
 }
-else
+
+if(request->resource[0]=='/') ii=1;
+if(!isRequestURLExist(string(request->resource+ii)))
 {
 printf("Sending 404 page\n");
 char tmp[501];
@@ -583,6 +586,13 @@ sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length
 strcat(responseBuffer,tmp);
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 }
+else
+{
+map<string,void *>::iterator ss=this->urlRequest.find(request->resource+ii);
+void (*ptrOnRequest)(Request &,Response &);
+ptrOnRequest=(void (*)(Request &,Response &))ss->second;
+ptrOnRequest(rq,rs);
+printf("Request Processed Successfully\n");
 }
 }//server part else ends here
 if(request->resource) free(request->resource);

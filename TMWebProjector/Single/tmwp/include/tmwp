@@ -41,13 +41,15 @@ class TMWebProjector
 {
 private: 
 int portNumber;
-char *url;
-void (*ptrOnRequest)(Request &,Response &);
+std::map<std::string,void *> urlRequest;
+//char *url;
+//void (*ptrOnRequest)(Request &,Response &);
 public:
 TMWebProjector(int portNumber);
 ~TMWebProjector();
+int isRequestURLExist(std::string url);
 void start();
-void onRequest(const char *,void (*ptrOnRequest)(Request &,Response &));
+void onRequest(const char *,void (*)(Request &,Response &));
 };
 }
 #endif
