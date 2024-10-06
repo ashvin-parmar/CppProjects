@@ -97,6 +97,29 @@ if(request->mimeType==NULL) return ;
 this->request->mimeType=(char *)malloc(sizeof(char)*strlen(request->mimeType)+1);
 strcpy(this->request->mimeType,request->mimeType);
 }
+void Request::forward(const char *hyperlink)
+{
+this->setClientSocket(clientSocketDescriptor);
+int ii=0;
+if(hyperlink[0]=='/') ii=1;
+if(!isRequestURLExist(string(hyperlink+ii)))
+{
+printf("Sending 404 page\n");
+char tmp[501];
+sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource /%s not found</h2></body></html>",request->resource);
+sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",strlen(tmp));
+strcat(responseBuffer,tmp);
+send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
+}
+else
+{
+map<string,void *>::iterator ss=this->urlRequest.find(request->resource+ii);
+void (*ptrOnRequest)(Request &,Response &);
+ptrOnRequest=(void (*)(Request &,Response &))ss->second;
+ptrOnRequest(rq,rs);
+printf("Request Processed Successfully\n");
+}
+}
 void Request::setData(map<string *,string *>::iterator start,map<string *,string *>::iterator end)
 {
 map<string *,string *>::iterator i;
@@ -571,10 +594,7 @@ Response rs;
 rs.setClientSocket(clientSocketDescriptor);
 cout<<"serverSideResource"<<endl;
 int ii=0;
-for(pair<string,void *> p:this->urlRequest)
-{
-printf("URL ASSIGENed: (%s), p2f: %d\n",p.first.c_str(),(void (*)(Request &,Response &))p.second);
-}
+//for(pair<string,void *> p:this->urlRequest) printf("URL ASSIGENed: (%s), p2f: %d\n",p.first.c_str(),(void (*)(Request &,Response &))p.second);
 
 if(request->resource[0]=='/') ii=1;
 if(!isRequestURLExist(string(request->resource+ii)))
