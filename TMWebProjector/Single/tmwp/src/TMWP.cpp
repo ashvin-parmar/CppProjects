@@ -171,12 +171,14 @@ return a;
 Response::Response()
 {
 this->clientSocketDescriptor=0;
-this->messege="";
+this->isClosed=false;
+this->headerCreated=false;
 }
 Response::Response(const Response &other)
 {
 this->clientSocketDescriptor=other.clientSocketDescriptor;
-this->messege=other.messege;
+this->isClosed=other.isClosed;
+this->headerCreated=other.headerCreated;
 }
 Response::Response(int clientSocketDescriptor)
 {
@@ -185,32 +187,38 @@ this->clientSocketDescriptor=clientSocketDescriptor;
 Response& Response::operator=(const Response &other)
 {
 this->clientSocketDescriptor=other.clientSocketDescriptor;
-this->messege=other.messege;
+this->isClosed=other.isClosed;
+this->headerCreated=other.headerCreated;
 return *this;
 }
 Response::~Response()
 {
 //Do nothing
-closesocket(clientSocketDescriptor);
+}
+void Response::close()
+{
+if(this->isClosed) return;
+closesocket(this->clientSocketDescriptor);
+this->isClosed=true;
 }
 void Response::setClientSocket(int clientSocketDescriptor)
 {
 this->clientSocketDescriptor=clientSocketDescriptor;
 }
-void Response::write(string messege)
+void Response::createHeader()
 {
-this->messege+=messege;
+char header[51];
+strcpy(header,"HTTP/1.1 200 OK\nContent-Type:text/html\n\n");
+send(clientSocketDescriptor,header,strlen(header),0);
+this->headerCreated=true;
 }
-void Response::sendResponse()
+void Response::write(const char *str)
 {
-string a;
-char tmp[501];
-sprintf(tmp,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\n\n",this->messege.size());
-a=tmp;
-a+=this->messege;
-if(clientSocketDescriptor==0) return;
-send(this->clientSocketDescriptor,a.c_str(),a.size(),0);
-this->messege=""; 	//Empty this messege string after sending response
+if(str==NULL) return;
+int len=strlen(str);
+if(len==0) return;
+if(!this->headerCreated) createHeader();
+send(clientSocketDescriptor,str,len,0);
 }
 int extensionEquals(const char *left,const char *right)
 {
@@ -418,7 +426,7 @@ if(url[0]=='/') ii=1;
 if(isRequestURLExist(url+ii)) return;
 this->urlRequest.insert(pair<string,void *>(string(url+ii),(void *)ptrOnRequest));
 
-printf("URL ASSIGENed: (%s), p2f: %d\n",url,ptrOnRequest);
+//printf("URL ASSIGENed: (%s), p2f: %d\n",url,ptrOnRequest);
 /*
 if(this->url) delete [] this->url;
 this->url=NULL;
@@ -507,15 +515,15 @@ printf("Request Resource: %s\n",request->resource);
 while(1)
 {
 //Here loop start for forwarding request to somewhere else part
-printf("Request Resource: %s\n",request->resource);
-printf("Resource Side: %c\n",request->isClientSideTechnologyResource);
+//printf("Request Resource: %s\n",request->resource);
+//printf("Resource Side: %c\n",request->isClientSideTechnologyResource);
 
 if(request->isClientSideTechnologyResource=='Y')
 {
-cout<<"clientSideTech"<<endl;
+//cout<<"clientSideTech"<<endl;
 if(request->resource==NULL)
 {
-cout<<"Resource Null"<<endl;
+//cout<<"Resource Null"<<endl;
 f=fopen("index.html","rb");
 if(f==NULL)
 {
@@ -554,7 +562,7 @@ break;		//For forwarding request
 }
 else		//if request->resource!=NULL
 {
-printf("Resource not null\n");
+//printf("Resource not null\n");
 f=fopen(request->resource,"rb");
 if(f==NULL)
 {
@@ -586,7 +594,6 @@ byteExtracted=send(clientSocketDescriptor,responseBuffer,rc,0);
 cn+=rc;
 }
 fclose(f);
-getchar();
 closesocket(clientSocketDescriptor);
 break;		//For forwarding request 
 }
@@ -596,7 +603,7 @@ else
 {
 Response rs;
 rs.setClientSocket(clientSocketDescriptor);
-cout<<"serverSideResource"<<endl;
+//cout<<"serverSideResource"<<endl;
 int ii=0;
 //for(pair<string,void *> p:this->urlRequest) printf("URL ASSIGENed: (%s), p2f: %d\n",p.first.c_str(),(void (*)(Request &,Response &))p.second);
 
@@ -617,18 +624,15 @@ map<string,void *>::iterator ss=this->urlRequest.find(request->resource+ii);
 void (*ptrOnRequest)(Request &,Response &);
 ptrOnRequest=(void (*)(Request &,Response &))ss->second;
 ptrOnRequest(rq,rs);
-cout<<"COmes Here"<<endl;
 if(rq.isForward())
 {
 string forwardTo=rq.getForward();
-cout<<"Forward: "<<forwardTo<<endl;
 if(request->resource) free(request->resource);
 if(request->mimeType) free(request->mimeType);
 request->resource=(char *)malloc((sizeof(char)*(forwardTo.length()))+1);
 strcpy(request->resource,forwardTo.c_str());
 request->isClientSideTechnologyResource=isClientSideResource(request->resource);
 request->mimeType=getMIMEType(request->resource);
-cout<<"NOw COmes Here"<<endl;
 rq.forward("");
 continue;
 }

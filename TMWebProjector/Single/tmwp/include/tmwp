@@ -29,16 +29,18 @@ std::string getForward();
 };
 class Response
 {
-std::string messege;
 int clientSocketDescriptor;
+bool isClosed;
+bool headerCreated;
 public:
 Response();
 Response(const Response &other);
 Response(int clientSocketDescriptor);
 Response& operator=(const Response &other);
 void setClientSocket(int clientSocketDescriptor);
-void write(std::string messege);
-void sendResponse();
+void write(const char *str);
+void close();
+void createHeader();
 virtual ~Response();
 };
 class TMWebProjector
