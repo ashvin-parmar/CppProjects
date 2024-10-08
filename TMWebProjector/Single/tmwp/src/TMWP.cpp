@@ -21,6 +21,7 @@ return (*a)<(*b);
 void parseRequest(const char *bytes,Request &rq);
 Request::Request()
 {
+this->forwardTo="";
 this->request=(REQUEST *)malloc(sizeof(REQUEST));
 this->request->method=NULL;
 this->request->resource=NULL;
@@ -30,6 +31,7 @@ this->data=new map<string *,string *>;
 }
 Request::Request(const char *request)
 {
+this->forwardTo="";
 this->request=(REQUEST *)malloc(sizeof(REQUEST));
 this->request->resource=NULL;
 this->request->method=NULL;
@@ -40,6 +42,7 @@ parseRequest(request,*this);
 }
 Request& Request::operator=(const Request &other)
 {
+this->forwardTo=other.forwardTo;
 if(this->request->method!=NULL) free(this->request->method);
 if(this->request->resource) free(this->request->resource);
 if(this->request->mimeType) free(this->request->mimeType);
@@ -99,26 +102,15 @@ strcpy(this->request->mimeType,request->mimeType);
 }
 void Request::forward(const char *hyperlink)
 {
-this->setClientSocket(clientSocketDescriptor);
-int ii=0;
-if(hyperlink[0]=='/') ii=1;
-if(!isRequestURLExist(string(hyperlink+ii)))
-{
-printf("Sending 404 page\n");
-char tmp[501];
-sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource /%s not found</h2></body></html>",request->resource);
-sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",strlen(tmp));
-strcat(responseBuffer,tmp);
-send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
+this->forwardTo=hyperlink;
 }
-else
+int Request::isForward()
 {
-map<string,void *>::iterator ss=this->urlRequest.find(request->resource+ii);
-void (*ptrOnRequest)(Request &,Response &);
-ptrOnRequest=(void (*)(Request &,Response &))ss->second;
-ptrOnRequest(rq,rs);
-printf("Request Processed Successfully\n");
+return this->forwardTo.length()>0;
 }
+string Request::getForward()
+{
+return this->forwardTo;
 }
 void Request::setData(map<string *,string *>::iterator start,map<string *,string *>::iterator end)
 {
@@ -213,7 +205,7 @@ void Response::sendResponse()
 {
 string a;
 char tmp[501];
-sprintf(tmp,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",this->messege.size());
+sprintf(tmp,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\n\n",this->messege.size());
 a=tmp;
 a+=this->messege;
 if(clientSocketDescriptor==0) return;
@@ -511,6 +503,13 @@ Request rq;
 parseRequest(url.getDecodedURL().c_str(),rq);
 REQUEST *request;
 request=rq.getRequest();
+printf("Request Resource: %s\n",request->resource);
+while(1)
+{
+//Here loop start for forwarding request to somewhere else part
+printf("Request Resource: %s\n",request->resource);
+printf("Resource Side: %c\n",request->isClientSideTechnologyResource);
+
 if(request->isClientSideTechnologyResource=='Y')
 {
 cout<<"clientSideTech"<<endl;
@@ -525,9 +524,10 @@ f=fopen("index.htm","rb");
 if(f==NULL)
 {
 printf("Sending 404 page\n");
-strcpy(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 163\nConnection: close\n\n<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource / not found</h2></body></html>");
+strcpy(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 163\n\n<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource / not found</h2></body></html>");
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 closesocket(clientSocketDescriptor);
+break;		//For forwarding request 
 }
 else
 {
@@ -549,11 +549,12 @@ cn+=rc;
 }
 fclose(f);
 closesocket(clientSocketDescriptor);
+break;		//For forwarding request 
 }
 }
 else		//if request->resource!=NULL
 {
-//printf("Resource not null\n");
+printf("Resource not null\n");
 f=fopen(request->resource,"rb");
 if(f==NULL)
 {
@@ -564,6 +565,7 @@ sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length
 strcat(responseBuffer,tmp);
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 closesocket(clientSocketDescriptor);
+break;		//For forwarding request 
 }
 else
 {
@@ -584,7 +586,9 @@ byteExtracted=send(clientSocketDescriptor,responseBuffer,rc,0);
 cn+=rc;
 }
 fclose(f);
+getchar();
 closesocket(clientSocketDescriptor);
+break;		//For forwarding request 
 }
 }
 }
@@ -605,6 +609,7 @@ sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>T
 sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",strlen(tmp));
 strcat(responseBuffer,tmp);
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
+break;		//For forwarding request 
 }
 else
 {
@@ -612,9 +617,26 @@ map<string,void *>::iterator ss=this->urlRequest.find(request->resource+ii);
 void (*ptrOnRequest)(Request &,Response &);
 ptrOnRequest=(void (*)(Request &,Response &))ss->second;
 ptrOnRequest(rq,rs);
+cout<<"COmes Here"<<endl;
+if(rq.isForward())
+{
+string forwardTo=rq.getForward();
+cout<<"Forward: "<<forwardTo<<endl;
+if(request->resource) free(request->resource);
+if(request->mimeType) free(request->mimeType);
+request->resource=(char *)malloc((sizeof(char)*(forwardTo.length()))+1);
+strcpy(request->resource,forwardTo.c_str());
+request->isClientSideTechnologyResource=isClientSideResource(request->resource);
+request->mimeType=getMIMEType(request->resource);
+cout<<"NOw COmes Here"<<endl;
+rq.forward("");
+continue;
+}
 printf("Request Processed Successfully\n");
+break;
 }
 }//server part else ends here
+}//For Forwarding Infinite Loop (donedone)
 if(request->resource) free(request->resource);
 if(request->mimeType) free(request->mimeType);
 if(request->method) free(request->method);

@@ -11,6 +11,7 @@ class Request
 private:
 std::map<std::string*,std::string*> *data;
 REQUEST* request;
+std::string forwardTo;
 public:
 Request();
 Request(const char* data);
@@ -22,7 +23,9 @@ void setData(std::map<std::string*, std::string *>::iterator start,std::map<std:
 std::map<std::string*,std::string*>* getData();
 REQUEST* getRequest() ;
 std::string get(const char *dataVariable);
-void forward(const char *);
+void forward(const char *forwardTo);
+int isForward();
+std::string getForward();
 };
 class Response
 {

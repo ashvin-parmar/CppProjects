@@ -1,0 +1,1 @@
+g++ -static myapp4.cpp -o myapp4.exe -I ..\tmwp\include -L ..\tmwp\lib -ltmwp -l ws2_32
