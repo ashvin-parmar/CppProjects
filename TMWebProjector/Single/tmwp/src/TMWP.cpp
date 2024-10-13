@@ -195,7 +195,7 @@ Response::~Response()
 {
 //Do nothing
 }
-void Response::close()
+void Response::closeClientSocket()
 {
 if(this->isClosed) return;
 closesocket(this->clientSocketDescriptor);

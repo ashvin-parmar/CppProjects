@@ -36,7 +36,7 @@ response.write("Student with same roll Number are already exist");
 response.write("<a href='index.html'>HOME</a>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 fclose(f);
 return;
 }
@@ -56,7 +56,7 @@ response.write("Student name size should be lesser than 50");
 response.write("<a href='index.html'>HOME</a>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 fclose(f);
 return;
 }
@@ -74,7 +74,7 @@ response.write("Student Data Saved");
 response.write("<a href='index.html'>HOME</a>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 fclose(f);
 }
 void getStud(Request &request,Response &response)
@@ -121,7 +121,7 @@ response.write("</table>");
 response.write("<a href='index.html'>HOME</a>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 fclose(f);
 }
 void editStud(Request &request,Response &response)
@@ -158,7 +158,7 @@ response.write("</form>");
 response.write("<a href='index.html'>HOME</a>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 fclose(f);
 return;
 }
@@ -174,7 +174,7 @@ response.write("Student with given roll number is not available");
 response.write("<a href='index.html'>HOME</a>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 fclose(f);
 }
 
@@ -210,8 +210,8 @@ response.write("Student Updated");
 response.write("<a href='index.html'>HOME</a>");
 response.write("</body>");
 response.write("</html>");
+response.closeClientSocket();
 fclose(f);
-response.close();
 return ;
 }
 }
@@ -249,7 +249,7 @@ response.write("</form>");
 response.write("<a href='index.html'>HOME</a>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 fclose(f);
 return ;
 }
@@ -265,7 +265,7 @@ response.write("Student Not Found<BR>");
 response.write("<a href='index.html'>HOME</a>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 fclose(f);
 return ;
 }
@@ -310,7 +310,7 @@ response.write("Student Deleted<BR>");
 response.write("<a href='index.html'>HOME</a>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 return ;
 }
 
