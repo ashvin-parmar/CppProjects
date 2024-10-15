@@ -26,7 +26,7 @@ response.write("COOL <BR>");
 response.write("<a href='index.html'>OK</a><br>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 }
 int main()
 {

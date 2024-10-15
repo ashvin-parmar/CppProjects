@@ -21,7 +21,7 @@ response.write("<a href='now'>Refresh</a><br>");
 response.write("<a href='index.html'>HOME</a><br>");
 response.write("</body>");
 response.write("</html>");
-response.close();
+response.closeClientSocket();
 
 }
 void clock(Request &request,Response &response)
@@ -36,6 +36,5 @@ TMWebProjector server(8080);
 server.onRequest("/now",dispatchTime);
 server.onRequest("/clock",clock);
 server.start();
-
 return 0;
 }

@@ -8,7 +8,7 @@ void getCityView(Request &request,Response &response)
 string cityCodeString=request.get("cityCode");
 int cityCode=atoi(cityCodeString.c_str());
 if(cityCode==1) request.forward("Ujjain.html");
-else if(cityCode==2) request.forward("Indore13.html");
+else if(cityCode==2) request.forward("Indore.html");
 else if(cityCode==3) request.forward("Dewas.html");
 else request.forward("index.html");
 }
