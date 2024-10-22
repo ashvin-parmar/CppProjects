@@ -2,6 +2,7 @@
 #define __tmwp__
 #include<iostream>
 #include<map>
+using namespace std;
 namespace tmwp
 {
 struct __request;
