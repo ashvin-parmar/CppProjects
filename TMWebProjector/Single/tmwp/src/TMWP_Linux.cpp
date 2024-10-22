@@ -156,6 +156,12 @@ request->mimeType=(char *)malloc(sizeof(char)*(strlen(this->request->mimeType)+1
 strcpy(request->mimeType,this->request->mimeType);
 return request;
 }
+void Request::set(const char *dataVariable,const char *data)
+{
+if(dataVariable==NULL || data==NULL) return;
+if(strlen(dataVariable)==0 || strlen(data)==0) return;
+this->data->insert(pair<string *,string *>(new string(dataVariable),new string(data)));
+}
 string Request::get(const char *dataVariable)
 {
 string dataVar(dataVariable);
