@@ -10,13 +10,13 @@
 using namespace std;
 using namespace tmwp;
 using namespace urldecoder;
-struct __request
+typedef struct tmwp::__request
 {
 char *resource;
 char *method;
 char isClientSideTechnologyResource;
 char *mimeType;
-};
+}REQUEST;
 int dataComparator(std::string *a,std::string *b)
 {
 return (*a)<(*b);

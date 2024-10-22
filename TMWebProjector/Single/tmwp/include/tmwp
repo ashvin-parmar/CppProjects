@@ -2,10 +2,10 @@
 #define __tmwp__
 #include<iostream>
 #include<map>
-struct __request;
-typedef struct __request REQUEST;
 namespace tmwp
 {
+struct __request;
+typedef struct __request REQUEST;
 class Request 
 {
 private:
