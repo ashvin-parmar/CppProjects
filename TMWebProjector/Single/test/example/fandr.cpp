@@ -1,10 +1,10 @@
 //Find and remove '${x}' with given INT type value
 
-#include<stdio.h>
 #include<iostream>
 #include<map>
-#include<string.h>
+#include<cstring>
 using namespace std;
+
 void findAndReplce(string fileName,map<string,int> &variable)
 {
 FILE *f;
