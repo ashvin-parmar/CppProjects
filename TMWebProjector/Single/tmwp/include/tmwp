@@ -21,7 +21,7 @@ Request& operator=(const Request& other);
 virtual ~Request();
 void setRequest(REQUEST* request);
 void setData(std::map<std::string*, std::string *>::iterator start,std::map<std::string*,std::string *>::iterator end);
-std::map<std::string*,std::string*>* getData();
+std::map<std::string,std::string>* getData();
 REQUEST* getRequest() ;
 std::string get(const char *dataVariable);
 void set(const char *dataVariable,const char *data);

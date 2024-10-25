@@ -128,14 +128,14 @@ for(i=start;i!=end;i++)
 this->data->insert(pair<string *,string *>(new string(*i->first),new string(*i->second)));
 }
 }
-map<string *,string *> * Request::getData() 
+map<string ,string >*  Request::getData() 
 {
-map<string *,string *> *data;
-data=new map<string *,string *>;
+map<string ,string > *data;
+data=new map<string ,string >;
 map<string *,string *>::iterator i;
 for(i=this->data->begin();i!=this->data->end();i++)
 {
-data->insert(pair<string *,string *>(new string(*i->first),new string(*i->second)));
+data->insert(pair<string ,string >( string(*i->first), string(*i->second)));
 }
 return data;
 }
@@ -450,6 +450,89 @@ TMWebProjector::~TMWebProjector()
 {
 //if(this->url) delete [] this->url;
 }
+
+//donedone
+void find_and_replace_file_keyword(string fileName,map<string,string> &variable)
+{
+FILE *f;
+f=fopen(fileName.c_str(),"r");
+FILE *tmp;
+tmp=fopen("tmp.tmp","w");
+if(f==NULL)
+{
+cout<<"Unable to open file"<<endl;
+return ;
+}
+int track;
+while(1)
+{
+track=ftell(f);
+char m=fgetc(f);
+if(feof(f)) break;
+string buffer;
+if(m=='$')
+{
+m=fgetc(f);
+if(feof(f)) break; 
+if(m=='{')
+{
+m=fgetc(f);
+if(feof(f)==EOF) break;
+string s;
+while(m!='}')
+{
+s.push_back(m);
+m=fgetc(f);
+if(feof(f)) break;
+}
+if(feof(f)) 
+{
+fputc('$',tmp);
+fseek(f,track+1,0);
+continue;
+}
+map<string,string>::iterator i;
+i=variable.find(s);
+if(i!=variable.end())
+{
+for(int j=0;j<i->second.size();j++) fputc(i->second[j],tmp);
+fseek(f,track+s.size()+3,0);
+}
+else
+{
+fputc('$',tmp);
+fseek(f,track+1,0);
+}
+}
+else
+{
+fputc('$',tmp);
+fseek(f,track+1,0);
+}
+}
+else
+{
+fputc(m,tmp);
+}
+}//While loop ends here
+fclose(tmp);
+fclose(f);
+tmp=fopen("tmp.tmp","r");
+f=fopen(fileName.c_str(),"w");
+fseek(tmp,0,0);
+fseek(f,0,0);
+while(1)
+{
+char m=fgetc(tmp);
+if(feof(tmp)) break;
+fputc(m,f);
+}
+fclose(tmp);
+fclose(f);
+tmp=fopen("tmp.tmp","w");
+fclose(tmp);
+}
+
 void TMWebProjector::start()
 {
 int length;
@@ -565,6 +648,11 @@ break;		//For forwarding request
 else		//if request->resource!=NULL
 {
 //printf("Resource not null\n");
+if(strcmp(request->resource+strlen(request->resource)-3,"tpl")==0)
+{
+//HERE ARE LOGIC FOR CHANGING FILE  donedone
+find_and_replace_file_keyword(request->resource,*rq.getData());
+}
 f=fopen(request->resource,"rb");
 if(f==NULL)
 {
@@ -642,7 +730,7 @@ printf("Request Processed Successfully\n");
 break;
 }
 }//server part else ends here
-}//For Forwarding Infinite Loop (donedone)
+}//For Forwarding Infinite Loop
 if(request->resource) free(request->resource);
 if(request->mimeType) free(request->mimeType);
 if(request->method) free(request->method);
