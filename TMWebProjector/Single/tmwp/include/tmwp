@@ -11,6 +11,7 @@ class Request
 {
 private:
 std::map<std::string*,std::string*> *data;
+std::map<std::string,std::string> keyValue;
 REQUEST* request;
 std::string forwardTo;
 public:
@@ -24,8 +25,15 @@ void setData(std::map<std::string*, std::string *>::iterator start,std::map<std:
 std::map<std::string,std::string>* getData();
 REQUEST* getRequest() ;
 std::string get(const char *dataVariable);
+std::string get(string &dataVariable);
 void set(const char *dataVariable,const char *data);
+void set(string &dataVariable,string &data);
+void setKeyValue(const char *key,const char *value);
+void setKeyValue(string key,string value);
+string getValue(const char *key);
+string getValue(string key);
 void forward(const char *forwardTo);
+void forward(string forwardTo);
 int isForward();
 std::string getForward();
 };
@@ -41,6 +49,7 @@ Response(int clientSocketDescriptor);
 Response& operator=(const Response &other);
 void setClientSocket(int clientSocketDescriptor);
 void write(const char *str);
+void write(string &str);
 void closeClientSocket();
 void createHeader();
 virtual ~Response();
@@ -58,6 +67,7 @@ TMWebProjector(int portNumber);
 int isRequestURLExist(std::string url);
 void start();
 void onRequest(const char *,void (*)(Request &,Response &));
+void onRequest(string &url,void (*)(Request &,Response &));
 };
 }
 #endif

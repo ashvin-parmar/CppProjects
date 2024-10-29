@@ -105,6 +105,12 @@ strcpy(this->request->mimeType,request->mimeType);
 }
 void Request::forward(const char *hyperlink)
 {
+if(strlen(hyperlink)==0) return;
+this->forwardTo=string(hyperlink);
+}
+void Request::forward(string hyperlink)
+{
+if(hyperlink.size()==0) return;
 this->forwardTo=hyperlink;
 }
 int Request::isForward()
@@ -162,6 +168,10 @@ if(dataVariable==NULL || data==NULL) return;
 if(strlen(dataVariable)==0 || strlen(data)==0) return;
 this->data->insert(pair<string *,string *>(new string(dataVariable),new string(data)));
 }
+void Request::set(string &dataVariable,string &data)
+{
+this->set(dataVariable.c_str(),data.c_str());
+}
 string Request::get(const char *dataVariable)
 {
 string dataVar(dataVariable);
@@ -176,6 +186,10 @@ string a=(*i->second);
 for(int i=0;i<a.size();i++) if(a[i]=='+') a[i]=' ';
 return a;
 }
+}
+string Request::get(string &dataVariable)
+{
+return this->get(dataVariable.c_str());
 }
 Response::Response()
 {
@@ -228,6 +242,10 @@ int len=strlen(str);
 if(len==0) return;
 if(!this->headerCreated) createHeader();
 send(clientSocketDescriptor,str,len,0);
+}
+void Response::write(string &str)
+{
+this->write(str.c_str());
 }
 int extensionEquals(const char *left,const char *right)
 {
@@ -445,6 +463,10 @@ this->url=new char[strlen(url)+1];
 strcpy(this->url,url);
 this->ptrOnRequest=ptrOnRequest;
 */
+}
+void TMWebProjector::onRequest(string &url,void (*ptrOnRequest)(Request &,Response &))
+{
+this->onRequest(url.c_str(),ptrOnRequest);
 }
 TMWebProjector::~TMWebProjector()
 {
