@@ -12,7 +12,7 @@ else if(cityCode==2) request.forward("Indore.html");
 else if(cityCode==3) request.forward("Dewas.html");
 else 
 {
-request.set("error","Invalid Code");
+request.setKeyValue("error","Invalid Code");
 request.forward("errorPage.tpl");
 }
 }

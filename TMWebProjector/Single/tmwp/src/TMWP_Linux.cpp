@@ -197,6 +197,44 @@ this->clientSocketDescriptor=0;
 this->isClosed=false;
 this->headerCreated=false;
 }
+void Request::setKeyValue(const char *key,const char *value)
+{
+this->setKeyValue(string(key),string(value));
+}
+void Request::setKeyValue(string key,string value)
+{
+if(key.size()==0 || value.size()==0) return;
+this->keyValue.insert(pair<string,string>(key,value));
+}
+string Request::getValue(const char *key)
+{
+return getValue(string(key));
+}
+string Request::getValue(string key)
+{
+if(key.size()==0) return string("");
+map<string,string>::iterator i;
+i=this->keyValue.find(key);
+if(i==this->keyValue.end())
+{
+return string("");
+}
+else
+{
+return i->second;
+}
+}
+map<string,string>* Request::getKeyValueMap()
+{
+map<string,string> *sharingData;
+sharingData=new map<string,string>;
+map<string,string>::iterator i;
+for(i=this->keyValue.begin();i!=this->keyValue.end();i++)
+{
+sharingData->insert(pair<string,string>(i->first,i->second));
+}
+return sharingData;
+}
 Response::Response(const Response &other)
 {
 this->clientSocketDescriptor=other.clientSocketDescriptor;
@@ -673,7 +711,7 @@ else		//if request->resource!=NULL
 if(strcmp(request->resource+strlen(request->resource)-3,"tpl")==0)
 {
 //HERE ARE LOGIC FOR CHANGING FILE  donedone
-find_and_replace_file_keyword(request->resource,*rq.getData());
+find_and_replace_file_keyword(request->resource,*rq.getKeyValueMap());
 }
 f=fopen(request->resource,"rb");
 if(f==NULL)
