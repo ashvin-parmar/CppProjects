@@ -512,16 +512,18 @@ TMWebProjector::~TMWebProjector()
 }
 
 //donedone
-void find_and_replace_file_keyword(string fileName,map<string,string> &variable)
+string find_and_replace_file_keyword(string fileName,map<string,string> &variable)
 {
 FILE *f;
 f=fopen(fileName.c_str(),"r");
 FILE *tmp;
-tmp=fopen("tmp.tmp","w");
+string tmpName=fileName;
+tmpName[tmpName.size()-3]='p';
+tmp=fopen(tmpName.c_str(),"w");
 if(f==NULL)
 {
 cout<<"Unable to open file"<<endl;
-return ;
+return string("");
 }
 int track;
 while(1)
@@ -577,6 +579,7 @@ fputc(m,tmp);
 }//While loop ends here
 fclose(tmp);
 fclose(f);
+/*
 tmp=fopen("tmp.tmp","r");
 f=fopen(fileName.c_str(),"w");
 fseek(tmp,0,0);
@@ -591,6 +594,8 @@ fclose(tmp);
 fclose(f);
 tmp=fopen("tmp.tmp","w");
 fclose(tmp);
+*/
+return tmpName;
 }
 
 void TMWebProjector::start()
@@ -711,7 +716,17 @@ else		//if request->resource!=NULL
 if(strcmp(request->resource+strlen(request->resource)-3,"tpl")==0)
 {
 //HERE ARE LOGIC FOR CHANGING FILE  donedone
-find_and_replace_file_keyword(request->resource,*rq.getKeyValueMap());
+string forwardTo=find_and_replace_file_keyword(request->resource,*rq.getKeyValueMap());
+if(forwardTo.size())
+{
+if(request->resource) free(request->resource);
+if(request->mimeType) free(request->mimeType);
+request->resource=(char *)malloc((sizeof(char)*(forwardTo.length()))+1);
+strcpy(request->resource,forwardTo.c_str());
+request->isClientSideTechnologyResource=isClientSideResource(request->resource);
+request->mimeType=getMIMEType(request->resource);
+continue;
+}
 }
 f=fopen(request->resource,"rb");
 if(f==NULL)

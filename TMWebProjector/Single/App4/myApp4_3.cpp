@@ -12,13 +12,11 @@ else if(cityCode==2) request.forward("Indore.html");
 else if(cityCode==3) request.forward("Dewas.html");
 else 
 {
-request.setKeyValue("error","Invalid Code");
+request.setKeyValue("error","Invalid Code, Please try again");
 request.forward("errorPage.tpl");
+x++;
 }
 }
-
-
-
 int main()
 {
 TMWebProjector server(8080);
