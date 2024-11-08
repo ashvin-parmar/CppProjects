@@ -2,7 +2,6 @@
 #include<map>
 #include<cstring>
 using namespace std;
-
 map<string,string> * getFuncNames(string filename)
 {
 FILE *f;
@@ -64,69 +63,17 @@ fclose(f);
 //cout<<"Size of func: "<<funcnames.size()<<endl;
 return funcnames;
 }
-void createH(string filename)
-{
-FILE *h;
-h=fopen("tpl.h","w");
-if(h==NULL)
-{
-printf("tpl.h file not opened\n");
-return ;
-}
-
-char buff[1000];
-sprintf(buff,"#ifndef __TMWP_H\n#define __TMWP_H\n#include<tmwp>\nusing namespce tmwp;\n");
-fwrite(buff,sizeof(char),strlen(buff),h);
-map<string,string> *data;
-data=getFuncNames(filename);
-for(pair<string,string> a:*data)
-{
-sprintf(buff,"void %s_TPL(Request &request,Response &response);\n",a.second.c_str());
-fwrite(buff,sizeof(char),strlen(buff),h);
-}
-sprintf(buff,"void registerTPLs(TMWebProjector *server)\n{\n");
-fwrite(buff,sizeof(char),strlen(buff),h);
-for(pair<string,string> a:*data)
-{
-sprintf(buff,"server->onRequest(\"%s.tpl.cpp\",%s_TPL);\n",a.first.c_str(),a.second.c_str());
-fwrite(buff,sizeof(char),strlen(buff),h);
-}
-sprintf(buff,"}\n#endif\n");
-fwrite(buff,sizeof(char),strlen(buff),h);
-
-fclose(h);
-}
-void createCPP(string fileName)
-{
-
-FILE *cpp;
-cpp=fopen((fileName+string(".cpp")).c_str(),"w");
-if(cpp==NULL)
-{
-return ;
-}
-
-char buff[1000];
-sprintf(buff,"#include<tmwp>\nusing namespace tmwp;\n");
-fwrite(buff,(strlen(buff)),sizeof(char),cpp);
-
-
-
-fclose(cpp);
-}
-
-
-void tpl2c(string fileName)
+void createTMP(string fileName)
 {
 FILE *f;
 f=fopen(fileName.c_str(),"r");
 if(f==NULL)
 {
-cout<<"Unable to open file"<<endl;
+//cout<<"Unable to open file"<<endl;
 return ;
 }
 FILE *tmp;
-tmp=fopen("tmp.tmp","w");
+tmp=fopen((fileName.substr(0,fileName.size()-3)+string("tmp")).c_str(),"w");
 if(tmp==NULL)
 {
 fclose(f);
@@ -191,7 +138,7 @@ fputc(m,tmp);
 }//While loop ends here
 fclose(tmp);
 fclose(f);
-createCPP(fileName);
+//createCPP(fileName);
 /*
 tmp=fopen("tmp.tmp","r");
 f=fopen(fileName.c_str(),"w");
@@ -209,123 +156,93 @@ tmp=fopen("tmp.tmp","w");
 fclose(tmp);
 */
 }
-
-
-
-void tpl2c_1(string fileName,map<string,string> &variable)
+void tpl2c(string filename)
 {
-FILE *f;
-f=fopen(fileName.c_str(),"r");
-if(f==NULL)
+FILE *h;
+h=fopen("tpl.h","w");
+if(h==NULL)
 {
-cout<<"Unable to open file"<<endl;
+printf("tpl.h file not opened\n");
 return ;
 }
-FILE *cpp;
-FILE *tmp;
-cpp=fopen((fileName+string(".cpp")).c_str(),"w");
-if(cpp==NULL) 
-{
-fclose(f);
-return ;
-}
-tmp=fopen("tmp.tmp","w");
-if(tmp==NULL)
-{
-fclose(cpp);
-fclose(f);
-return ;
-}
-int track;
-while(1)
-{
-track=ftell(f);
-char m=fgetc(f);
-if(feof(f)) break;
-string buffer;
-if(m=='$')
-{
-m=fgetc(f);
-if(feof(f)) break; 
-if(m=='{')
-{
-m=fgetc(f);
-if(feof(f)==EOF) break;
-string s;
-while(m!='}')
-{
-s.push_back(m);
-m=fgetc(f);
-if(feof(f)) break;
-}
-if(feof(f)) 
-{
-fputc('$',tmp);
-fseek(f,track+1,0);
-continue;
-}
-map<string,string>::iterator i;
-i=variable.find(s);
-if(i!=variable.end())
-{
-for(int j=0;j<i->second.size();j++) fputc(i->second[j],tmp);
-fseek(f,track+s.size()+3,0);
-}
-else
-{
-fputc('$',tmp);
-fseek(f,track+1,0);
-}
-}
-else
-{
-fputc('$',tmp);
-fseek(f,track+1,0);
-}
-}
-else
-{
-fputc(m,tmp);
-}
-}//While loop ends here
-fclose(tmp);
-fclose(f);
 
 char buff[1000];
+sprintf(buff,"#ifndef __TMWP_H\n#define __TMWP_H\n#include<tmwp>\nusing namespce tmwp;\n");
+fwrite(buff,sizeof(char),strlen(buff),h);
+map<string,string> *data;
+data=getFuncNames(filename);
+for(pair<string,string> a:*data)
+{
+sprintf(buff,"void %s_TPL(Request &request,Response &response);\n",a.second.c_str());
+fwrite(buff,sizeof(char),strlen(buff),h);
+}
+sprintf(buff,"void registerTPLs(TMWebProjector *server)\n{\n");
+fwrite(buff,sizeof(char),strlen(buff),h);
+for(pair<string,string> a:*data)
+{
+sprintf(buff,"server->onRequest(\"%s.tpl.cpp\",%s_TPL);\n",a.first.c_str(),a.second.c_str());
+fwrite(buff,sizeof(char),strlen(buff),h);
+}
+sprintf(buff,"}\n#endif\n");
+fwrite(buff,sizeof(char),strlen(buff),h);
+fclose(h);
+
+for(pair<string,string> a:*data)
+{
+FILE *cpp;
+createTMP(a.first+string(".tpl"));
+FILE *f;
+f=fopen(((a.first)+string(".tmp")).c_str(),"r");
+if(f==NULL)
+{
+continue;
+}
+cpp=fopen((a.first+string(".tpl.cpp")).c_str(),"w");
+if(cpp==NULL)
+{
+continue;
+}
 sprintf(buff,"#include<tmwp>\nusing namespace tmwp;\n");
 fwrite(buff,(strlen(buff)),sizeof(char),cpp);
-fclose(cpp);
-
-
-
-
-/*
-tmp=fopen("tmp.tmp","r");
-f=fopen(fileName.c_str(),"w");
-fseek(tmp,0,0);
-fseek(f,0,0);
+sprintf(buff,"void %s_TPL(Request &request,Response &response)\n{\n",a.second.c_str());
+fwrite(buff,strlen(buff),sizeof(char),cpp);
+int x=0;
+string funcname;
 while(1)
 {
-char m=fgetc(tmp);
-if(feof(tmp)) break;
-fputc(m,f);
+char c;
+string line;
+while(1)
+{
+c=fgetc(f);
+if(feof(f)) break;
+if(c=='\n') break;
+line.push_back(c);
 }
-fclose(tmp);
+//cout<<"Line: "<<line<<endl;
+sprintf(buff,"response.write(\"%s\");\n",line.c_str());
+fwrite(buff,sizeof(char),strlen(buff),cpp);
+if(feof(f)) break;
+}
 fclose(f);
-tmp=fopen("tmp.tmp","w");
-fclose(tmp);
-*/
+f=fopen(((a.first)+string(".tmp")).c_str(),"w");
+fclose(f);
 
+sprintf(buff,"}\nint main()\n{\nreturn 0;\n}\n");
+fwrite(buff,sizeof(char),strlen(buff),cpp);
+fclose(cpp);
+}//funcMap
+delete data;
 }
 int main()
 {
 string filename;
 cout<<"Enter file name: ";
 getline(cin,filename);
-map<string,string> keyValueMap;
+//map<string,string> keyValueMap;
+/*
 while(1)
 {
-/*
 cout<<"Enter key: ";
 string key;
 getline(cin,key);
@@ -333,7 +250,7 @@ cout<<"Enter value: ";
 string value;
 getline(cin,value);
 keyValueMap.insert(pair<string,string>(key,value));
-*/
+
 char c;
 cout<<"Want to enter more values: ";
 cin>>c;
@@ -341,6 +258,7 @@ cin.ignore(100,'\n');
 if(c!='y' && c!='Y') break;
 
 }
+*/
 //tpl2c_1(filename,keyValueMap);
 createH(filename);
 return 0;
