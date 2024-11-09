@@ -14,7 +14,6 @@ else
 {
 request.setKeyValue("error","Invalid Code, Please try again");
 request.forward("errorPage.tpl");
-x++;
 }
 }
 int main()

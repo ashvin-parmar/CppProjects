@@ -260,6 +260,6 @@ if(c!='y' && c!='Y') break;
 }
 */
 //tpl2c_1(filename,keyValueMap);
-createH(filename);
+tpl2c(filename);
 return 0;
 }

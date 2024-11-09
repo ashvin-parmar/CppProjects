@@ -12,7 +12,5 @@ response.write("");
 }
 int main()
 {
-
-
 return 0;
 }

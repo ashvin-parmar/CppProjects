@@ -4,7 +4,7 @@
 <title>Error Page</title>
 </head>
 <body>
-${error}<BR>
+Invalid Code, Please try again<BR>
 <a href='index.html'>Home</a><BR>
 </body>
 </html>
