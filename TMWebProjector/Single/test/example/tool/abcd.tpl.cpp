@@ -10,7 +10,3 @@ response.write("request.getValue("There")");
 response.write("<BR>");
 response.write("");
 }
-int main()
-{
-return 0;
-}

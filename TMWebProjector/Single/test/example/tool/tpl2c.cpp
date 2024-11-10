@@ -180,7 +180,7 @@ sprintf(buff,"void registerTPLs(TMWebProjector *server)\n{\n");
 fwrite(buff,sizeof(char),strlen(buff),h);
 for(pair<string,string> a:*data)
 {
-sprintf(buff,"server->onRequest(\"%s.tpl.cpp\",%s_TPL);\n",a.first.c_str(),a.second.c_str());
+sprintf(buff,"server->onRequest(\"%s.tpl\",%s_TPL);\n",a.first.c_str(),a.second.c_str());
 fwrite(buff,sizeof(char),strlen(buff),h);
 }
 sprintf(buff,"}\n#endif\n");
@@ -228,7 +228,8 @@ fclose(f);
 f=fopen(((a.first)+string(".tmp")).c_str(),"w");
 fclose(f);
 
-sprintf(buff,"}\nint main()\n{\nreturn 0;\n}\n");
+//sprintf(buff,"}\nint main()\n{\nreturn 0;\n}\n");
+sprintf(buff,"}\n");
 fwrite(buff,sizeof(char),strlen(buff),cpp);
 fclose(cpp);
 }//funcMap
