@@ -713,6 +713,7 @@ break;		//For forwarding request
 else		//if request->resource!=NULL
 {
 //printf("Resource not null\n");
+/* COMMENTING THIS CODE BECAUSE MY IDEA REMOVED AND BACKUPED
 if(strcmp(request->resource+strlen(request->resource)-3,"tpl")==0)
 {
 //HERE ARE LOGIC FOR CHANGING FILE  donedone
@@ -728,6 +729,7 @@ request->mimeType=getMIMEType(request->resource);
 continue;
 }
 }
+*/
 f=fopen(request->resource,"rb");
 if(f==NULL)
 {
