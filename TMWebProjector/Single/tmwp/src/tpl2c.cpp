@@ -8,7 +8,11 @@ FILE *f;
 map<string,string> *funcnames;
 funcnames=new map<string,string>;
 f=fopen(filename.c_str(),"r");
-if(f==NULL) return NULL;
+if(f==NULL) 
+{
+delete funcnames;
+return NULL;
+}
 int x=0;
 string funcname;
 while(1)
@@ -122,6 +126,9 @@ fclose(f);
 void tpl2c(string filename)
 {
 FILE *h;
+map<string,string> *data;
+data=getFuncNames(filename);
+if(data==NULL) return ;
 h=fopen("tpl.h","w");
 if(h==NULL)
 {
@@ -130,10 +137,8 @@ return ;
 }
 
 char buff[1000];
-sprintf(buff,"#ifndef __TMWP_H\n#define __TMWP_H\n#include<tmwp>\nusing namespce tmwp;\n");
+sprintf(buff,"#ifndef __TMWP_H\n#define __TMWP_H\n#include<tmwp>\nusing namespace tmwp;\n");
 fwrite(buff,sizeof(char),strlen(buff),h);
-map<string,string> *data;
-data=getFuncNames(filename);
 for(pair<string,string> a:*data)
 {
 sprintf(buff,"void %s_TPL(Request &request,Response &response);\n",a.second.c_str());
@@ -143,7 +148,7 @@ sprintf(buff,"void registerTPLs(TMWebProjector *server)\n{\n");
 fwrite(buff,sizeof(char),strlen(buff),h);
 for(pair<string,string> a:*data)
 {
-sprintf(buff,"server->onRequest(\"%s.tpl\",%s_TPL);\n",a.first.c_str(),a.second.c_str());
+sprintf(buff,"server->onRequest(\"/%s.tpl\",%s_TPL);\n",a.first.c_str(),a.second.c_str());
 fwrite(buff,sizeof(char),strlen(buff),h);
 }
 sprintf(buff,"}\n#endif\n");
@@ -182,7 +187,9 @@ if(feof(f)) break;
 if(c=='\n') break;
 line.push_back(c);
 }
-sprintf(buff,"response.write(\"%s\");\n",line.c_str());
+//donedone
+if(line.find("request.getValue")==std::string::npos) sprintf(buff,"response.write(\"%s\");\n",line.c_str());
+else sprintf(buff,"response.write(%s);\n",line.c_str());
 fwrite(buff,sizeof(char),strlen(buff),cpp);
 if(feof(f)) break;
 }
@@ -195,12 +202,17 @@ fclose(cpp);
 }//funcMap
 delete data;
 }
-int main()
+int main(int argc,char *argv[])
 {
-string filename;
-cout<<"Enter file name: ";
-getline(cin,filename);
+if(argc<=1) 
+{
+printf("Use Formate : [/tpl2c filename1 filename2 ...]");
+}
+for(int i=1;i<argc;i++)
+{
+string filename=string(argv[i]);
 tpl2c(filename);
+}
 return 0;
 }
 

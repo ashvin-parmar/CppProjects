@@ -281,7 +281,7 @@ if(len==0) return;
 if(!this->headerCreated) createHeader();
 send(clientSocketDescriptor,str,len,0);
 }
-void Response::write(string &str)
+void Response::write(string str)
 {
 this->write(str.c_str());
 }
@@ -510,8 +510,6 @@ TMWebProjector::~TMWebProjector()
 {
 //if(this->url) delete [] this->url;
 }
-
-//donedone
 string find_and_replace_file_keyword(string fileName,map<string,string> &variable)
 {
 FILE *f;
@@ -661,11 +659,11 @@ Request rq;
 parseRequest(url.getDecodedURL().c_str(),rq);
 REQUEST *request;
 request=rq.getRequest();
-printf("Request Resource: %s\n",request->resource);
+//printf("Request Resource: %s\n",request->resource);
 while(1)
 {
 //Here loop start for forwarding request to somewhere else part
-//printf("Request Resource: %s\n",request->resource);
+printf("Request Resource: %s\n",request->resource);
 //printf("Resource Side: %c\n",request->isClientSideTechnologyResource);
 
 if(request->isClientSideTechnologyResource=='Y')
@@ -730,6 +728,35 @@ continue;
 }
 }
 */
+if(strcmp(request->resource+strlen(request->resource)-3,"tpl")==0)
+{
+int ii=0;
+if(request->resource[0]=='/') ii=1;
+if(!isRequestURLExist(string(request->resource+ii)))
+{
+printf("Sending 404 page\n");
+char tmp[501];
+sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource /%s not found</h2></body></html>",request->resource);
+sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",(int)strlen(tmp));
+strcat(responseBuffer,tmp);
+send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
+close(clientSocketDescriptor);
+break;		//For forwarding request 
+}
+else
+{
+Response rs;
+rs.setClientSocket(clientSocketDescriptor);
+map<string,void *>::iterator ss=this->urlRequest.find(request->resource+ii);
+void (*ptrOnRequest)(Request &,Response &);
+ptrOnRequest=(void (*)(Request &,Response &))ss->second;
+ptrOnRequest(rq,rs);
+printf("Request Processed Successfully\n");
+rs.closeClientSocket();
+break;
+}
+//donedone
+}
 f=fopen(request->resource,"rb");
 if(f==NULL)
 {
@@ -806,6 +833,7 @@ continue;
 printf("Request Processed Successfully\n");
 break;
 }
+rs.closeClientSocket();
 }//server part else ends here
 }//For Forwarding Infinite Loop
 if(request->resource) free(request->resource);

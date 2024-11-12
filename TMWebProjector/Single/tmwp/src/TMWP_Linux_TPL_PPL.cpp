@@ -281,7 +281,7 @@ if(len==0) return;
 if(!this->headerCreated) createHeader();
 send(clientSocketDescriptor,str,len,0);
 }
-void Response::write(string &str)
+void Response::write(string str)
 {
 this->write(str.c_str());
 }

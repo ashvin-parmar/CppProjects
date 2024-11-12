@@ -50,7 +50,7 @@ Response(int clientSocketDescriptor);
 Response& operator=(const Response &other);
 void setClientSocket(int clientSocketDescriptor);
 void write(const char *str);
-void write(string &str);
+void write(string str);
 void closeClientSocket();
 void createHeader();
 virtual ~Response();

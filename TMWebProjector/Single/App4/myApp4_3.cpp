@@ -1,8 +1,26 @@
+#include"tpl.h"
 #include<iostream>
 #include<ctime>
 #include<tmwp>
 using namespace std;
 using namespace tmwp;
+void __getCityView_TPL(Request &request,Response &response)
+{
+response.write("<!DOCTYPE HTML>");
+response.write("<head>");
+response.write("<meta charset='utf8'>");
+response.write("<title>Error Page</title>");
+response.write("</head>");
+response.write("<body>");
+response.write("");
+response.write(request.getValue("error"));
+printf("%s\n",request.getValue("error").c_str());
+response.write("<BR>");
+response.write("<a href='index.html'>Home</a><BR>");
+response.write("</body>");
+response.write("</html>");
+response.write("");
+}
 void getCityView(Request &request,Response &response)
 {
 string cityCodeString=request.get("cityCode");
@@ -20,8 +38,7 @@ int main()
 {
 TMWebProjector server(8080);
 server.onRequest("/getCity",getCityView);
-
+registerTPLs(&server);
 server.start();
-
 return 0;
 }
