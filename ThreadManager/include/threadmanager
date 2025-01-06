@@ -1,0 +1,30 @@
+#ifndef __Thread_Manager__
+#define __Thread_Manager__
+
+#include<tuple>
+#include<thread>
+#include<utility>
+using namespace std;
+template<typename pointer_to_function,typename ...T>
+class ThreadManager
+{
+private:
+thread *thread_ptr;
+pointer_to_function func;
+tuple<T...> arguments;
+public:
+ThreadManager(pointer_to_function,T...);
+~ThreadManager();
+void start();
+ThreadManager(const ThreadManager &other)=delete;
+ThreadManager& operator=(const ThreadManager &other)=delete;
+void* operator new(size_t)=delete;
+void* operator new[](size_t)=delete;
+private:
+template<size_t ...c>
+void threadStarter(tuple<T...> &t,index_sequence<c...>);
+};
+
+#include "./../src/threadmanager.cpp"	//I do not want to create (.tpp) file
+
+#endif
