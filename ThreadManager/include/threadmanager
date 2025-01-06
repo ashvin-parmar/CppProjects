@@ -4,6 +4,7 @@
 #include<tuple>
 #include<thread>
 #include<utility>
+
 using namespace std;
 template<typename pointer_to_function,typename ...T>
 class ThreadManager
@@ -13,18 +14,31 @@ thread *thread_ptr;
 pointer_to_function func;
 tuple<T...> arguments;
 public:
-ThreadManager(pointer_to_function,T...);
+ThreadManager(pointer_to_function func,T&&... argu);
 ~ThreadManager();
 void start();
 ThreadManager(const ThreadManager &other)=delete;
 ThreadManager& operator=(const ThreadManager &other)=delete;
-void* operator new(size_t)=delete;
-void* operator new[](size_t)=delete;
+//void* operator new(size_t)=delete;
+//void* operator new[](size_t)=delete;
 private:
 template<size_t ...c>
 void threadStarter(tuple<T...> &t,index_sequence<c...>);
+template<typename E>
+static decltype(auto) forward_as_needed(E&& e) {
+if constexpr (std::is_lvalue_reference_v<E>) {
+return std::ref(e);
+} else {
+return std::move(e);
+}
+}
+/*
+template<typename E>
+auto wrapper(E&& e) -> decltype(forward<E>(e)) { return forward<E>(e); }
+template<typename E>
+auto wrapper(reference_wrapper<E> e) -> E& { return e.get(); }
+*/
 };
 
 #include "./../src/threadmanager.cpp"	//I do not want to create (.tpp) file
-
 #endif
