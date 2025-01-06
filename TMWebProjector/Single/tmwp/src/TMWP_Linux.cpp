@@ -657,6 +657,10 @@ requestBuffer[byteExtracted]='\0';	//Request taken from browser are not contain 
 URLDecoder url(requestBuffer);
 Request rq;
 parseRequest(url.getDecodedURL().c_str(),rq);
+//---------------Threading Part for each request starts here-------------------
+//Here Thread created
+
+// Below data shifted to a function and then this function address is passed to thread manager class and processing of that function is managed by respective thread. 
 REQUEST *request;
 request=rq.getRequest();
 //printf("Request Resource: %s\n",request->resource);
@@ -840,6 +844,8 @@ if(request->resource) free(request->resource);
 if(request->mimeType) free(request->mimeType);
 if(request->method) free(request->method);
 if(request) free(request);
+//------------Threading parts ends here---------------
+
 }//else part ends here
 }// while loop ends
 close(serverSocketDescriptor);
