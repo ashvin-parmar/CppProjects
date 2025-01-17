@@ -7,6 +7,7 @@
 #include<urldecoder>
 #include<string.h>
 #include<map>
+#include<threadmanager>
 using namespace std;
 using namespace tmwp;
 using namespace urldecoder;
@@ -266,6 +267,10 @@ void Response::setClientSocket(int clientSocketDescriptor)
 {
 this->clientSocketDescriptor=clientSocketDescriptor;
 }
+int Response::getClientSocket()
+{
+return this->clientSocketDescriptor;
+}
 void Response::createHeader()
 {
 char header[51];
@@ -477,6 +482,12 @@ this->portNumber=portNumber;
 //this->ptrOnRequest=NULL;
 //this->url=NULL;
 }
+void * TMWebProjector::getURLRequest(string url)
+{
+map<string,void *>::iterator i=this->urlRequest.find(url);
+if(i==this->urlRequest.end()) return NULL;
+else return i->second;
+}
 int TMWebProjector::isRequestURLExist(string url)
 {
 map<string,void *>::iterator i=this->urlRequest.find(url);
@@ -595,19 +606,28 @@ fclose(tmp);
 */
 return tmpName;
 }
-
+void threadRequest(TMWebProjector *,Request &rq,Response &rs);
+bool isExit=false;
+void TMWebProjector::exit()
+{
+while(1)
+{
+char m=getchar();
+if(m=='\n')
+{
+//wait for all request to complete and then serverSocket destroy
+isExit=true;
+}
+}
+}
 void TMWebProjector::start()
 {
-int length;
-int cn,rc;
-FILE *f;
 int serverSocketDescriptor;
 int clientSocketDescriptor;
 struct sockaddr_in serverSocketInformation;
 struct sockaddr_in clientSocketInformation;
 int successCode,byteExtracted,len;
 char requestBuffer[8192]; 	//8192=1024 * 8 
-char responseBuffer[1024]; 	//1024 chunk of data 
 serverSocketDescriptor=socket(AF_INET,SOCK_STREAM,0);
 if(serverSocketDescriptor<0)
 {
@@ -628,6 +648,7 @@ return ;
 }
 listen(serverSocketDescriptor,10);
 len=sizeof(clientSocketInformation);
+thread t(TMWebProjector::exit);
 while(1)
 {
 sprintf(messege,"TMServer is ready to accept request on port %d",this->portNumber);
@@ -657,25 +678,51 @@ requestBuffer[byteExtracted]='\0';	//Request taken from browser are not contain 
 URLDecoder url(requestBuffer);
 Request rq;
 parseRequest(url.getDecodedURL().c_str(),rq);
+Response rs;
+rs.setClientSocket(clientSocketDescriptor);
 //---------------Threading Part for each request starts here-------------------
 //Here Thread created
 
 // Below data shifted to a function and then this function address is passed to thread manager class and processing of that function is managed by respective thread. 
+ThreadManager<void (*)(TMWebProjector *,Request&,Response&),TMWebProjector *,Request&,Response&> tm(threadRequest,this,rq,rs);
+//Here data of thread is maintained in a data structure such that all of the thread are runs and then server ends	[Pending]
+tm.start();
+}//else part ends here
+//Here a thread which demands for server to end using break statement [Handle through a function of TMWebProjector]
+if(isExit) 
+{
+//Free ALl Thread then break
+break;
+}
+}// while loop ends
+close(serverSocketDescriptor);
+}
+
+void threadRequest(TMWebProjector *tm,Request &rq,Response &rs)
+{
 REQUEST *request;
-request=rq.getRequest();
 //printf("Request Resource: %s\n",request->resource);
+FILE *f;
+int length;
+int cn,rc;
+int clientSocketDescriptor;
+int byteExtracted;
+char responseBuffer[1024]; 	//1024 chunk of data 
+request=rq.getRequest();
+printf("Request Resource: %s\n",request->resource);
+clientSocketDescriptor=rs.getClientSocket();
+printf("%d\n",clientSocketDescriptor);
 while(1)
 {
 //Here loop start for forwarding request to somewhere else part
-printf("Request Resource: %s\n",request->resource);
 //printf("Resource Side: %c\n",request->isClientSideTechnologyResource);
 
 if(request->isClientSideTechnologyResource=='Y')
 {
-//cout<<"clientSideTech"<<endl;
+cout<<"clientSideTech"<<endl;
 if(request->resource==NULL)
 {
-//cout<<"Resource Null"<<endl;
+cout<<"Resource Null"<<endl;
 f=fopen("index.html","rb");
 if(f==NULL)
 {
@@ -686,7 +733,8 @@ if(f==NULL)
 printf("Sending 404 page\n");
 strcpy(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 163\n\n<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>TM Web Projector</title></head><body><h2 style='color:red'>Resource / not found</h2></body></html>");
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
-close(clientSocketDescriptor);
+close(rs.getClientSocket());
+//rs.closeClientSocket();
 break;		//For forwarding request 
 }
 else
@@ -694,7 +742,7 @@ else
 fseek(f,0,2);
 length=ftell(f);
 fseek(f,0,0);
-//printf("Size of length: %d\n",length);
+printf("Size of length: %d\n",length);
 sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",length);
 byteExtracted=send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 cn=0;
@@ -708,7 +756,8 @@ byteExtracted=send(clientSocketDescriptor,responseBuffer,rc,0);
 cn+=rc;
 }
 fclose(f);
-close(clientSocketDescriptor);
+close(rs.getClientSocket());
+//rs.closeClientSocket();
 break;		//For forwarding request 
 }
 }
@@ -736,7 +785,7 @@ if(strcmp(request->resource+strlen(request->resource)-3,"tpl")==0)
 {
 int ii=0;
 if(request->resource[0]=='/') ii=1;
-if(!isRequestURLExist(string(request->resource+ii)))
+if(!tm->isRequestURLExist(string(request->resource+ii)))
 {
 printf("Sending 404 page\n");
 char tmp[501];
@@ -744,22 +793,23 @@ sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>T
 sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",(int)strlen(tmp));
 strcat(responseBuffer,tmp);
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
-close(clientSocketDescriptor);
+//close(clientSocketDescriptor);
+rs.closeClientSocket();
 break;		//For forwarding request 
 }
 else
 {
-Response rs;
-rs.setClientSocket(clientSocketDescriptor);
-map<string,void *>::iterator ss=this->urlRequest.find(request->resource+ii);
+//Response rs;
+//rs.setClientSocket(clientSocketDescriptor);
+//map<string,void *>::iterator ss=tm->urlRequest.find(request->resource+ii);
 void (*ptrOnRequest)(Request &,Response &);
-ptrOnRequest=(void (*)(Request &,Response &))ss->second;
+//ptrOnRequest=(void (*)(Request &,Response &))ss->second;
+ptrOnRequest=(void (*)(Request &,Response &))tm->getURLRequest(string(request->resource+ii));
 ptrOnRequest(rq,rs);
 printf("Request Processed Successfully\n");
 rs.closeClientSocket();
 break;
 }
-//donedone
 }
 f=fopen(request->resource,"rb");
 if(f==NULL)
@@ -770,7 +820,8 @@ sprintf(tmp,"<!DOCTYPE HTML><html lang='en'><head><meta charset='utf-8'><title>T
 sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: %d\nConnection: close\n\n",(int)strlen(tmp));
 strcat(responseBuffer,tmp);
 send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
-close(clientSocketDescriptor);
+//close(clientSocketDescriptor);
+rs.closeClientSocket();
 break;		//For forwarding request 
 }
 else
@@ -778,7 +829,7 @@ else
 fseek(f,0,2);
 length=ftell(f);
 fseek(f,0,0);
-//printf("Size of length: %d\n",length);
+printf("Size of length: %d\n",length);
 sprintf(responseBuffer,"HTTP/1.1 200 OK\nContent-Type: %s\nContent-Length: %d\nConnection: close\n\n",request->mimeType,length);
 byteExtracted=send(clientSocketDescriptor,responseBuffer,strlen(responseBuffer),0);
 cn=0;
@@ -792,21 +843,22 @@ byteExtracted=send(clientSocketDescriptor,responseBuffer,rc,0);
 cn+=rc;
 }
 fclose(f);
-close(clientSocketDescriptor);
+//close(clientSocketDescriptor);
+rs.closeClientSocket();
 break;		//For forwarding request 
 }
 }
 }
 else
 {
-Response rs;
-rs.setClientSocket(clientSocketDescriptor);
+//Response rs;
+//rs.setClientSocket(clientSocketDescriptor);
 //cout<<"serverSideResource"<<endl;
 int ii=0;
-//for(pair<string,void *> p:this->urlRequest) printf("URL ASSIGENed: (%s), p2f: %d\n",p.first.c_str(),(void (*)(Request &,Response &))p.second);
+//for(pair<string,void *> p:tm->urlRequest) printf("URL ASSIGENed: (%s), p2f: %d\n",p.first.c_str(),(void (*)(Request &,Response &))p.second);
 
 if(request->resource[0]=='/') ii=1;
-if(!isRequestURLExist(string(request->resource+ii)))
+if(!tm->isRequestURLExist(string(request->resource+ii)))
 {
 printf("Sending 404 page\n");
 char tmp[501];
@@ -818,9 +870,10 @@ break;		//For forwarding request
 }
 else
 {
-map<string,void *>::iterator ss=this->urlRequest.find(request->resource+ii);
+//map<string,void *>::iterator ss=tm->urlRequest.find(request->resource+ii);
 void (*ptrOnRequest)(Request &,Response &);
-ptrOnRequest=(void (*)(Request &,Response &))ss->second;
+ptrOnRequest=(void (*)(Request &,Response &))tm->getURLRequest(string(request->resource+ii));
+//ptrOnRequest=(void (*)(Request &,Response &))ss->second;
 ptrOnRequest(rq,rs);
 if(rq.isForward())
 {
@@ -845,8 +898,4 @@ if(request->mimeType) free(request->mimeType);
 if(request->method) free(request->method);
 if(request) free(request);
 //------------Threading parts ends here---------------
-
-}//else part ends here
-}// while loop ends
-close(serverSocketDescriptor);
 }
