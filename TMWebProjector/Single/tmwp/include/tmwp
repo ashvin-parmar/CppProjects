@@ -49,6 +49,7 @@ Response(const Response &other);
 Response(int clientSocketDescriptor);
 Response& operator=(const Response &other);
 void setClientSocket(int clientSocketDescriptor);
+int getClientSocket();
 void write(const char *str);
 void write(string str);
 void closeClientSocket();
@@ -65,10 +66,13 @@ std::map<std::string,void *> urlRequest;
 public:
 TMWebProjector(int portNumber);
 ~TMWebProjector();
+void * getURLRequest(std::string url);
 int isRequestURLExist(std::string url);
 void start();
+static void exit();
 void onRequest(const char *,void (*)(Request &,Response &));
 void onRequest(string &url,void (*)(Request &,Response &));
+//void threadRequest(Request rq,Response rs);
 };
 }
 #endif
