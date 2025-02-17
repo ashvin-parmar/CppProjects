@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QList>
 #include "drawing.h"
-#include <unordered_map>
 #include<QHash>
 
 class DrawingManager : public QWidget {

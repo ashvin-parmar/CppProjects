@@ -32,7 +32,6 @@ SOURCES += \
     shapes_src/textshape.cpp
 
 HEADERS += \
-    ../../../Ashvin/cppProgramming/QT/qteg/DPII_Final/drawingmanager.h \
     drawing.h \
     drawingmanager.h \
     mainwindow.h \

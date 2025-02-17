@@ -26,7 +26,6 @@
 #include<shapes_header/pointshape.h>
 #include<shapes_header/polylineshape.h>
 #include<shapes_header/polygonshape.h>
-#include<shapes_header/arcshape.h>
 #include<shapes_header/ellipseshape.h>
 #include<shapes_header/rectangleshape.h>
 #include<shapes_header/roundedrectangleshape.h>
@@ -48,17 +47,20 @@ MainWindow::MainWindow(QWidget *parent)
     QStringList colorList=QColor::colorNames();
     QStringList fontFamilies=QFontDatabase().families();
     //Style Sheet Strings
+    QString spinBoxUpDownButton=" QSpinBox::up-button { color: lightgray; width: 20px; } QSpinBox::down-button { color: lightgray; width: 20px; }";
     QString drawingStyleSheet="background-color: white; border: 2px solid black; border-radius: 5px";
     QString menuFrameStyleSheet="border: 2px solid black; border-radius: 5px";
-    QString comboBoxStyleSheet="QComboBox { border: 1px solid gray; border-radius: 3px; padding: 2px 5px; background: white; color: black; } QComboBox QAbstractItemView { selection-background-color: lightblue; selection-color: white; }";
+    QString comboBoxStyleSheet="QComboBox { border: 1px solid gray; border-radius: 3px; padding: 2px 5px; background: white; color: black; } QComboBox QAbstractItemView {padding: 2px;  selection-background-color: lightblue; selection-color: white; } ";
     QString transparentButtonStyleSheet="background-color: rgba(0, 0, 0, 0); color: white; border: none;";
     QString shapeMenuButtonStyleSheet="background: white; border: 0px solid gray; border-radius: 5px;";
     QString pushButtonStyleSheet="background: white; border: 1px solid black; border-radius: 5px;";
     QString textLineStyleSheet="background: white; border: 1px solid black; border-radius: 5px;";
-    QString spinBoxStyleSheet="background: white; border: 1px solid lightgray; border-radius: 5px;";
+    QString spinBoxStyleSheet="QSpinBox {background: white; border: 1px solid lightgray; border-radius: 5px;}"+spinBoxUpDownButton;
     QString frameStyleSheet="QFrame {background-color: #efefef; border: 2px solid lightgray; border-radius: 5px;} QLabel {background: transparent; color: black; font: unset; border: none;} QTableWidget { background-color: white; border: 2px solid lightgray; gridline-color: lightgray; } QHeaderView::section { background-color: white; border: 0px solid lightgray; padding: 4px;} QTableWidget::item:selected { background: lightblue; color: white;}";
     QString titleLabelStyleSheet="border: 1px solid black; border-radius: 5px;";
     QString tableWidgetStyleSheet="QTableWidget { background-color: white; border: 2px solid lightgray; gridline-color: lightgray; } QHeaderView::section { background-color: white; border: 0px solid lightgray; padding: 4px;} QTableWidget::item:selected { background: lightblue; color: white;} QLabel {background: transparent; color: black; font: unset; border: none;}";
+
+
 
     brushStyleInitialization();
     frameSetTabOrderInitialization();
@@ -93,6 +95,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->loginButton->setStyleSheet("QPushButton { color: black; background-color: white; border: 1px solid black; padding: 5px; } QPushButton:hover { background-color: black; color: white;}");
     this->ui->username->setPlaceholderText("Enter username...");
     this->ui->username->setStyleSheet("background: white; border: 1px solid black; padding: 2px;");
+    this->ui->username->setFocus(Qt::FocusReason::TabFocusReason);
+    this->ui->username->setTabOrder(this->ui->loginButton,this->ui->loginButton);
+    this->ui->loginButton->setTabOrder(this->ui->username,this->ui->username);
     this->ui->homeMenu->setStyleSheet(shapeMenuButtonStyleSheet);
     this->frameOpened=false;
     this->ui->menuLabel->setStyleSheet(titleLabelStyleSheet);
@@ -471,6 +476,7 @@ MainWindow::~MainWindow()
 void MainWindow::brushStyleInitialization()
 {
     // Add each brush style to the combo box with proper QVariant conversion
+    this->ui->brushStylePolyline->addItem("None", QVariant::fromValue(Qt::NoBrush));
     this->ui->brushStylePolyline->addItem("SolidPattern", QVariant::fromValue(Qt::SolidPattern));
     this->ui->brushStylePolyline->addItem("Dense1Pattern", QVariant::fromValue(Qt::Dense1Pattern));
     this->ui->brushStylePolyline->addItem("Dense2Pattern", QVariant::fromValue(Qt::Dense2Pattern));
@@ -485,11 +491,8 @@ void MainWindow::brushStyleInitialization()
     this->ui->brushStylePolyline->addItem("BDiagPattern", QVariant::fromValue(Qt::BDiagPattern));
     this->ui->brushStylePolyline->addItem("FDiagPattern", QVariant::fromValue(Qt::FDiagPattern));
     this->ui->brushStylePolyline->addItem("DiagCrossPattern", QVariant::fromValue(Qt::DiagCrossPattern));
-    this->ui->brushStylePolyline->addItem("LinearGradientPattern", QVariant::fromValue(Qt::LinearGradientPattern));
-    this->ui->brushStylePolyline->addItem("RadialGradientPattern", QVariant::fromValue(Qt::RadialGradientPattern));
-    this->ui->brushStylePolyline->addItem("ConicalGradientPattern", QVariant::fromValue(Qt::ConicalGradientPattern));
-    this->ui->brushStylePolyline->addItem("TexturePattern", QVariant::fromValue(Qt::TexturePattern));
 
+    this->ui->brushStylePolygon->addItem("None", QVariant::fromValue(Qt::NoBrush));
     this->ui->brushStylePolygon->addItem("SolidPattern", QVariant::fromValue(Qt::SolidPattern));
     this->ui->brushStylePolygon->addItem("Dense1Pattern", QVariant::fromValue(Qt::Dense1Pattern));
     this->ui->brushStylePolygon->addItem("Dense2Pattern", QVariant::fromValue(Qt::Dense2Pattern));
@@ -504,11 +507,8 @@ void MainWindow::brushStyleInitialization()
     this->ui->brushStylePolygon->addItem("BDiagPattern", QVariant::fromValue(Qt::BDiagPattern));
     this->ui->brushStylePolygon->addItem("FDiagPattern", QVariant::fromValue(Qt::FDiagPattern));
     this->ui->brushStylePolygon->addItem("DiagCrossPattern", QVariant::fromValue(Qt::DiagCrossPattern));
-    this->ui->brushStylePolygon->addItem("LinearGradientPattern", QVariant::fromValue(Qt::LinearGradientPattern));
-    this->ui->brushStylePolygon->addItem("RadialGradientPattern", QVariant::fromValue(Qt::RadialGradientPattern));
-    this->ui->brushStylePolygon->addItem("ConicalGradientPattern", QVariant::fromValue(Qt::ConicalGradientPattern));
-    this->ui->brushStylePolygon->addItem("TexturePattern", QVariant::fromValue(Qt::TexturePattern));
 
+    this->ui->brushStyleEllipse->addItem("None", QVariant::fromValue(Qt::NoBrush));
     this->ui->brushStyleEllipse->addItem("SolidPattern", QVariant::fromValue(Qt::SolidPattern));
     this->ui->brushStyleEllipse->addItem("Dense1Pattern", QVariant::fromValue(Qt::Dense1Pattern));
     this->ui->brushStyleEllipse->addItem("Dense2Pattern", QVariant::fromValue(Qt::Dense2Pattern));
@@ -523,11 +523,8 @@ void MainWindow::brushStyleInitialization()
     this->ui->brushStyleEllipse->addItem("BDiagPattern", QVariant::fromValue(Qt::BDiagPattern));
     this->ui->brushStyleEllipse->addItem("FDiagPattern", QVariant::fromValue(Qt::FDiagPattern));
     this->ui->brushStyleEllipse->addItem("DiagCrossPattern", QVariant::fromValue(Qt::DiagCrossPattern));
-    this->ui->brushStyleEllipse->addItem("LinearGradientPattern", QVariant::fromValue(Qt::LinearGradientPattern));
-    this->ui->brushStyleEllipse->addItem("RadialGradientPattern", QVariant::fromValue(Qt::RadialGradientPattern));
-    this->ui->brushStyleEllipse->addItem("ConicalGradientPattern", QVariant::fromValue(Qt::ConicalGradientPattern));
-    this->ui->brushStyleEllipse->addItem("TexturePattern", QVariant::fromValue(Qt::TexturePattern));
 
+    this->ui->brushStyleRectangle->addItem("None", QVariant::fromValue(Qt::NoBrush));
     this->ui->brushStyleRectangle->addItem("SolidPattern", QVariant::fromValue(Qt::SolidPattern));
     this->ui->brushStyleRectangle->addItem("Dense1Pattern", QVariant::fromValue(Qt::Dense1Pattern));
     this->ui->brushStyleRectangle->addItem("Dense2Pattern", QVariant::fromValue(Qt::Dense2Pattern));
@@ -542,12 +539,8 @@ void MainWindow::brushStyleInitialization()
     this->ui->brushStyleRectangle->addItem("BDiagPattern", QVariant::fromValue(Qt::BDiagPattern));
     this->ui->brushStyleRectangle->addItem("FDiagPattern", QVariant::fromValue(Qt::FDiagPattern));
     this->ui->brushStyleRectangle->addItem("DiagCrossPattern", QVariant::fromValue(Qt::DiagCrossPattern));
-    this->ui->brushStyleRectangle->addItem("LinearGradientPattern", QVariant::fromValue(Qt::LinearGradientPattern));
-    this->ui->brushStyleRectangle->addItem("RadialGradientPattern", QVariant::fromValue(Qt::RadialGradientPattern));
-    this->ui->brushStyleRectangle->addItem("ConicalGradientPattern", QVariant::fromValue(Qt::ConicalGradientPattern));
-    this->ui->brushStyleRectangle->addItem("TexturePattern", QVariant::fromValue(Qt::TexturePattern));
 
-
+    this->ui->brushStyleRoundedRectangle->addItem("None", QVariant::fromValue(Qt::NoBrush));
     this->ui->brushStyleRoundedRectangle->addItem("SolidPattern", QVariant::fromValue(Qt::SolidPattern));
     this->ui->brushStyleRoundedRectangle->addItem("Dense1Pattern", QVariant::fromValue(Qt::Dense1Pattern));
     this->ui->brushStyleRoundedRectangle->addItem("Dense2Pattern", QVariant::fromValue(Qt::Dense2Pattern));
@@ -562,11 +555,6 @@ void MainWindow::brushStyleInitialization()
     this->ui->brushStyleRoundedRectangle->addItem("BDiagPattern", QVariant::fromValue(Qt::BDiagPattern));
     this->ui->brushStyleRoundedRectangle->addItem("FDiagPattern", QVariant::fromValue(Qt::FDiagPattern));
     this->ui->brushStyleRoundedRectangle->addItem("DiagCrossPattern", QVariant::fromValue(Qt::DiagCrossPattern));
-    this->ui->brushStyleRoundedRectangle->addItem("LinearGradientPattern", QVariant::fromValue(Qt::LinearGradientPattern));
-    this->ui->brushStyleRoundedRectangle->addItem("RadialGradientPattern", QVariant::fromValue(Qt::RadialGradientPattern));
-    this->ui->brushStyleRoundedRectangle->addItem("ConicalGradientPattern", QVariant::fromValue(Qt::ConicalGradientPattern));
-    this->ui->brushStyleRoundedRectangle->addItem("TexturePattern", QVariant::fromValue(Qt::TexturePattern));
-
 }
 
 void MainWindow::frameSetTabOrderInitialization()
@@ -602,8 +590,8 @@ void MainWindow::on_drawLine_clicked()
     line->setPenColor(QColor(this->ui->colorLine->currentText()));
     line->setPenWidth(this->ui->penWidth->value());
     this->drawingManager->addShape(line);
-    this->ui->listWidget->addItem(line->toString());
-    this->ui->treeWidget->addTopLevelItem(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(line->toString())));
+    this->ui->listWidget->insertItem(0,line->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(line->toString())));
     this->ui->lineFrame->setVisible(false);
     this->ui->x1->setValue(100);
     this->ui->y1->setValue(100);
@@ -651,8 +639,8 @@ void MainWindow::on_drawText_clicked()
     text->setPointSize(this->ui->textPointSize->value());
     this->drawingManager->addShape(text);
     this->ui->textFrame->setVisible(false);
-    this->ui->listWidget->addItem(text->toString());
-    this->ui->treeWidget->addTopLevelItem(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(text->toString())));
+    this->ui->listWidget->insertItem(0,text->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(text->toString())));
     this->ui->text->setText("");
     this->ui->textX->setValue(100);
     this->ui->textY->setValue(100);
@@ -694,8 +682,8 @@ void MainWindow::on_drawPoint_clicked()
     point->setPenWidth(this->ui->pointPenWidth->value());
     this->drawingManager->addShape(point);
     this->ui->pointFrame->setVisible(false);
-    this->ui->listWidget->addItem(point->toString());
-    this->ui->treeWidget->addTopLevelItem(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(point->toString())));
+    this->ui->listWidget->insertItem(0,point->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(point->toString())));
     this->drawingManager->drawAll();
     this->ui->pointX->setValue(100);
     this->ui->pointY->setValue(200);
@@ -763,8 +751,8 @@ void MainWindow::on_drawPolyline_clicked()
 //    polyline->setBrush(QBrush(QColor(this->ui->brushPolyline->currentText())));
     this->drawingManager->addShape(polyline);
     this->ui->polylineFrame->setVisible(false);
-    this->ui->listWidget->addItem(polyline->toString());
-    this->ui->treeWidget->addTopLevelItem(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(polyline->toString())));
+    this->ui->listWidget->insertItem(0,polyline->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(polyline->toString())));
     this->ui->polylineX->setValue(100);
     this->ui->polylineY->setValue(100);
     this->ui->polylinePointTable->setColumnCount(0);
@@ -839,8 +827,8 @@ void MainWindow::on_drawPolygon_clicked()
 //    polygon->setBrush(QBrush(QColor(this->ui->brushpolygon->currentText())));
     this->drawingManager->addShape(polygon);
     this->ui->polygonFrame->setVisible(false);
-    this->ui->listWidget->addItem(polygon->toString());
-    this->ui->treeWidget->addTopLevelItem(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(polygon->toString())));
+    this->ui->listWidget->insertItem(0,polygon->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(polygon->toString())));
     this->ui->polygonX->setValue(100);
     this->ui->polygonY->setValue(100);
     this->ui->polygonPointTable->setColumnCount(0);
@@ -893,8 +881,8 @@ void MainWindow::on_drawArc_clicked()
     arc->setPenWidth(this->ui->arcPenWidth->value());
     this->drawingManager->addShape(arc);
     this->ui->arcFrame->setVisible(false);
-    this->ui->listWidget->addItem(arc->toString());
-    this->ui->treeWidget->addTopLevelItem(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(arc->toString())));
+    this->ui->listWidget->insertItem(0,arc->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(arc->toString())));
     this->ui->arcX->setValue(100);
     this->ui->arcY->setValue(100);
     this->ui->arcWidth->setValue(100);
@@ -942,8 +930,8 @@ void MainWindow::on_drawEllipse_clicked()
 //    ellipse->setBrush(QBrush(QColor(this->ui->brushEllipse->currentText())));
     this->drawingManager->addShape(ellipse);
     this->ui->ellipseFrame->setVisible(false);
-    this->ui->listWidget->addItem(ellipse->toString());
-    this->ui->treeWidget->addTopLevelItem(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(ellipse->toString())));
+    this->ui->listWidget->insertItem(0,ellipse->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(ellipse->toString())));
     this->ui->ellipseX->setValue(100);
     this->ui->ellipseY->setValue(100);
     this->ui->ellipseVR->setValue(100);
@@ -999,8 +987,8 @@ void MainWindow::on_drawRectangle_clicked()
 //    rectangle->setBrush(QBrush(QColor(this->ui->brushRectangle->currentText())));
     this->drawingManager->addShape(rectangle);
     this->ui->rectangleFrame->setVisible(false);
-    this->ui->listWidget->addItem(rectangle->toString());
-    this->ui->treeWidget->addTopLevelItem(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(rectangle->toString())));
+    this->ui->listWidget->insertItem(0,rectangle->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(rectangle->toString())));
     this->ui->rectangleX->setValue(100);
     this->ui->rectangleY->setValue(100);
     this->ui->rectangleWidth->setValue(100);
@@ -1036,8 +1024,8 @@ void MainWindow::on_drawRoundedRectangle_clicked()
 //    roundedRectangle->setBrush(QBrush(QColor(this->ui->brushRoundedRectangle->currentText())));
     this->drawingManager->addShape(roundedRectangle);
     this->ui->roundedRectangleFrame->setVisible(false);
-    this->ui->listWidget->addItem(roundedRectangle->toString());
-    this->ui->treeWidget->addTopLevelItem(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(roundedRectangle->toString())));
+    this->ui->listWidget->insertItem(0,roundedRectangle->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(roundedRectangle->toString())));
     this->ui->roundedRectangleX->setValue(100);
     this->ui->roundedRectangleY->setValue(100);
     this->ui->roundedRectangleXRadius->setValue(10);
@@ -1104,8 +1092,8 @@ void MainWindow::on_drawPixmap_clicked()
     pixmap->setPixmap(image);
     this->drawingManager->addShape(pixmap);
     this->ui->pixmapFrame->setVisible(false);
-    this->ui->listWidget->addItem(pixmap->toString());
-    this->ui->treeWidget->addTopLevelItem(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(pixmap->toString())));
+    this->ui->listWidget->insertItem(0,pixmap->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(pixmap->toString())));
     this->ui->pixmapX->setValue(100);
     this->ui->pixmapY->setValue(100);
     this->ui->pixmapWidth->setValue(100);
