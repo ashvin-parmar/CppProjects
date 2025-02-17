@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>cancel.png</file>
+        <file>icon/arc_2.png</file>
+        <file>icon/board_background_1.jpg</file>
+        <file>icon/board_background_2.avif</file>
+        <file>icon/ellipse.svg</file>
+        <file>icon/line.svg</file>
+        <file>icon/login-icon.svg</file>
+        <file>icon/logout-icon.svg</file>
+        <file>icon/point.svg</file>
+        <file>icon/polygon.svg</file>
+        <file>icon/polyline.svg</file>
+        <file>icon/rectangle.svg</file>
+        <file>icon/rounded-rectangle.svg</file>
+        <file>icon/text.png</file>
+        <file>icon/text.svg</file>
+        <file>icon/image.svg</file>
+        <file>icon/user.svg</file>
+    </qresource>
+</RCC>
