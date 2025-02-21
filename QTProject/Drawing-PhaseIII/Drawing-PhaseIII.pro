@@ -22,6 +22,7 @@ SOURCES += \
     mainwindow.cpp \
     shapes_src/arcshape.cpp \
     shapes_src/ellipseshape.cpp \
+    shapes_src/freehandshape.cpp \
     shapes_src/lineshape.cpp \
     shapes_src/pixmapshape.cpp \
     shapes_src/pointshape.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     mainwindow.h \
     shapes_header/arcshape.h \
     shapes_header/ellipseshape.h \
+    shapes_header/freehandshape.h \
     shapes_header/lineshape.h \
     shapes_header/pixmapshape.h \
     shapes_header/pointshape.h \

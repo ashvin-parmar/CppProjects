@@ -21,8 +21,8 @@
    <widget class="QFrame" name="phaseII">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>2342</y>
+      <x>4354</x>
+      <y>0</y>
       <width>1369</width>
       <height>900</height>
      </rect>
@@ -4496,6 +4496,22 @@
        </widget>
       </item>
      </layout>
+    </widget>
+    <widget class="QWidget" name="board" native="true">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>10</y>
+       <width>1144</width>
+       <height>700</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
     </widget>
    </widget>
   </widget>

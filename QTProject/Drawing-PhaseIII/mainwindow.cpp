@@ -30,6 +30,7 @@
 #include<shapes_header/rectangleshape.h>
 #include<shapes_header/roundedrectangleshape.h>
 #include<shapes_header/pixmapshape.h>
+#include<shapes_header/freehandshape.h>
 #include<iostream>
 using namespace std;
 
@@ -43,7 +44,6 @@ MainWindow::MainWindow(QWidget *parent)
 //    this->setGeometry(QRect(0,0,1369,900));
     PhaseII();
     PhaseIII();
-
 }
 //This Feature is not usefull for our application
 
@@ -63,11 +63,11 @@ void MainWindow::PhaseIII()
     this->ui->phaseII->setVisible(false);
     this->ui->menubar->setVisible(false);
 
-
+    //Because mixing two different applications
     this->ui->phaseIII->setVisible(true);
     this->ui->phaseIII->setGeometry(QRect(0,0,1369,900));
     this->ui->listView->setMaximumSize(131,371);
-
+    this->model=DrawingManager::getInstance(this->ui->board);
 
 
 
@@ -79,6 +79,7 @@ void MainWindow::PhaseIII()
 void MainWindow::PhaseII()
 {
     this->ui->phaseIII->setVisible(false);
+
     this->ui->phaseII->setGeometry(QRect(0,0,1369,900));
     QStringList colorList=QColor::colorNames();
     QStringList fontFamilies=QFontDatabase().families();
@@ -105,11 +106,10 @@ void MainWindow::PhaseII()
 //       qDebug() << "Full Screen Size: " << fullSize;
 
     this->drawingManager=DrawingManager::getInstance(this->ui->drawing);
-    this->drawingManager->setGeometry(10,10,1190,700);
+    this->drawingManager->setGeometry(10,10,1189,699);
     this->ui->drawing->setStyleSheet(drawingStyleSheet);
     this->ui->menuFrame->setStyleSheet(menuFrameStyleSheet);
     this->drawingManager->setVisible(true);
-
     this->ui->drawing->setVisible(false);
     this->ui->menuFrame->setVisible(false);
 //    QGridLayout *layout=new QGridLayout();
@@ -1279,11 +1279,43 @@ void MainWindow::on_changePhaseII_clicked()
     this->ui->phaseIII->setVisible(false);
     this->ui->phaseII->setVisible(true);
     this->ui->menubar->setVisible(true);
+
+//    //Removing all data from listWidget + drawingmanager
+//        while(this->ui->listWidget->count()>0)
+//        {
+//            QListWidgetItem *item=this->ui->listWidget->takeItem(0);
+//            QString data=item->text();
+//    //        printf("Data: %s\n",data.toStdString().c_str());
+//            this->model->removeShape(data);
+//        }
+//        this->ui->listWidget->clear();
+//        this->ui->treeWidget->clear();
+
 }
 
-void MainWindow::on_changePhaseIII_clicked()
+void MainWindow::on_changePhaseIII_clicked()    //Some code to change donedone
 {
     this->ui->phaseIII->setVisible(true);
     this->ui->phaseII->setVisible(false);
     this->ui->menubar->setVisible(false);
+/*
+    //Removing all data from listWidget + drawingmanager
+    while(this->ui->listWidget->count()>0)
+    {
+        QListWidgetItem *item=this->ui->listWidget->takeItem(0);
+        QString data=item->text();
+//        printf("Data: %s\n",data.toStdString().c_str());
+        this->drawingManager->removeShape(data);
+    }
+    this->ui->listWidget->clear();
+    this->ui->treeWidget->clear();*/
+
+}
+
+void MainWindow::on_freeHandDraw_clicked()
+{
+    FreeHandShape *freeHandShape=new FreeHandShape();
+    this->model->addShape(freeHandShape);
+    this->ui->listWidget->insertItem(0,freeHandShape->toString());
+    this->ui->treeWidget->insertTopLevelItem(0,new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(freeHandShape->toString())));
 }

@@ -22,11 +22,15 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+
 private:
     explicit DrawingManager(QWidget *parent = nullptr);
     static DrawingManager *instance;
     QList<Drawing*> shapes;
     QHash<QString,Drawing*> viewMap;
+    bool mousePressed=false;
 };
 
 #endif // DRAWINGMANAGER_H

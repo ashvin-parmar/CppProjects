@@ -121,9 +121,12 @@ private slots:
 
     void on_changePhaseIII_clicked();
 
+    void on_freeHandDraw_clicked();
+
 private:
     Ui::MainWindow *ui;
-    DrawingManager *drawingManager;
+    DrawingManager *drawingManager;     //For Phase II      //Same  address but maintain different pointer for clarity
+    DrawingManager *model;              //For Phase III
     bool frameOpened;
     QPushButton *exitFullScreenButton;
 };

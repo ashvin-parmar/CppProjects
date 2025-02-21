@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QDebug>
 #include<iostream>
+#include<shapes_header/freehandshape.h>
 using namespace std;
 
 DrawingManager* DrawingManager::instance = nullptr;
@@ -10,7 +11,8 @@ DrawingManager::DrawingManager(QWidget *parent) : QWidget(parent)
 
 }
 DrawingManager* DrawingManager::getInstance(QWidget *parent) {
-    if (instance==nullptr) {
+    if (instance==nullptr || parent==nullptr)
+    {
         instance = new DrawingManager(parent);
 //        printf("Instance created\n");
     }
@@ -18,11 +20,17 @@ DrawingManager* DrawingManager::getInstance(QWidget *parent) {
 }
 
 
-DrawingManager::~DrawingManager() {
-    qDeleteAll(shapes);
+DrawingManager::~DrawingManager()
+{
+    if(!instance)
+    {
+        qDeleteAll(shapes);
+        instance=NULL;
+    }
 }
 
-void DrawingManager::addShape(Drawing *drawing) {
+void DrawingManager::addShape(Drawing *drawing)
+{
     if (drawing) {
         shapes.append(drawing);
 //        cout<<drawing->toString().toStdString().c_str();
@@ -63,18 +71,36 @@ void DrawingManager::drawAll()
 }
 void DrawingManager::processClicked(const QPoint &point)
 {
-    for (Drawing *shape : shapes) {
-        if(shape->isPointInShapeRegion(point))
+    for (Drawing *shape : shapes)
+    {                               //replica of instanceof function in c++
+        FreeHandShape *freeHandShape=dynamic_cast<FreeHandShape *>(shape);
+        if(freeHandShape==nullptr)
         {
-            shape->select();
+            if(shape->isPointInShapeRegion(point))
+                    {
+                        shape->select();
+                    }
+        }
+        else
+        {
+            if(this->mousePressed)
+            {
+                freeHandShape->addPoint(point);
+            }
         }
     }
 }
-void DrawingManager::paintEvent(QPaintEvent *event) {
+void DrawingManager::paintEvent(QPaintEvent *event)
+{
     Q_UNUSED(event);
     QPainter painter(this);
-    painter.setClipRect(5,5,1165,680);
-    painter.eraseRect(5,5,1165,680);
+    QRect rect=this->rect();
+    rect.setX(rect.x()-10);
+    rect.setY(rect.x()-10);
+    rect.setWidth(rect.width()-5);
+    rect.setWidth(rect.height()-5);
+    painter.setClipRect(this->rect());
+//    painter.eraseRect(this->rect());
 //    cout<<"Painting got called size: "<<shapes.size()<<endl;
     for (Drawing *shape : shapes) {
         shape->draw(painter);  // Call each shape’s draw method
@@ -82,6 +108,19 @@ void DrawingManager::paintEvent(QPaintEvent *event) {
 }
 void DrawingManager::mousePressEvent(QMouseEvent *event)
 {
+    QPoint point=event->pos();
+    this->mousePressed=true;
+    this->processClicked(point);
+}
+void DrawingManager::mouseReleaseEvent(QMouseEvent *event)
+{
+    QPoint point=event->pos();
+    this->processClicked(point);
+    this->mousePressed=false;
+}
+void DrawingManager::mouseMoveEvent(QMouseEvent *event)
+{
+    if(!mousePressed) return;
     QPoint point=event->pos();
     this->processClicked(point);
 }
