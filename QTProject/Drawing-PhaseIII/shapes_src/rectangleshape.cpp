@@ -28,6 +28,15 @@ QString RectangleShape::toString()
 {
         return QString("Rectangle")+QString::number(number);
 }
+void RectangleShape::select()
+{
+
+}
+bool RectangleShape::isPointInShapeRegion(const QPoint &point)
+{
+   Q_UNUSED(point);
+    return false;
+}
 int RectangleShape::getX() const
 {
     return x;

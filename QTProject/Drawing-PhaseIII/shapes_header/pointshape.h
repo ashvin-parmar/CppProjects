@@ -15,6 +15,8 @@ public:
     void draw(QPainter &painter) override;
     void clear() override;
     QString toString() override;
+    void select() override;
+    bool isPointInShapeRegion(const QPoint &point) override;
 
     int getX() const;
     void setX(int value);

@@ -27,6 +27,15 @@ QString EllipseShape::toString()
 {
     return (QString("Ellipse")+QString::number(number));
 }
+void EllipseShape::select()
+{
+
+}
+bool EllipseShape::isPointInShapeRegion(const QPoint &point)
+{
+   Q_UNUSED(point);
+    return false;
+}
 int EllipseShape::getX() const
 {
     return x;

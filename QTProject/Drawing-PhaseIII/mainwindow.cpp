@@ -67,7 +67,7 @@ void MainWindow::PhaseIII()
     this->ui->phaseIII->setVisible(true);
     this->ui->phaseIII->setGeometry(QRect(0,0,1369,900));
     this->ui->listView->setMaximumSize(131,371);
-    this->ui->listView->stackUnder(this->ui->listWidget);
+
 
 
 
@@ -1274,10 +1274,16 @@ void MainWindow::on_actionTree_View_changed()
     }
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_changePhaseII_clicked()
 {
     this->ui->phaseIII->setVisible(false);
     this->ui->phaseII->setVisible(true);
     this->ui->menubar->setVisible(true);
+}
 
+void MainWindow::on_changePhaseIII_clicked()
+{
+    this->ui->phaseIII->setVisible(true);
+    this->ui->phaseII->setVisible(false);
+    this->ui->menubar->setVisible(false);
 }

@@ -23,6 +23,15 @@ QString PointShape::toString()
 {
     return QString("Point")+QString::number(number);
 }
+void PointShape::select()
+{
+
+}
+bool PointShape::isPointInShapeRegion(const QPoint &point)
+{
+   Q_UNUSED(point);
+    return false;
+}
 int PointShape::getX() const
 {
     return x;

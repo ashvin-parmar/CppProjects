@@ -28,6 +28,17 @@ QString ArcShape::toString()
 {
     return (QString("Arc")+QString::number(number));
 }
+void ArcShape::select()
+{
+
+}
+bool ArcShape::isPointInShapeRegion(const QPoint &point)
+{
+   Q_UNUSED(point);
+    return false;
+}
+
+
 int ArcShape::getX() const
 {
     return x;

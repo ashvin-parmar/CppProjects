@@ -27,6 +27,15 @@ QString PolylineShape::toString()
 {
     return QString("Polyline")+QString::number(number);
 }
+void PolylineShape::select()
+{
+
+}
+bool PolylineShape::isPointInShapeRegion(const QPoint &point)
+{
+   Q_UNUSED(point);
+    return false;
+}
 QVector<QPoint> PolylineShape::getPoints() const
 {
     return points;

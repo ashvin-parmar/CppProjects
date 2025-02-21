@@ -117,7 +117,9 @@ private slots:
 
     void on_treeWidgetClose_clicked();
 
-    void on_pushButton_clicked();
+    void on_changePhaseII_clicked();
+
+    void on_changePhaseIII_clicked();
 
 private:
     Ui::MainWindow *ui;

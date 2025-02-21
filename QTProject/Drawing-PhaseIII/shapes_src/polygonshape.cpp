@@ -27,6 +27,15 @@ QString PolygonShape::toString()
 {
     return QString("Polygon")+QString::number(number);
 }
+void PolygonShape::select()
+{
+
+}
+bool PolygonShape::isPointInShapeRegion(const QPoint &point)
+{
+   Q_UNUSED(point);
+    return false;
+}
 QVector<QPoint> PolygonShape::getPoints() const
 {
     return points;

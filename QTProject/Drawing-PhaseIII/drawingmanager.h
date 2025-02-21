@@ -5,7 +5,7 @@
 #include <QList>
 #include "drawing.h"
 #include<QHash>
-
+#include<QMouseEvent>
 class DrawingManager : public QWidget {
     Q_OBJECT
 
@@ -18,9 +18,10 @@ public:
     void clearCanvas();                  // Clear canvas (painted shapes)
     void drawAll();
     QList<QString> getAllShapes();
+    void processClicked(const QPoint &point);
 protected:
     void paintEvent(QPaintEvent *event) override;
-
+    void mousePressEvent(QMouseEvent *event) override;
 private:
     explicit DrawingManager(QWidget *parent = nullptr);
     static DrawingManager *instance;

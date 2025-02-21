@@ -23,5 +23,6 @@
         <file>icon2/red.svg</file>
         <file>icon2/draw.svg</file>
         <file>icon2/close.svg</file>
+        <file>icon2/logo_icon.svg</file>
     </qresource>
 </RCC>

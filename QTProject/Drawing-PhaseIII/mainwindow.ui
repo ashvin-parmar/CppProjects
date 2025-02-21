@@ -13,14 +13,18 @@
   <property name="windowTitle">
    <string>Draw A Think</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="images.qrc">
+    <normaloff>:/images/icon2/logo_icon.svg</normaloff>:/images/icon2/logo_icon.svg</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QFrame" name="phaseII">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>2444</y>
-      <width>731</width>
-      <height>331</height>
+      <y>2342</y>
+      <width>1369</width>
+      <height>900</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -317,6 +321,19 @@
         <width>26</width>
         <height>26</height>
        </size>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="changePhaseIII">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>630</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>PhaseIII</string>
       </property>
      </widget>
     </widget>
@@ -4041,7 +4058,7 @@
       <x>0</x>
       <y>0</y>
       <width>1369</width>
-      <height>900</height>
+      <height>750</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -4069,6 +4086,17 @@
        <height>721</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <stylestrategy>PreferAntialias</stylestrategy>
+      </font>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::DefaultContextMenu</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -4079,7 +4107,7 @@
     <widget class="QFrame" name="dynamicShape">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>8</x>
        <y>0</y>
        <width>41</width>
        <height>741</height>
@@ -4113,6 +4141,29 @@
        <property name="bottomMargin">
         <number>2</number>
        </property>
+       <item>
+        <widget class="QPushButton" name="logo">
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/icon2/logo_icon.svg</normaloff>:/images/icon2/logo_icon.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QPushButton" name="freeHandDraw">
          <property name="maximumSize">
@@ -4273,7 +4324,7 @@
       </property>
      </widget>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="changePhaseII">
      <property name="geometry">
       <rect>
        <x>1260</x>
@@ -4286,7 +4337,7 @@
       <string>Phase II</string>
      </property>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>1232</x>
@@ -4349,7 +4400,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>1230</x>

@@ -17,6 +17,8 @@ public:
     void draw(QPainter &painter) override;
     void clear() override;
     QString toString() override;
+    void select() override;
+    bool isPointInShapeRegion(const QPoint &point) override;
 
     //Setter getter
     QColor getPenColor() const;

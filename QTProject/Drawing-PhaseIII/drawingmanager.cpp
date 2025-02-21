@@ -61,6 +61,15 @@ void DrawingManager::drawAll()
 {
     update();
 }
+void DrawingManager::processClicked(const QPoint &point)
+{
+    for (Drawing *shape : shapes) {
+        if(shape->isPointInShapeRegion(point))
+        {
+            shape->select();
+        }
+    }
+}
 void DrawingManager::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QPainter painter(this);
@@ -70,4 +79,9 @@ void DrawingManager::paintEvent(QPaintEvent *event) {
     for (Drawing *shape : shapes) {
         shape->draw(painter);  // Call each shape’s draw method
     }
+}
+void DrawingManager::mousePressEvent(QMouseEvent *event)
+{
+    QPoint point=event->pos();
+    this->processClicked(point);
 }

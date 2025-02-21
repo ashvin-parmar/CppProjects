@@ -30,6 +30,15 @@ QString LineShape::toString()
 {
     return QString("Line")+QString::number(number);
 }
+void LineShape::select()
+{
+
+}
+bool LineShape::isPointInShapeRegion(const QPoint &point)
+{
+   Q_UNUSED(point);
+    return false;
+}
 QColor LineShape::getPenColor() const
 {
     return penColor;

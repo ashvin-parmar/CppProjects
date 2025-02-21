@@ -25,6 +25,15 @@ QString PixmapShape::toString()
 {
     return QString("Image")+QString::number(number);
 }
+void PixmapShape::select()
+{
+
+}
+bool PixmapShape::isPointInShapeRegion(const QPoint &point)
+{
+   Q_UNUSED(point);
+    return false;
+}
 int PixmapShape::getX() const
 {
     return x;

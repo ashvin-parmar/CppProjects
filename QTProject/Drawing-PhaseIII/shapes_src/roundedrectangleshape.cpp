@@ -30,6 +30,15 @@ QString RoundedRectangleShape::toString()
 {
     return QString("RoundedRectangle")+QString::number(number);
 }
+void RoundedRectangleShape::select()
+{
+
+}
+bool RoundedRectangleShape::isPointInShapeRegion(const QPoint &point)
+{
+   Q_UNUSED(point);
+    return false;
+}
 int RoundedRectangleShape::getX() const
 {
     return x;

@@ -25,6 +25,15 @@ QString TextShape::toString()
 {
     return QString("Text")+QString::number(number);
 }
+void TextShape::select()
+{
+
+}
+bool TextShape::isPointInShapeRegion(const QPoint &point)
+{
+   Q_UNUSED(point);
+    return false;
+}
 QColor TextShape::getPenColor() const
 {
     return penColor;
