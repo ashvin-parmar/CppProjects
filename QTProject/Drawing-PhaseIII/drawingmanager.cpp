@@ -89,6 +89,7 @@ void DrawingManager::processClicked(const QPoint &point)
             }
         }
     }
+    update();
 }
 void DrawingManager::paintEvent(QPaintEvent *event)
 {
