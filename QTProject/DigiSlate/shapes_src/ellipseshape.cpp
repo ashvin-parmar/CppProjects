@@ -3,7 +3,7 @@ int EllipseShape::count=1;
 EllipseShape::EllipseShape(QObject *parent):Drawing(parent),penWidth(1)
 {
     this->penColor=Qt::black;
-    this->brush=QBrush(Qt::white,Qt::SolidPattern);
+    this->brush=QBrush(Qt::NoBrush);
     this->isCenter=true;
     this->number=count++;
 }
@@ -25,15 +25,34 @@ void EllipseShape::clear()
 }
 QString EllipseShape::toString()
 {
-    return (QString("Ellipse")+QString::number(number));
+    if(horizontalRadius!=verticalRadius) return (QString("Ellipse")+QString::number(number));
+    else return QString("Circle")+QString::number(number);
 }
 void EllipseShape::select(QPainter &painter)
 {
-
+    QPen pen=painter.pen();
+    pen.setWidth(penWidth+5);
+    painter.setPen(pen);
+    QVector<QPoint> points;
+    if(this->isCenter==false)
+    {
+        points.append(QPoint(x+horizontalRadius,y));
+        points.append(QPoint(x+horizontalRadius*2,y+verticalRadius));
+        points.append(QPoint(x+horizontalRadius,y+verticalRadius*2));
+        points.append(QPoint(x,y+verticalRadius));
+    }
+    else
+    {
+        points.append(QPoint(x+horizontalRadius,y));
+        points.append(QPoint(x,y+verticalRadius));
+        points.append(QPoint(x-horizontalRadius,y));
+        points.append(QPoint(x,y-verticalRadius));
+    }
+    painter.drawPoints(points);
 }
 bool EllipseShape::isPointInShapeRegion(const QPoint &point)
 {
-   Q_UNUSED(point);
+    //to implement
     return false;
 }
 int EllipseShape::getX() const

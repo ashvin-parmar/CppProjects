@@ -27,11 +27,19 @@ QString PixmapShape::toString()
 }
 void PixmapShape::select(QPainter &painter)
 {
-
+    QVector<QPoint> points;
+    points.append(QPoint(x,y));
+    points.append(QPoint(x+width,y));
+    points.append(QPoint(x,y+height));
+    points.append(QPoint(x+width,y+height));
+    painter.drawPoints(points);
 }
 bool PixmapShape::isPointInShapeRegion(const QPoint &point)
 {
-   Q_UNUSED(point);
+    int pointX,pointY;
+    pointX=point.x();
+    pointY=point.y();
+    if((pointX>=x && pointY>=y) && (pointX<=(x+width) && pointY<=(y+height))) return true;
     return false;
 }
 int PixmapShape::getX() const

@@ -32,11 +32,19 @@ QString RoundedRectangleShape::toString()
 }
 void RoundedRectangleShape::select(QPainter &painter)
 {
-
+    QPen pen=painter.pen();
+    pen.setWidth(penWidth+5);
+    painter.setPen(pen);
+    QVector<QPoint> points;
+    points.append(QPoint(x+width/2,y));
+    points.append(QPoint(x+width,y+height/2));
+    points.append(QPoint(x+width/2,y+height));
+    points.append(QPoint(x,y+height/2));
 }
 bool RoundedRectangleShape::isPointInShapeRegion(const QPoint &point)
 {
    Q_UNUSED(point);
+
     return false;
 }
 int RoundedRectangleShape::getX() const

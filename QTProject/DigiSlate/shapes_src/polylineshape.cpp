@@ -1,4 +1,6 @@
 #include "shapes_header/polylineshape.h"
+#include<QtMath>
+
 int PolylineShape::count=1;
 PolylineShape::PolylineShape(QObject *parent):Drawing(parent),penWidth(1)
 {
@@ -29,11 +31,29 @@ QString PolylineShape::toString()
 }
 void PolylineShape::select(QPainter &painter)
 {
-
+    QPen pen=painter.pen();
+    pen.setWidth(penWidth+5);
+    painter.setPen(pen);
+    painter.drawPoints(points);
 }
 bool PolylineShape::isPointInShapeRegion(const QPoint &point)
 {
    Q_UNUSED(point);
+    int x1,y1,x2,y2;
+    int ao,ob,ab;
+    QPoint p1=points.front();
+    for(QPoint p2: points)
+    {
+         x1=p1.x();
+         y1=p1.y();
+         x2=p2.x();
+         y2=p2.y();
+         ao=qSqrt(pow(point.x()-x1,2)+pow(point.y()-y1,2));
+         ob=qSqrt(pow(x2-point.x(),2)+pow(y2-point.y(),2));
+         ab=qSqrt(pow(x2-x1,2)+pow(y2-y1,2));
+         if(ab==ao+ob) return true;
+         p1=p2;
+    }
     return false;
 }
 QVector<QPoint> PolylineShape::getPoints() const

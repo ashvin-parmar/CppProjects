@@ -3,7 +3,7 @@ int PolygonShape::count=1;
 PolygonShape::PolygonShape(QObject *parent):Drawing(parent)
 {
     this->penColor=Qt::black;
-    this->brush=QBrush(Qt::white,Qt::SolidPattern);
+    this->brush=QBrush(Qt::NoBrush);
     this->number=count++;
 }
 PolygonShape::~PolygonShape()
@@ -29,11 +29,10 @@ QString PolygonShape::toString()
 }
 void PolygonShape::select(QPainter &painter)
 {
-
+    painter.drawPoints(points);
 }
 bool PolygonShape::isPointInShapeRegion(const QPoint &point)
 {
-   Q_UNUSED(point);
     return false;
 }
 QVector<QPoint> PolygonShape::getPoints() const

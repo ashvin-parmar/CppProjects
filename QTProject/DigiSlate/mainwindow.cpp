@@ -127,3 +127,22 @@ void MainWindow::on_ellipseDraw_clicked()
 {
     this->model->setFlag(ELLIPSE);
 }
+
+void MainWindow::on_circleDraw_clicked()
+{
+    this->model->setFlag(CIRCLE);
+}
+
+void MainWindow::on_imageDraw_clicked()
+{
+    QString filePath=QFileDialog::getOpenFileName(this,tr("Open Image"),"home","Images (*.jpg *.png)");
+    if(filePath.compare("")==1)
+    {
+        //this->model->setFlag(IMAGE);
+        //this->model->setFilePath(filePath);
+    }
+    else
+    {
+        //QMessageBox::warning(this,"File Error","File not select");
+    }
+}

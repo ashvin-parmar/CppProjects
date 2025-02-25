@@ -47,6 +47,10 @@ private slots:
 
     void on_ellipseDraw_clicked();
 
+    void on_circleDraw_clicked();
+
+    void on_imageDraw_clicked();
+
 private:
     Ui::MainWindow *ui;
     Model *model;

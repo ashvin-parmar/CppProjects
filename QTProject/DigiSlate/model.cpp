@@ -132,6 +132,32 @@ void Model::mousePressEvent(QMouseEvent *event)
         this->drawing=shape;
         this->addShape(this->drawing);
     }
+    if(this->flag==ELLIPSE)
+    {
+        EllipseShape *shape=new EllipseShape();
+        shape->setX(event->x());
+        shape->setY(event->y());
+        shape->setIsCenter(false);
+        shape->setHorizontalRadius(0);
+        shape->setVerticalRadius(0);
+        shape->setPenColor(this->color);
+        shape->setPenWidth(penWidth);
+        this->drawing=shape;
+        this->addShape(this->drawing);
+    }
+    if(this->flag==CIRCLE)
+    {
+        EllipseShape *shape=new EllipseShape();
+        shape->setX(event->x());
+        shape->setY(event->y());
+        shape->setIsCenter(true);
+        shape->setHorizontalRadius(0);
+        shape->setVerticalRadius(0);
+        shape->setPenColor(this->color);
+        shape->setPenWidth(penWidth);
+        this->drawing=shape;
+        this->addShape(this->drawing);
+    }
 }
 void Model::mouseMoveEvent(QMouseEvent *event)
 {
@@ -158,6 +184,24 @@ void Model::mouseMoveEvent(QMouseEvent *event)
             RectangleShape *shape=dynamic_cast<RectangleShape *>(this->drawing);
             shape->setWidth((event->x()-shape->getX()));
             shape->setHeight((event->y()-shape->getY()));
+        }
+    }
+    if(this->flag==ELLIPSE)
+    {
+        if(drawing!=nullptr)
+        {
+            EllipseShape *shape=dynamic_cast<EllipseShape *>(this->drawing);
+            shape->setHorizontalRadius((event->x()-shape->getX()));
+            shape->setVerticalRadius((event->y()-shape->getY()));
+        }
+    }
+    if(this->flag==CIRCLE)
+    {
+        if(drawing!=nullptr)
+        {
+            EllipseShape *shape=dynamic_cast<EllipseShape *>(this->drawing);
+            shape->setHorizontalRadius((event->x()-shape->getX()));
+            shape->setVerticalRadius((event->x()-shape->getX()));
         }
     }
     update();
@@ -208,8 +252,40 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
             drawing=nullptr;
         }
     }
-    update();
+    if(this->flag==ELLIPSE)
+    {
+        if(drawing!=nullptr)
+        {
+            EllipseShape *shape=dynamic_cast<EllipseShape *>(this->drawing);
+            if(shape->getX()==event->x() && shape->getY()==event->y())
+            {
+                this->removeShape(shape->toString());
+                return;
+            }
+            shape->setHorizontalRadius((event->x()-shape->getX()));
+            shape->setVerticalRadius((event->y()-shape->getY()));
+            this->listWidget->insertItem(0,shape->toString());
+            drawing=nullptr;
+        }
+    }
+    if(this->flag==CIRCLE)
+    {
+        if(drawing!=nullptr)
+        {
+            EllipseShape *shape=dynamic_cast<EllipseShape *>(this->drawing);
+            if(shape->getX()==event->x() && shape->getY()==event->y())
+            {
+                this->removeShape(shape->toString());
+                return;
+            }
 
+            shape->setHorizontalRadius((event->x()-shape->getX()));
+            shape->setVerticalRadius((event->x()-shape->getX()));
+            this->listWidget->insertItem(0,shape->toString());
+            drawing=nullptr;
+        }
+    }
+    update();
 }
 
 int Model::getPenWidth() const

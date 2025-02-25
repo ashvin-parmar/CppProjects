@@ -30,11 +30,22 @@ QString RectangleShape::toString()
 }
 void RectangleShape::select(QPainter &painter)
 {
-
+    QPen pen=painter.pen();
+    pen.setWidth(penWidth+5);
+    painter.setPen(pen);
+    QVector<QPoint> points;
+    points.append(QPoint(x,y));
+    points.append(QPoint(x+width,y));
+    points.append(QPoint(x,y+height));
+    points.append(QPoint(x+width,y+height));
+    painter.drawPoints(points);
 }
 bool RectangleShape::isPointInShapeRegion(const QPoint &point)
 {
-   Q_UNUSED(point);
+    int pointX,pointY;
+    pointX=point.x();
+    pointY=point.y();
+    if((pointX>=x && pointY>=y) && (pointX<=(x+width) && pointY<=(y+height))) return true;
     return false;
 }
 int RectangleShape::getX() const
