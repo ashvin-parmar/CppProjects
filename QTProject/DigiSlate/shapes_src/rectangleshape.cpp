@@ -3,7 +3,7 @@ int RectangleShape::count=1;
 RectangleShape::RectangleShape(QObject *parent):Drawing(parent),penWidth(1)
 {
     this->penColor=Qt::black;
-    this->brush=QBrush(Qt::white,Qt::SolidPattern);
+    this->brush=QBrush(Qt::NoBrush);
     x=100;
     y=100;
     width=100;
@@ -28,7 +28,7 @@ QString RectangleShape::toString()
 {
         return QString("Rectangle")+QString::number(number);
 }
-void RectangleShape::select()
+void RectangleShape::select(QPainter &painter)
 {
 
 }

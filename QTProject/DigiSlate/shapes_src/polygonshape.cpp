@@ -27,7 +27,7 @@ QString PolygonShape::toString()
 {
     return QString("Polygon")+QString::number(number);
 }
-void PolygonShape::select()
+void PolygonShape::select(QPainter &painter)
 {
 
 }

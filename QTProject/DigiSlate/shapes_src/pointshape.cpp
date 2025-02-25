@@ -23,7 +23,7 @@ QString PointShape::toString()
 {
     return QString("Point")+QString::number(number);
 }
-void PointShape::select()
+void PointShape::select(QPainter &painter)
 {
 
 }

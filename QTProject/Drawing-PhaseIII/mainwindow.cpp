@@ -68,7 +68,7 @@ void MainWindow::PhaseIII()
     this->ui->phaseIII->setGeometry(QRect(0,0,1369,900));
     this->ui->listView->setMaximumSize(131,371);
     this->model=DrawingManager::getInstance(this->ui->board);
-
+    this->model->setGeometry(70,10,1144,700);
 
 
     connect(this->ui->closeApp, &QPushButton::clicked, this, [=]() {

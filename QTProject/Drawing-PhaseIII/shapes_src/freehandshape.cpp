@@ -11,7 +11,7 @@ FreeHandShape::~FreeHandShape()
 void FreeHandShape::draw(QPainter &painter)
 {
     painter.setPen(QPen(Qt::red,4));
-    painter.drawPoints(drawPath);
+    painter.drawPolyline(drawPath);
 }
 void FreeHandShape::clear()
 {

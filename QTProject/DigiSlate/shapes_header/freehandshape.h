@@ -14,14 +14,24 @@ public:
     void draw(QPainter &painter) override;
     void clear() override;
     QString toString() override;
-    void select() override;
+    void select(QPainter &painter) override;
     bool isPointInShapeRegion(const QPoint &point) override;
 
     void addPoint(const QPoint &point);
-    void pathSize() const;
+    int pathSize() const;
+
+    QColor getColor() const;
+    void setColor(const QColor &value);
+
+    int getPenWidth() const;
+    void setPenWidth(int value);
 
 private:
     QPolygon drawPath;
+    QColor color;
+    int penWidth;
+    static int count;
+    int number;
 };
 
 #endif // FREEHANDSHAPE_H

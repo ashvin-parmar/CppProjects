@@ -3,6 +3,8 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QColorDialog>
+#include<QtMath>
+
 int LineShape::count=1;
 LineShape::LineShape(QObject *parent) : Drawing(parent), penColor(Qt::black), penWidth(1) {
     x1=0;
@@ -30,13 +32,22 @@ QString LineShape::toString()
 {
     return QString("Line")+QString::number(number);
 }
-void LineShape::select()
+void LineShape::select(QPainter &painter)
 {
-
+    QPen pen=painter.pen();
+    pen.setWidth(penWidth+5);
+    painter.setPen(pen);
+    painter.drawPoint(this->x1,this->y1);
+    painter.drawPoint(this->x2,this->y2);
 }
 bool LineShape::isPointInShapeRegion(const QPoint &point)
 {
-   Q_UNUSED(point);
+    //int because we want nearest click are allow
+    int ao=qSqrt(pow(point.x()-x1,2)+pow(point.y()-y1,2));
+    int ob=qSqrt(pow(x2-point.x(),2)+pow(y2-point.y(),2));
+    int ab=qSqrt(pow(x2-x1,2)+pow(y2-y1,2));
+//    printf("%d ,%d, %d\n",ao,ob,ab);
+    if(ab==ao+ob) return true;
     return false;
 }
 QColor LineShape::getPenColor() const

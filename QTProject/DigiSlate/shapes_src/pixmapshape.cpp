@@ -25,7 +25,7 @@ QString PixmapShape::toString()
 {
     return QString("Image")+QString::number(number);
 }
-void PixmapShape::select()
+void PixmapShape::select(QPainter &painter)
 {
 
 }

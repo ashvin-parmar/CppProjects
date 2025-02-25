@@ -25,7 +25,7 @@ QString TextShape::toString()
 {
     return QString("Text")+QString::number(number);
 }
-void TextShape::select()
+void TextShape::select(QPainter &painter)
 {
 
 }

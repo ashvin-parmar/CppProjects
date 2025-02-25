@@ -28,7 +28,7 @@ QString ArcShape::toString()
 {
     return (QString("Arc")+QString::number(number));
 }
-void ArcShape::select()
+void ArcShape::select(QPainter &painter)
 {
 
 }

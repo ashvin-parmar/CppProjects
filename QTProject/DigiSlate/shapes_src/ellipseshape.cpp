@@ -27,7 +27,7 @@ QString EllipseShape::toString()
 {
     return (QString("Ellipse")+QString::number(number));
 }
-void EllipseShape::select()
+void EllipseShape::select(QPainter &painter)
 {
 
 }

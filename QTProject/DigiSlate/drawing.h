@@ -15,7 +15,7 @@ public:
     virtual void draw(QPainter &painter) = 0;   // Must be implemented in derived classes
     virtual void clear() = 0;                   // Clears the shape
     virtual QString toString()=0;
-    virtual void select()=0;
+    virtual void select(QPainter &painter)=0;
     virtual bool isPointInShapeRegion(const QPoint &point)=0;
 };
 

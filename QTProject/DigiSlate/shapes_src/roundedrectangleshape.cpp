@@ -30,7 +30,7 @@ QString RoundedRectangleShape::toString()
 {
     return QString("RoundedRectangle")+QString::number(number);
 }
-void RoundedRectangleShape::select()
+void RoundedRectangleShape::select(QPainter &painter)
 {
 
 }

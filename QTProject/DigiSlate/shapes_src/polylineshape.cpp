@@ -27,7 +27,7 @@ QString PolylineShape::toString()
 {
     return QString("Polyline")+QString::number(number);
 }
-void PolylineShape::select()
+void PolylineShape::select(QPainter &painter)
 {
 
 }
