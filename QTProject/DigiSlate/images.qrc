@@ -24,5 +24,9 @@
         <file>icon2/draw.svg</file>
         <file>icon2/close.svg</file>
         <file>icon2/logo_icon.svg</file>
+        <file>icon2/circle.svg</file>
+        <file>icon2/pick_tool.svg</file>
+        <file>icon2/addNewPage.svg</file>
+        <file>icon2/freeDraw.svg</file>
     </qresource>
 </RCC>

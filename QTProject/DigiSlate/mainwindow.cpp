@@ -58,6 +58,8 @@ void MainWindow::PhaseIII()
     this->model->setVisible(true);
     this->model->setGeometry(0,0,1144,700);
     this->model->setCordinates(this->ui->coordinatesModel);
+//    QRadioButton *radioButton=new QRadioButton(this->ui->boardWindow);
+
 
     connect(this->ui->closeApp, &QPushButton::clicked, this, [=]() {
         this->close();
@@ -70,6 +72,7 @@ MainWindow::~MainWindow()
 }
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event);
     this->model->setFlag(NOFLAG);
 }
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
@@ -138,11 +141,19 @@ void MainWindow::on_imageDraw_clicked()
     QString filePath=QFileDialog::getOpenFileName(this,tr("Open Image"),"home","Images (*.jpg *.png)");
     if(filePath.compare("")==1)
     {
-        //this->model->setFlag(IMAGE);
-        //this->model->setFilePath(filePath);
+        QPixmap pixmap(filePath);
+        if(pixmap.isNull()==false)
+        {
+        this->model->setFlag(IMAGE);
+        this->model->setFilePath(filePath);
+        return;
+        }
     }
-    else
-    {
-        //QMessageBox::warning(this,"File Error","File not select");
-    }
+    QMessageBox::warning(this,"File Error","File not select");
+}
+
+void MainWindow::on_addNewPage_clicked()
+{
+//    QRadioButton *radioButton=new QRadioButton(this->ui->boardWindow);
+
 }

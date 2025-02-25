@@ -8,6 +8,7 @@
 #define CIRCLE 3
 #define ELLIPSE 4
 #define RECTANGLE 5
+#define IMAGE 6
 
 #include <QWidget>
 #include <QList>
@@ -44,6 +45,9 @@ public:
     QListWidget *getListWidget() const;
     void setListWidget(QListWidget *value);
 
+    QString getFilePath() const;
+    void setFilePath(const QString &value);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -61,6 +65,7 @@ private:
     int penWidth;
     QPoint pickPoint;
     QListWidget *listWidget;
+    QString filePath;
 };
 
 #endif // MODEL_H

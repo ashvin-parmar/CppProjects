@@ -86,7 +86,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="leftMargin">
-        <number>4</number>
+        <number>6</number>
        </property>
        <property name="topMargin">
         <number>2</number>
@@ -142,7 +142,7 @@
          </property>
          <property name="icon">
           <iconset resource="images.qrc">
-           <normaloff>:/images/icon2/draw.svg</normaloff>:/images/icon2/draw.svg</iconset>
+           <normaloff>:/images/icon2/freeDraw.svg</normaloff>:/images/icon2/freeDraw.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -250,6 +250,10 @@
          <property name="text">
           <string/>
          </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/icon2/circle.svg</normaloff>:/images/icon2/circle.svg</iconset>
+         </property>
          <property name="iconSize">
           <size>
            <width>25</width>
@@ -303,7 +307,36 @@
          </property>
          <property name="icon">
           <iconset resource="images.qrc">
-           <normaloff>:/images/icon2/logo_icon.svg</normaloff>:/images/icon2/logo_icon.svg</iconset>
+           <normaloff>:/images/icon2/pick_tool.svg</normaloff>:/images/icon2/pick_tool.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="addNewPage">
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Pick Shape</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/icon2/addNewPage.svg</normaloff>:/images/icon2/addNewPage.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -333,7 +366,7 @@
        <rect>
         <x>10</x>
         <y>0</y>
-        <width>25</width>
+        <width>16</width>
         <height>25</height>
        </rect>
       </property>
@@ -346,7 +379,7 @@
        <rect>
         <x>30</x>
         <y>0</y>
-        <width>25</width>
+        <width>16</width>
         <height>25</height>
        </rect>
       </property>
@@ -359,7 +392,7 @@
        <rect>
         <x>50</x>
         <y>0</y>
-        <width>25</width>
+        <width>16</width>
         <height>25</height>
        </rect>
       </property>
@@ -372,7 +405,7 @@
        <rect>
         <x>70</x>
         <y>0</y>
-        <width>25</width>
+        <width>16</width>
         <height>25</height>
        </rect>
       </property>

@@ -18,7 +18,15 @@ using namespace std;
 
 Model::Model(QWidget *parent) : QWidget(parent)
 {
+    //Initialization
+    flag=NOFLAG;
+    cordinates=nullptr;
+    freeHandShape=nullptr;
+    drawing=nullptr;
+    this->color=Qt::black;
+    this->penWidth=1;
     pickPoint=QPoint();
+    this->filePath="";
 }
 Model::~Model()
 {
@@ -64,11 +72,11 @@ void Model::processClicked(QPainter &painter)
 {
     if(this->flag==PICK)
     {
-        painter.setPen(QPen(Qt::yellow,penWidth+5,Qt::PenStyle::SolidLine,Qt::PenCapStyle::RoundCap));
         for(Drawing *shape: shapes)
         {
             if(shape->isPointInShapeRegion(pickPoint))
             {
+                painter.setPen(QPen(Qt::yellow,penWidth+5,Qt::PenStyle::SolidLine,Qt::PenCapStyle::RoundCap));
                 shape->select(painter);
                 break;
             }
@@ -99,6 +107,7 @@ void Model::paintEvent(QPaintEvent *event)
 }
 void Model::mousePressEvent(QMouseEvent *event)
 {
+    if(this->flag==NOFLAG) return;
     QPoint point=event->pos();
     if(this->flag==PICK) this->pickPoint=point;
     if(this->flag==FREEHAND)
@@ -158,10 +167,30 @@ void Model::mousePressEvent(QMouseEvent *event)
         this->drawing=shape;
         this->addShape(this->drawing);
     }
+    if(this->flag==IMAGE)
+    {
+        if(this->filePath.compare("")==0) return ;
+        QPixmap image(this->filePath);
+        if(image.isNull())
+        {
+            this->drawing=nullptr;
+            return;
+        }
+        filePath="";
+        PixmapShape *shape=new PixmapShape();
+        shape->setX(event->x());
+        shape->setY(event->y());
+        shape->setWidth(0);
+        shape->setHeight(0);
+        shape->setPixmap(image);
+        this->drawing=shape;
+        this->addShape(this->drawing);
+    }
 }
 void Model::mouseMoveEvent(QMouseEvent *event)
 {
     cordinates->setText(QString("x=%1,y=%2").arg(event->x()).arg(event->y()));
+    if(this->flag==NOFLAG) return;
     QPoint point=event->pos();
     if(this->flag==PICK) this->pickPoint=point;
     if(this->flag==FREEHAND)
@@ -204,11 +233,24 @@ void Model::mouseMoveEvent(QMouseEvent *event)
             shape->setVerticalRadius((event->x()-shape->getX()));
         }
     }
+    if(this->flag==IMAGE)
+    {
+        if(drawing!=nullptr)
+        {
+            PixmapShape *shape=dynamic_cast<PixmapShape *>(this->drawing);
+            shape->setWidth((event->x()-shape->getX()));
+            shape->setHeight((event->y()-shape->getY()));
+        }
+    }
     update();
 }
-
 void Model::mouseReleaseEvent(QMouseEvent *event)
 {
+    if(this->flag==NOFLAG)
+    {
+        this->drawing=nullptr;
+        return;
+    }
     QPoint point=event->pos();
     if(this->flag==PICK) this->pickPoint=point;
     if(this->flag==FREEHAND)
@@ -228,6 +270,7 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
             if(shape->getX1()==event->x() && shape->getY1()==event->y())
             {
                 this->removeShape(shape->toString());
+                drawing=nullptr;
                 return;
             }
             shape->setY2(event->y());
@@ -244,6 +287,7 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
             if(shape->getX()==event->x() && shape->getY()==event->y())
             {
                 this->removeShape(shape->toString());
+                drawing=nullptr;
                 return;
             }
             shape->setWidth((event->x()-shape->getX()));
@@ -260,6 +304,7 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
             if(shape->getX()==event->x() && shape->getY()==event->y())
             {
                 this->removeShape(shape->toString());
+                drawing=nullptr;
                 return;
             }
             shape->setHorizontalRadius((event->x()-shape->getX()));
@@ -276,6 +321,7 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
             if(shape->getX()==event->x() && shape->getY()==event->y())
             {
                 this->removeShape(shape->toString());
+                drawing=nullptr;
                 return;
             }
 
@@ -283,6 +329,24 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
             shape->setVerticalRadius((event->x()-shape->getX()));
             this->listWidget->insertItem(0,shape->toString());
             drawing=nullptr;
+        }
+    }
+    if(this->flag==IMAGE)
+    {
+        if(drawing!=nullptr)
+        {
+            PixmapShape *shape=dynamic_cast<PixmapShape *>(this->drawing);
+            if(shape->getX()==event->x() && shape->getY()==event->y())
+            {
+                this->removeShape(shape->toString());
+                drawing=nullptr;
+                return;
+            }
+            shape->setWidth((event->x()-shape->getX()));
+            shape->setHeight((event->y()-shape->getY()));
+            this->listWidget->insertItem(0,shape->toString());
+            drawing=nullptr;
+            this->flag=NOFLAG;
         }
     }
     update();
@@ -330,4 +394,14 @@ QListWidget *Model::getListWidget() const
 void Model::setListWidget(QListWidget *value)
 {
     listWidget = value;
+}
+
+QString Model::getFilePath() const
+{
+    return filePath;
+}
+
+void Model::setFilePath(const QString &value)
+{
+    filePath = value;
 }

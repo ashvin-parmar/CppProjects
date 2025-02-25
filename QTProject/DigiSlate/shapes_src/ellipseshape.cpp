@@ -52,7 +52,22 @@ void EllipseShape::select(QPainter &painter)
 }
 bool EllipseShape::isPointInShapeRegion(const QPoint &point)
 {
-    //to implement
+    if(horizontalRadius==verticalRadius && this->isCenter)  //Circle
+    {
+        int dx=point.x()-this->x;
+        int dy=point.y()-this->y;
+        return (dx * dx + dy * dy)<=(horizontalRadius*horizontalRadius);
+    }
+    else
+    {
+        int x_c=this->x+horizontalRadius;   //Center
+        int y_c=this->y+verticalRadius;     //Center
+        int a =horizontalRadius;
+        int b =verticalRadius;
+        int x = point.x();
+        int y = point.y();
+        return ((x - x_c) * (x - x_c)) / (a * a) + ((y - y_c) * (y - y_c)) / (b * b) <= 1;
+    }
     return false;
 }
 int EllipseShape::getX() const

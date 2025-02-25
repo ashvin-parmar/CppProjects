@@ -33,7 +33,7 @@ void PolygonShape::select(QPainter &painter)
 }
 bool PolygonShape::isPointInShapeRegion(const QPoint &point)
 {
-    return false;
+    return QPolygon(points).contains(point);
 }
 QVector<QPoint> PolygonShape::getPoints() const
 {

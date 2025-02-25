@@ -38,7 +38,6 @@ void PolylineShape::select(QPainter &painter)
 }
 bool PolylineShape::isPointInShapeRegion(const QPoint &point)
 {
-   Q_UNUSED(point);
     int x1,y1,x2,y2;
     int ao,ob,ab;
     QPoint p1=points.front();

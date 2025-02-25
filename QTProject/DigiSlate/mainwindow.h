@@ -51,8 +51,11 @@ private slots:
 
     void on_imageDraw_clicked();
 
+    void on_addNewPage_clicked();
+
 private:
     Ui::MainWindow *ui;
+    QListWidget *listWidget;
     Model *model;
 };
 #endif // MAINWINDOW_H
