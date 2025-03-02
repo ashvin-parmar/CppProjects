@@ -1,6 +1,9 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#define ENABLE true
+#define DISABLE false
+
 #define NOFLAG -1
 #define PICK 0
 #define FREEHAND 1
@@ -9,6 +12,8 @@
 #define ELLIPSE 4
 #define RECTANGLE 5
 #define IMAGE 6
+#define GROUPPICK 7
+#define UNGROUPPICK 8
 
 #include <QWidget>
 #include <QList>
@@ -18,6 +23,7 @@
 #include<QLabel>
 #include<QListWidget>
 #include<shapes_header/freehandshape.h>
+#include<groupshape.h>
 
 class Model : public QWidget {
     Q_OBJECT
@@ -48,6 +54,9 @@ public:
     QString getFilePath() const;
     void setFilePath(const QString &value);
 
+    bool getDrag() const;
+    void setDrag(bool value);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -58,6 +67,7 @@ private:
     QList<Drawing*> shapes;
     QHash<QString,Drawing*> viewMap;
     int flag=NOFLAG;
+    bool drag=DISABLE;
     QLabel *cordinates;
     FreeHandShape *freeHandShape;
     Drawing *drawing;
@@ -66,6 +76,10 @@ private:
     QPoint pickPoint;
     QListWidget *listWidget;
     QString filePath;
+    GroupShape *groupShapes;
+    QPoint initialPoint;
+    QPoint currentPoint;
+    QPoint finalPoint;
 };
 
 #endif // MODEL_H

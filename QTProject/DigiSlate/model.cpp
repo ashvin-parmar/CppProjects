@@ -1,7 +1,7 @@
 #include "model.h"
 #include <QPainter>
 #include <QDebug>
-
+#include <QPointF>
 #include<shapes_header/arcshape.h>
 #include<shapes_header/lineshape.h>
 #include<shapes_header/textshape.h>
@@ -20,6 +20,7 @@ Model::Model(QWidget *parent) : QWidget(parent)
 {
     //Initialization
     flag=NOFLAG;
+    drag=DISABLE;
     cordinates=nullptr;
     freeHandShape=nullptr;
     drawing=nullptr;
@@ -27,6 +28,7 @@ Model::Model(QWidget *parent) : QWidget(parent)
     this->penWidth=1;
     pickPoint=QPoint();
     this->filePath="";
+    this->groupShapes=new GroupShape();
 }
 Model::~Model()
 {
@@ -72,20 +74,41 @@ void Model::processClicked(QPainter &painter)
 {
     if(this->flag==PICK)
     {
+        this->groupShapes->removeAllShape();
         for(Drawing *shape: shapes)
         {
             if(shape->isPointInShapeRegion(pickPoint))
             {
-                painter.setPen(QPen(Qt::yellow,penWidth+5,Qt::PenStyle::SolidLine,Qt::PenCapStyle::RoundCap));
+//                painter.setPen(QPen(Qt::yellow,penWidth+5,Qt::PenStyle::SolidLine,Qt::PenCapStyle::RoundCap));
+                this->groupShapes->addShape(shape);
                 shape->select(painter);
                 break;
             }
         }
+    }else if(this->flag==GROUPPICK)
+    {
+        for(Drawing *shape: shapes)
+        {
+            if(this->groupShapes->containShape(shape)) continue;
+            if(shape->isPointInShapeRegion(pickPoint))
+            {
+//                painter.setPen(QPen(Qt::yellow,penWidth+5,Qt::PenStyle::SolidLine,Qt::PenCapStyle::RoundCap));
+                this->groupShapes->addShape(shape);
+                break;
+            }
+        }
+        for(Drawing *shape: this->groupShapes->getShapes()) shape->select(painter);
+    }
+    else if(this->flag==UNGROUPPICK)
+    {
+        this->groupShapes->removeAllShape();
     }
     else
     {
         this->pickPoint=QPoint();
+        this->groupShapes->removeAllShape();
     }
+
     update();
 }
 void Model::paintEvent(QPaintEvent *event)
@@ -100,7 +123,7 @@ void Model::paintEvent(QPaintEvent *event)
         shape->draw(painter);  // Call each shape’s draw method
     }
 
-    if(this->flag==PICK)
+    if(this->flag==PICK || this->flag==GROUPPICK || this->flag==UNGROUPPICK)
     {
         processClicked(painter);
     }
@@ -108,8 +131,9 @@ void Model::paintEvent(QPaintEvent *event)
 void Model::mousePressEvent(QMouseEvent *event)
 {
     if(this->flag==NOFLAG) return;
+    currentPoint=event->pos();
     QPoint point=event->pos();
-    if(this->flag==PICK) this->pickPoint=point;
+    if(this->flag==PICK || this->flag==GROUPPICK) this->pickPoint=point;
     if(this->flag==FREEHAND)
     {
         freeHandShape=new FreeHandShape();
@@ -186,16 +210,21 @@ void Model::mousePressEvent(QMouseEvent *event)
         this->drawing=shape;
         this->addShape(this->drawing);
     }
+
+    update();
 }
 void Model::mouseMoveEvent(QMouseEvent *event)
 {
     cordinates->setText(QString("x=%1,y=%2").arg(event->x()).arg(event->y()));
+    currentPoint=event->pos();
     if(this->flag==NOFLAG) return;
-    QPoint point=event->pos();
-    if(this->flag==PICK) this->pickPoint=point;
+    if(this->flag==PICK || this->flag==GROUPPICK)
+    {
+        this->drag=ENABLE;
+    }
     if(this->flag==FREEHAND)
     {
-        if(freeHandShape!=nullptr) this->freeHandShape->addPoint(point);
+        if(freeHandShape!=nullptr) this->freeHandShape->addPoint(currentPoint);
     }
     if(this->flag==LINE)
     {
@@ -242,8 +271,20 @@ void Model::mouseMoveEvent(QMouseEvent *event)
             shape->setHeight((event->y()-shape->getY()));
         }
     }
+
+    if(this->drag==ENABLE)
+    {
+        //Traverse on groupShapes and call drawing(shapes) method for dragMove Event specific [Change position/Calculate Difference from clicked place]
+        QPointF diff=currentPoint-initialPoint;
+        for(Drawing *shape:this->groupShapes->getShapes())
+        {
+            shape->moveShape(diff);
+        }
+    }
+
     update();
 }
+
 void Model::mouseReleaseEvent(QMouseEvent *event)
 {
     if(this->flag==NOFLAG)
@@ -251,8 +292,9 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
         this->drawing=nullptr;
         return;
     }
+    finalPoint=event->pos();
     QPoint point=event->pos();
-    if(this->flag==PICK) this->pickPoint=point;
+
     if(this->flag==FREEHAND)
     {
         if(freeHandShape!=nullptr)
@@ -349,6 +391,19 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
             this->flag=NOFLAG;
         }
     }
+
+    if(this->drag==ENABLE)
+    {
+        QPointF diff=finalPoint-initialPoint;
+        for(Drawing *shape:this->groupShapes->getShapes())
+        {
+            shape->moveShape(diff);
+        }
+    }
+    if(this->flag==PICK || this->flag==GROUPPICK)
+    {
+       this->drag=DISABLE;
+    }
     update();
 }
 
@@ -404,4 +459,13 @@ QString Model::getFilePath() const
 void Model::setFilePath(const QString &value)
 {
     filePath = value;
+}
+bool Model::getDrag() const
+{
+    return drag;
+}
+
+void Model::setDrag(bool value)
+{
+    drag = value;
 }

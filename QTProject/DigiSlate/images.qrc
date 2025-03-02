@@ -28,5 +28,10 @@
         <file>icon2/pick_tool.svg</file>
         <file>icon2/addNewPage.svg</file>
         <file>icon2/freeDraw.svg</file>
+        <file>icon2/boardFrame_removebg.png</file>
+        <file>icon2/drag.svg</file>
+        <file>icon2/open_file.svg</file>
+        <file>icon2/save.svg</file>
+        <file>icon2/group-items.svg</file>
     </qresource>
 </RCC>

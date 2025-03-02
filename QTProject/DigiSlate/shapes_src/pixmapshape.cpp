@@ -42,6 +42,11 @@ bool PixmapShape::isPointInShapeRegion(const QPoint &point)
     if((pointX>=x && pointY>=y) && (pointX<=(x+width) && pointY<=(y+height))) return true;
     return false;
 }
+void PixmapShape::moveShape(const QPointF &diffPoint)
+{
+    this->x+=diffPoint.x();
+    this->y+=diffPoint.y();
+}
 int PixmapShape::getX() const
 {
     return x;

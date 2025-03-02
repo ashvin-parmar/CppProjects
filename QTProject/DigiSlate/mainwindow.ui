@@ -44,7 +44,7 @@
      </property>
      <property name="font">
       <font>
-       <stylestrategy>PreferAntialias</stylestrategy>
+       <stylestrategy>NoAntialias</stylestrategy>
       </font>
      </property>
      <property name="contextMenuPolicy">
@@ -57,7 +57,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="images.qrc">:/images/icon2/boardFrame.png</pixmap>
+      <pixmap resource="images.qrc">:/images/icon2/boardFrame_removebg.png</pixmap>
      </property>
     </widget>
     <widget class="QFrame" name="dynamicShape">
@@ -81,7 +81,7 @@
         <x>0</x>
         <y>10</y>
         <width>41</width>
-        <height>371</height>
+        <height>571</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -318,6 +318,64 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="group_shape">
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Group Components</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/icon2/group-items.svg</normaloff>:/images/icon2/group-items.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="drag">
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Save File</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/icon2/drag.svg</normaloff>:/images/icon2/drag.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="addNewPage">
          <property name="maximumSize">
           <size>
@@ -329,7 +387,10 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>Pick Shape</string>
+          <string>Add New Page</string>
+         </property>
+         <property name="toolTipDuration">
+          <number>-1</number>
          </property>
          <property name="text">
           <string/>
@@ -337,6 +398,64 @@
          <property name="icon">
           <iconset resource="images.qrc">
            <normaloff>:/images/icon2/addNewPage.svg</normaloff>:/images/icon2/addNewPage.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="openFile">
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Open File</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/icon2/open_file.svg</normaloff>:/images/icon2/open_file.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="saveFile">
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Save File</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/icon2/save.svg</normaloff>:/images/icon2/save.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -460,6 +579,9 @@
           <height>30</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Close</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -495,6 +617,9 @@
           <height>20</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Black</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -511,6 +636,9 @@
           <width>20</width>
           <height>20</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Red</string>
         </property>
         <property name="text">
          <string/>
@@ -529,6 +657,9 @@
           <height>20</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Green</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -546,6 +677,9 @@
           <height>20</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Blue</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -562,6 +696,9 @@
           <width>20</width>
           <height>20</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Mix Color </string>
         </property>
         <property name="text">
          <string/>
@@ -602,6 +739,9 @@
        <height>371</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>List of Shape</string>
+     </property>
     </widget>
     <widget class="QSlider" name="penWidthSlider">
      <property name="geometry">
@@ -611,6 +751,9 @@
        <width>100</width>
        <height>16</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>Pen Width</string>
      </property>
      <property name="minimum">
       <number>1</number>
@@ -622,6 +765,14 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
+    <zorder>dynamicShape</zorder>
+    <zorder>boardWindow</zorder>
+    <zorder>layoutWidget</zorder>
+    <zorder>layoutWidget</zorder>
+    <zorder>listWidget</zorder>
+    <zorder>penWidthSlider</zorder>
+    <zorder>boardFrame</zorder>
+    <zorder>board</zorder>
    </widget>
    <widget class="QLabel" name="coordinatesScreen">
     <property name="geometry">

@@ -17,6 +17,9 @@ public:
     virtual QString toString()=0;
     virtual void select(QPainter &painter)=0;
     virtual bool isPointInShapeRegion(const QPoint &point)=0;
+    virtual void moveShape(const QPointF &diffPoint)=0;
+    //virtual Drawing* fromJson(const QJsonObject& )=0;
+    //virtual QJsonObject toJson() const=0;
 };
 
 #endif // DRAWING_H

@@ -41,6 +41,11 @@ bool FreeHandShape::isPointInShapeRegion(const QPoint &point)
     }
     return false;
 }
+void FreeHandShape::moveShape(const QPointF &diffPoint)
+{
+    QPoint point((int)diffPoint.x(),(int)diffPoint.y());
+    this->drawPath.translate(point);
+}
 void FreeHandShape::addPoint(const QPoint &point)
 {
     this->drawPath.append(point);

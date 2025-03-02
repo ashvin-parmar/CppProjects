@@ -55,6 +55,13 @@ bool PolylineShape::isPointInShapeRegion(const QPoint &point)
     }
     return false;
 }
+void PolylineShape::moveShape(const QPointF &diffPoint)
+{
+    QPoint point((int)diffPoint.x(),(int)diffPoint.y());
+    QPolygon polygon(this->points);
+    polygon.translate(point);
+    this->points=polygon.toList().toVector();
+}
 QVector<QPoint> PolylineShape::getPoints() const
 {
     return points;

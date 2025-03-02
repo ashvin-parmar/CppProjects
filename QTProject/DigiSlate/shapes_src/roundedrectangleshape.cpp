@@ -47,6 +47,11 @@ bool RoundedRectangleShape::isPointInShapeRegion(const QPoint &point)
 
     return false;
 }
+void RoundedRectangleShape::moveShape(const QPointF &diffPoint)
+{
+    this->x+=diffPoint.x();
+    this->y+=diffPoint.y();
+}
 int RoundedRectangleShape::getX() const
 {
     return x;

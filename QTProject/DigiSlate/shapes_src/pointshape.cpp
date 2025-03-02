@@ -32,6 +32,11 @@ bool PointShape::isPointInShapeRegion(const QPoint &point)
    Q_UNUSED(point);
     return false;
 }
+void PointShape::moveShape(const QPointF &diffPoint)
+{
+    this->x+=diffPoint.x();
+    this->y+=diffPoint.y();
+}
 int PointShape::getX() const
 {
     return x;

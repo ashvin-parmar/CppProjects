@@ -50,6 +50,14 @@ bool LineShape::isPointInShapeRegion(const QPoint &point)
     if(ab==ao+ob) return true;
     return false;
 }
+void LineShape::moveShape(const QPointF &diffPoint)
+{
+    QPoint point((int)diffPoint.x(),(int)diffPoint.y());
+    this->x1+=diffPoint.x();
+    this->y1+=diffPoint.y();
+    this->x2+=diffPoint.x();
+    this->y2+=diffPoint.y();
+}
 QColor LineShape::getPenColor() const
 {
     return penColor;

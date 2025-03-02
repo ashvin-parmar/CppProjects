@@ -37,7 +37,11 @@ bool ArcShape::isPointInShapeRegion(const QPoint &point)
    Q_UNUSED(point);
     return false;
 }
-
+void ArcShape::moveShape(const QPointF &diffPoint)
+{
+    this->x+=diffPoint.x();
+    this->y+=diffPoint.y();
+}
 
 int ArcShape::getX() const
 {

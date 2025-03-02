@@ -70,6 +70,11 @@ bool EllipseShape::isPointInShapeRegion(const QPoint &point)
     }
     return false;
 }
+void EllipseShape::moveShape(const QPointF &diffPoint)
+{
+    this->x+=diffPoint.x();
+    this->y+=diffPoint.y();
+}
 int EllipseShape::getX() const
 {
     return x;

@@ -48,6 +48,11 @@ bool RectangleShape::isPointInShapeRegion(const QPoint &point)
     if((pointX>=x && pointY>=y) && (pointX<=(x+width) && pointY<=(y+height))) return true;
     return false;
 }
+void RectangleShape::moveShape(const QPointF &diffPoint)
+{
+    this->x+=diffPoint.x();
+    this->y+=diffPoint.y();
+}
 int RectangleShape::getX() const
 {
     return x;

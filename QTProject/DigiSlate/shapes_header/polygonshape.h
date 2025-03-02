@@ -19,6 +19,7 @@ public:
     QString toString() override;
     void select(QPainter &painter) override;
     bool isPointInShapeRegion(const QPoint &point) override;
+    void moveShape(const QPointF &diffPoint) override;
 
     QVector<QPoint> getPoints() const;
     void setPoints(const QVector<QPoint> &value);

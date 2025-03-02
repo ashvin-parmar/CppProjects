@@ -138,7 +138,7 @@ void MainWindow::on_circleDraw_clicked()
 
 void MainWindow::on_imageDraw_clicked()
 {
-    QString filePath=QFileDialog::getOpenFileName(this,tr("Open Image"),"home","Images (*.jpg *.png)");
+    QString filePath=QFileDialog::getOpenFileName(this,tr("Open Image"),QDir::homePath(),"Images (*.jpg *.png)");
     if(filePath.compare("")==1)
     {
         QPixmap pixmap(filePath);
@@ -156,4 +156,32 @@ void MainWindow::on_addNewPage_clicked()
 {
 //    QRadioButton *radioButton=new QRadioButton(this->ui->boardWindow);
 
+}
+
+void MainWindow::on_saveFile_clicked()
+{
+
+}
+
+void MainWindow::on_openFile_clicked()
+{
+
+}
+
+void MainWindow::on_drag_clicked()
+{
+    this->model->setDrag(ENABLE);
+}
+
+void MainWindow::on_group_shape_clicked()
+{
+    this->model->setFlag(GROUPPICK);
+}
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key()==Qt::Key::Key_Control) this->model->setFlag(GROUPPICK);
+}
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->key()==Qt::Key::Key_Control) this->model->setFlag(UNGROUPPICK);
 }
