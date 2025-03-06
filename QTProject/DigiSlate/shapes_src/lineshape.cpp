@@ -58,6 +58,14 @@ void LineShape::moveShape(const QPointF &diffPoint)
     this->x2+=diffPoint.x();
     this->y2+=diffPoint.y();
 }
+Drawing *LineShape::fromJson(const QJsonObject &json)
+{
+
+}
+QJsonObject LineShape::toJson() const
+{
+
+}
 QColor LineShape::getPenColor() const
 {
     return penColor;

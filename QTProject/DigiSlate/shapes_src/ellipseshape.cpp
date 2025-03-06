@@ -75,6 +75,57 @@ void EllipseShape::moveShape(const QPointF &diffPoint)
     this->x+=diffPoint.x();
     this->y+=diffPoint.y();
 }
+Drawing *EllipseShape::fromJson(const QJsonObject &json)
+{
+    EllipseShape *ellipseShape=new EllipseShape();
+    printf("Object Created");
+    if(const QJsonValue value=json["x"]; value.isDouble())
+    {
+        ellipseShape->x=value.toInt();
+    }
+    if(const QJsonValue value=json["y"]; value.isDouble())
+    {
+        ellipseShape->y=value.toInt();
+    }
+    if(const QJsonValue value=json["horizontalRadius"]; value.isDouble())
+    {
+        ellipseShape->horizontalRadius=value.toInt();
+    }
+    if(const QJsonValue value=json["verticalRadius"]; value.isDouble())
+    {
+        ellipseShape->verticalRadius=value.toInt();
+    }
+    if(const QJsonValue value=json["penColor"]; value.isDouble())
+    {
+        ellipseShape->penColor=value.toInt();
+    }
+    if(const QJsonValue value=json["penWidth"]; value.isDouble())
+    {
+        ellipseShape->penWidth=value.toInt();
+    }
+//    if(const QJsonValue value=json["brush"]; value.isObject())
+//    {
+//        QVariant variant(value.toVariant());
+//        QBrush bbrush=variant.value<QBrush>();
+//        ellipseShape->brush=bbrush;
+//    }
+    printf("%d, %d, %d, %d ",ellipseShape->x,ellipseShape->y,ellipseShape->verticalRadius,ellipseShape->horizontalRadius);
+return ellipseShape;
+}
+QJsonObject EllipseShape::toJson() const
+{
+    QJsonObject json;
+    json["x"]=x;
+    json["y"]=y;
+    json["horizontalRadius"]=horizontalRadius;
+    json["verticalRadius"]=verticalRadius;
+    json["penWidth"]=penWidth;
+    json["penColor"]=penColor.value();
+//    QVariant value=QVariant::fromValue(brush);
+//    json["brush"]=value.toJsonObject();
+    return json;
+
+}
 int EllipseShape::getX() const
 {
     return x;

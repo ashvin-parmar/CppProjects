@@ -46,6 +46,14 @@ void FreeHandShape::moveShape(const QPointF &diffPoint)
     QPoint point((int)diffPoint.x(),(int)diffPoint.y());
     this->drawPath.translate(point);
 }
+Drawing *FreeHandShape::fromJson(const QJsonObject &json)
+{
+return nullptr;
+}
+QJsonObject FreeHandShape::toJson() const
+{
+
+}
 void FreeHandShape::addPoint(const QPoint &point)
 {
     this->drawPath.append(point);

@@ -17,6 +17,7 @@
 #include<QStyledItemDelegate>
 #include<QAbstractItemView>
 #include<QTreeWidgetItem>
+#include<QJsonDocument>
 
 #include<drawing.h>
 #include<model.h>
@@ -160,12 +161,72 @@ void MainWindow::on_addNewPage_clicked()
 
 void MainWindow::on_saveFile_clicked()
 {
-
+QString saveFile=QFileDialog::getSaveFileName(this,tr("Save File"),QDir::homePath(),tr("Files (*.slate)"));
+if(saveFile.compare("")==1)
+{
+    if(saveFile.endsWith(".slate")==false)
+    {
+        saveFile+=".slate";
+    }
+    QFile file(saveFile);
+    if(file.exists()==true)
+    {
+        QMessageBox::warning(this,"File Error","File already exist");
+        return;
+    }
+    cout<<(saveFile.toStdString())<<endl;
+    QJsonObject json=this->model->toJson();
+    QJsonDocument *docs=new QJsonDocument();
+    docs->setObject(json);
+    QByteArray byteArray=docs->toJson();
+    if(!file.open(QIODevice::WriteOnly | QIODevice::ReadOnly))
+    {
+//        qWaring("Couldn't open file");
+        return ;
+    }
+    file.write(byteArray);
+    file.close();
+    delete docs;
+}
 }
 
 void MainWindow::on_openFile_clicked()
 {
+    QString openFile=QFileDialog::getOpenFileName(this,tr("Open File"),QDir::homePath(),tr("Files (*.slate)"));
+    if(openFile.compare("")==1)
+    {
+        QFile file(openFile);
+        if(file.exists()==false)
+        {
+            QMessageBox::warning(this,"File Error","File not exist");
+            return;
+        }
+        cout<<(openFile.toStdString())<<endl;
+        if(!file.open(QIODevice::WriteOnly | QIODevice::ReadOnly))
+        {
+    //        qWaring("Couldn't open file");
+            return ;
+        }
+        QJsonDocument docs(QJsonDocument::fromJson(file.readAll()));
+        if(docs.isNull()) printf("Null");
+        QJsonObject jsonObject=docs.object();
+        if(jsonObject.isEmpty()) printf("Empty");
+        Model *newModel=Model::fromJson(jsonObject,this->ui->board);
+        if(newModel==nullptr) printf("Null model");
+        delete this->model;
+        this->model=newModel;
+//        this->model->setParent(this->ui->board);
+        this->model->setGeometry(0,0,1144,700);
 
+        this->model->setColor(Qt::black);
+        this->model->setPenWidth(1);
+        this->model->setListWidget(this->ui->listWidget);
+
+        this->model->setVisible(true);
+        this->model->setCordinates(this->ui->coordinatesModel);
+        this->model->update();
+
+    }
 }
 
 void MainWindow::on_drag_clicked()
@@ -183,5 +244,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 }
 void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
-    if(event->key()==Qt::Key::Key_Control) this->model->setFlag(UNGROUPPICK);
+    Q_UNUSED(event);
+    //if(event->key()==Qt::Key::Key_Control) this->model->setFlag(UNGROUPPICK);
 }

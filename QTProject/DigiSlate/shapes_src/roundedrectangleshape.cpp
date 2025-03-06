@@ -52,6 +52,14 @@ void RoundedRectangleShape::moveShape(const QPointF &diffPoint)
     this->x+=diffPoint.x();
     this->y+=diffPoint.y();
 }
+Drawing * RoundedRectangleShape::fromJson(const QJsonObject &json)
+{
+
+}
+QJsonObject RoundedRectangleShape::toJson() const
+{
+
+}
 int RoundedRectangleShape::getX() const
 {
     return x;

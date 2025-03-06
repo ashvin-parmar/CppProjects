@@ -47,6 +47,14 @@ void PixmapShape::moveShape(const QPointF &diffPoint)
     this->x+=diffPoint.x();
     this->y+=diffPoint.y();
 }
+Drawing * PixmapShape::fromJson(const QJsonObject &json)
+{
+
+}
+QJsonObject PixmapShape::toJson() const
+{
+
+}
 int PixmapShape::getX() const
 {
     return x;

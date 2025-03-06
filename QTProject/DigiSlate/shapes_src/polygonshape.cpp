@@ -42,6 +42,14 @@ void PolygonShape::moveShape(const QPointF &diffPoint)
     polygon.translate(point);
     this->points=polygon.toList().toVector();
 }
+Drawing * PolygonShape::fromJson(const QJsonObject &json)
+{
+return nullptr;
+}
+QJsonObject PolygonShape::toJson() const
+{
+
+}
 QVector<QPoint> PolygonShape::getPoints() const
 {
     return points;

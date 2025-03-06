@@ -53,6 +53,14 @@ void RectangleShape::moveShape(const QPointF &diffPoint)
     this->x+=diffPoint.x();
     this->y+=diffPoint.y();
 }
+Drawing * RectangleShape::fromJson(const QJsonObject &json)
+{
+
+}
+QJsonObject RectangleShape::toJson() const
+{
+
+}
 int RectangleShape::getX() const
 {
     return x;

@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QPointF>
+#include<QJsonDocument>
 #include<shapes_header/arcshape.h>
 #include<shapes_header/lineshape.h>
 #include<shapes_header/textshape.h>
@@ -12,6 +13,7 @@
 #include<shapes_header/rectangleshape.h>
 #include<shapes_header/roundedrectangleshape.h>
 #include<shapes_header/pixmapshape.h>
+
 
 #include<iostream>
 using namespace std;
@@ -80,8 +82,9 @@ void Model::processClicked(QPainter &painter)
             if(shape->isPointInShapeRegion(pickPoint))
             {
 //                painter.setPen(QPen(Qt::yellow,penWidth+5,Qt::PenStyle::SolidLine,Qt::PenCapStyle::RoundCap));
-                this->groupShapes->addShape(shape);
+//                this->groupShapes->addShape(shape);
                 shape->select(painter);
+                drawing=shape;
                 break;
             }
         }
@@ -102,14 +105,14 @@ void Model::processClicked(QPainter &painter)
     else if(this->flag==UNGROUPPICK)
     {
         this->groupShapes->removeAllShape();
+        update();
     }
     else
     {
         this->pickPoint=QPoint();
         this->groupShapes->removeAllShape();
+        update();
     }
-
-    update();
 }
 void Model::paintEvent(QPaintEvent *event)
 {
@@ -131,7 +134,7 @@ void Model::paintEvent(QPaintEvent *event)
 void Model::mousePressEvent(QMouseEvent *event)
 {
     if(this->flag==NOFLAG) return;
-    currentPoint=event->pos();
+    initialPoint=event->pos();
     QPoint point=event->pos();
     if(this->flag==PICK || this->flag==GROUPPICK) this->pickPoint=point;
     if(this->flag==FREEHAND)
@@ -275,13 +278,20 @@ void Model::mouseMoveEvent(QMouseEvent *event)
     if(this->drag==ENABLE)
     {
         //Traverse on groupShapes and call drawing(shapes) method for dragMove Event specific [Change position/Calculate Difference from clicked place]
-        QPointF diff=currentPoint-initialPoint;
+        QPointF diff=QPoint(currentPoint.x()-initialPoint.x(),currentPoint.y()-initialPoint.y());
+        if(this->flag==PICK)
+        {
+            if(drawing!=nullptr) drawing->moveShape(diff);
+        }
+        if(this->flag==GROUPPICK)
+        {
         for(Drawing *shape:this->groupShapes->getShapes())
         {
             shape->moveShape(diff);
         }
+        }
+        initialPoint=currentPoint;
     }
-
     update();
 }
 
@@ -394,10 +404,18 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
 
     if(this->drag==ENABLE)
     {
-        QPointF diff=finalPoint-initialPoint;
+        QPointF diff=QPoint(currentPoint.x()-initialPoint.x(),currentPoint.y()-initialPoint.y());
+        if(this->flag==PICK)
+        {
+            if(drawing!=nullptr) drawing->moveShape(diff);
+            drawing=nullptr;
+        }
+        if(this->flag==GROUPPICK)
+        {
         for(Drawing *shape:this->groupShapes->getShapes())
         {
             shape->moveShape(diff);
+        }
         }
     }
     if(this->flag==PICK || this->flag==GROUPPICK)
@@ -405,6 +423,44 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
        this->drag=DISABLE;
     }
     update();
+}
+
+Model* Model::fromJson(const QJsonObject &jsonObject,QWidget *parent)
+{
+    Model *model=new Model(parent);
+    QStringList list=jsonObject.keys();
+    for(QString key:list)
+    {
+        Drawing *shape=nullptr;
+        QJsonValue value=jsonObject.value(key);
+        if(key.contains("Arc"))
+        {
+            shape=ArcShape::fromJson(value.toObject());
+        }
+        if(key.contains("Ellipse"))
+        {
+            shape=EllipseShape::fromJson(value.toObject());
+        }
+        if(key.contains("Circle"))
+        {
+            shape=EllipseShape::fromJson(value.toObject());
+        }
+        if(shape!=nullptr)
+        {
+            model->addShape(shape);
+        }
+    }
+    return model;
+}
+QJsonObject Model::toJson() const
+{
+    QJsonObject json;
+    for(Drawing *shape:shapes)
+    {
+        QJsonObject shapeJson=shape->toJson();
+        json[shape->toString()]=shapeJson;
+    }
+    return json;
 }
 
 int Model::getPenWidth() const

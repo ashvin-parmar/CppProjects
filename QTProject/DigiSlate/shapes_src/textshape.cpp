@@ -51,6 +51,14 @@ void TextShape::moveShape(const QPointF &diffPoint)
     this->x+=diffPoint.x();
     this->y+=diffPoint.y();
 }
+Drawing * TextShape::fromJson(const QJsonObject &json)
+{
+
+}
+QJsonObject TextShape::toJson() const
+{
+
+}
 QColor TextShape::getPenColor() const
 {
     return penColor;

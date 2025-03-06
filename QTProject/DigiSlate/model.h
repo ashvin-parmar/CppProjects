@@ -21,6 +21,8 @@
 #include<QHash>
 #include<QMouseEvent>
 #include<QLabel>
+#include<QJsonArray>
+
 #include<QListWidget>
 #include<shapes_header/freehandshape.h>
 #include<groupshape.h>
@@ -38,6 +40,9 @@ public:
     void drawAll();
     QList<QString> getAllShapes();
     void processClicked(QPainter &painter);
+
+    static Model* fromJson(const QJsonObject &json,QWidget *parent=nullptr);
+    QJsonObject toJson() const;
 
     void setCordinates(QLabel *value);
 

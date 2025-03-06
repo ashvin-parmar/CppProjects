@@ -17,6 +17,8 @@ public:
     void select(QPainter &painter) override;
     bool isPointInShapeRegion(const QPoint &point) override;
     void moveShape(const QPointF &diffPoint) override;
+    static Drawing * fromJson(const QJsonObject &json);
+    QJsonObject toJson() const override;
 
     void addPoint(const QPoint &point);
     int pathSize() const;

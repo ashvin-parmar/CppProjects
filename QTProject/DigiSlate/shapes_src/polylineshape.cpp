@@ -62,6 +62,14 @@ void PolylineShape::moveShape(const QPointF &diffPoint)
     polygon.translate(point);
     this->points=polygon.toList().toVector();
 }
+Drawing * PolylineShape::fromJson(const QJsonObject &json)
+{
+
+}
+QJsonObject PolylineShape::toJson() const
+{
+
+}
 QVector<QPoint> PolylineShape::getPoints() const
 {
     return points;

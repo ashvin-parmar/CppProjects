@@ -37,6 +37,14 @@ void PointShape::moveShape(const QPointF &diffPoint)
     this->x+=diffPoint.x();
     this->y+=diffPoint.y();
 }
+Drawing * PointShape::fromJson(const QJsonObject &json)
+{
+
+}
+QJsonObject PointShape::toJson() const
+{
+
+}
 int PointShape::getX() const
 {
     return x;
