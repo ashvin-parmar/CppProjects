@@ -5,6 +5,8 @@
 #include <QFrame>
 #include <QObject>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
 #include <QVariant>
 class Drawing : public QObject
 {

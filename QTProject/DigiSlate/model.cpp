@@ -129,6 +129,9 @@ void Model::paintEvent(QPaintEvent *event)
     if(this->flag==PICK || this->flag==GROUPPICK || this->flag==UNGROUPPICK)
     {
         processClicked(painter);
+    } else if(this->drag==DISABLE)
+    {
+        this->groupShapes->removeAllShape();
     }
 }
 void Model::mousePressEvent(QMouseEvent *event)
@@ -203,13 +206,15 @@ void Model::mousePressEvent(QMouseEvent *event)
             this->drawing=nullptr;
             return;
         }
-        filePath="";
+
         PixmapShape *shape=new PixmapShape();
         shape->setX(event->x());
         shape->setY(event->y());
         shape->setWidth(0);
         shape->setHeight(0);
+        shape->setFileName(filePath);
         shape->setPixmap(image);
+        filePath="";
         this->drawing=shape;
         this->addShape(this->drawing);
     }
@@ -437,13 +442,17 @@ Model* Model::fromJson(const QJsonObject &jsonObject,QWidget *parent)
         {
             shape=ArcShape::fromJson(value.toObject());
         }
-        if(key.contains("Ellipse"))
+        else if(key.contains("Ellipse"))
         {
             shape=EllipseShape::fromJson(value.toObject());
         }
-        if(key.contains("Circle"))
+        else if(key.contains("Circle"))
         {
             shape=EllipseShape::fromJson(value.toObject());
+        }
+        else if(key.contains("FreeHand"))
+        {
+            shape=FreeHandShape::fromJson(value.toObject());
         }
         if(shape!=nullptr)
         {
@@ -458,6 +467,7 @@ QJsonObject Model::toJson() const
     for(Drawing *shape:shapes)
     {
         QJsonObject shapeJson=shape->toJson();
+        if(shapeJson.isEmpty()) continue;
         json[shape->toString()]=shapeJson;
     }
     return json;

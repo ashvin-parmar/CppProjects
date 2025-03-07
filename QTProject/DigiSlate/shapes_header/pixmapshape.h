@@ -46,9 +46,13 @@ public:
     QPixmap getPixmap() const;
     void setPixmap(const QPixmap &value);
 
+    QString getFileName() const;
+    void setFileName(const QString &value);
+
 private:
     int x,y;
     int width,height;
+    QString fileName;
     double scaleFactor;
     qreal rotationAngle;
     Qt::TransformationMode transformationMode;

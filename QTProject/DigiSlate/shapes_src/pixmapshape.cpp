@@ -49,11 +49,24 @@ void PixmapShape::moveShape(const QPointF &diffPoint)
 }
 Drawing * PixmapShape::fromJson(const QJsonObject &json)
 {
-
+    PixmapShape *shape=new PixmapShape();
+    shape->x=json["x"].toInt();
+    shape->y=json["y"].toInt();
+    shape->width=json["width"].toInt();
+    shape->height=json["height"].toInt();
+    shape->fileName=json["fileName"].toString();
+    shape->pixmap.save(shape->fileName);
+    return shape;
 }
 QJsonObject PixmapShape::toJson() const
 {
-
+    QJsonObject json;
+    json["x"]=x;
+    json["y"]=y;
+    json["width"]=width;
+    json["height"]=height;
+    json["fileName"]=fileName;
+    return json;
 }
 int PixmapShape::getX() const
 {
@@ -133,4 +146,14 @@ QPixmap PixmapShape::getPixmap() const
 void PixmapShape::setPixmap(const QPixmap &value)
 {
     pixmap = value;
+}
+
+QString PixmapShape::getFileName() const
+{
+    return fileName;
+}
+
+void PixmapShape::setFileName(const QString &value)
+{
+    fileName = value;
 }

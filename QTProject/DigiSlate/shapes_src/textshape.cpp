@@ -53,11 +53,29 @@ void TextShape::moveShape(const QPointF &diffPoint)
 }
 Drawing * TextShape::fromJson(const QJsonObject &json)
 {
-
+    TextShape *shape=new TextShape();
+    shape->text=json["text"].toString();
+    shape->penWidth=json["pointSize"].toInt();
+    shape->penWidth=json["penWidth"].toInt();
+    shape->penColor=json["penColor"].toString();
+    if(const QJsonValue value=json["font"]; value.isObject())
+    {
+        QVariant variant(value.toVariant());
+        QFont ffont=variant.value<QFont>();
+        shape->font=ffont;
+    }
+    return shape;
 }
 QJsonObject TextShape::toJson() const
 {
-
+    QJsonObject json;
+    json["text"]=this->text;
+    json["pointSize"]=this->pointSize;
+    json["penWidth"]=this->penWidth;
+    json["penColor"]=this->penColor.name();
+    QVariant value=QVariant::fromValue(font);
+    json["font"]=value.toJsonObject();
+    return json;
 }
 QColor TextShape::getPenColor() const
 {

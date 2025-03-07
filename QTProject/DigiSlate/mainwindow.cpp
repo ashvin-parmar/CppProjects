@@ -18,6 +18,7 @@
 #include<QAbstractItemView>
 #include<QTreeWidgetItem>
 #include<QJsonDocument>
+#include<QColorDialog>
 
 #include<drawing.h>
 #include<model.h>
@@ -104,7 +105,16 @@ void MainWindow::on_blueColor_clicked()
 
 void MainWindow::on_mixColor_clicked()
 {
-    this->model->setColor(Qt::black);
+//    this->model->setColor(Qt::black);
+    QColor selectedColor=QColorDialog::getColor(Qt::black,this,"Select Color");
+    if(selectedColor.isValid())
+    {
+        this->model->setColor(selectedColor);
+    }
+    else
+    {
+        this->model->setColor(Qt::black);
+    }
 }
 
 void MainWindow::on_penWidthSlider_valueChanged(int value)
@@ -232,6 +242,10 @@ void MainWindow::on_openFile_clicked()
 void MainWindow::on_drag_clicked()
 {
     this->model->setDrag(ENABLE);
+    this->model->setFlag(PICK);
+//    int flag=this->model->getFlag();
+//    if(!(flag==PICK || flag==GROUPPICK)) this->model->setFlag(NOFLAG);
+
 }
 
 void MainWindow::on_group_shape_clicked()

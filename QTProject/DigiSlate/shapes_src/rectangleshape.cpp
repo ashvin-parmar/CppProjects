@@ -55,11 +55,33 @@ void RectangleShape::moveShape(const QPointF &diffPoint)
 }
 Drawing * RectangleShape::fromJson(const QJsonObject &json)
 {
-
+    RectangleShape *shape=new RectangleShape();
+    shape->x=json["x"].toInt();
+    shape->y=json["y"].toInt();
+    shape->width=json["width"].toInt();
+    shape->height=json["height"].toInt();
+    shape->penColor=QColor(json["penColor"].toString());
+    shape->penWidth=json["penWidth"].toInt();
+    if(const QJsonValue value=json["brush"]; value.isObject())
+    {
+        QVariant variant(value.toVariant());
+        QBrush bbrush=variant.value<QBrush>();
+        shape->brush=bbrush;
+    }
+    return shape;
 }
 QJsonObject RectangleShape::toJson() const
 {
-
+    QJsonObject json;
+    json["x"]=x;
+    json["y"]=y;
+    json["width"]=width;
+    json["height"]=height;
+    json["penColor"]=this->penColor.name();
+    json["penWidth"]=this->penWidth;
+    QVariant value=QVariant::fromValue(brush);
+    json["brush"]=value.toJsonObject();
+    return json;
 }
 int RectangleShape::getX() const
 {

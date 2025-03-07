@@ -65,9 +65,9 @@ Drawing * ArcShape::fromJson(const QJsonObject &json)
     {
         arcShape->penWidth=value.toInt();
     }
-    if(const QJsonValue value=json["penColor"]; value.isDouble())
+    if(const QJsonValue value=json["penColor"]; value.isString())
     {
-        arcShape->penColor=QColor(value.toInt());
+        arcShape->penColor=QColor(value.toString());
     }
     return arcShape;
 }
@@ -81,7 +81,7 @@ QJsonObject ArcShape::toJson() const
     json["startAngle"]=startAngle;
     json["spanAngle"]=spanAngle;
     json["penWidth"]=penWidth;
-    json["penColor"]=penColor.value();
+    json["penColor"]=penColor.name();
     return json;
 }
 

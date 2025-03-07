@@ -78,7 +78,7 @@ void EllipseShape::moveShape(const QPointF &diffPoint)
 Drawing *EllipseShape::fromJson(const QJsonObject &json)
 {
     EllipseShape *ellipseShape=new EllipseShape();
-    printf("Object Created");
+//    printf("Object Created");
     if(const QJsonValue value=json["x"]; value.isDouble())
     {
         ellipseShape->x=value.toInt();
@@ -95,20 +95,24 @@ Drawing *EllipseShape::fromJson(const QJsonObject &json)
     {
         ellipseShape->verticalRadius=value.toInt();
     }
-    if(const QJsonValue value=json["penColor"]; value.isDouble())
+    if(const QJsonValue value=json["penColor"]; value.isString())
     {
-        ellipseShape->penColor=value.toInt();
+        ellipseShape->penColor=value.toString();
     }
     if(const QJsonValue value=json["penWidth"]; value.isDouble())
     {
         ellipseShape->penWidth=value.toInt();
     }
-//    if(const QJsonValue value=json["brush"]; value.isObject())
-//    {
-//        QVariant variant(value.toVariant());
-//        QBrush bbrush=variant.value<QBrush>();
-//        ellipseShape->brush=bbrush;
-//    }
+    if(const QJsonValue value=json["brush"]; value.isObject())
+    {
+        QVariant variant(value.toVariant());
+        QBrush bbrush=variant.value<QBrush>();
+        ellipseShape->brush=bbrush;
+    }
+    if(const QJsonValue value=json["isCenter"]; value.isBool())
+    {
+        ellipseShape->isCenter=value.toBool();
+    }
     printf("%d, %d, %d, %d ",ellipseShape->x,ellipseShape->y,ellipseShape->verticalRadius,ellipseShape->horizontalRadius);
 return ellipseShape;
 }
@@ -120,11 +124,11 @@ QJsonObject EllipseShape::toJson() const
     json["horizontalRadius"]=horizontalRadius;
     json["verticalRadius"]=verticalRadius;
     json["penWidth"]=penWidth;
-    json["penColor"]=penColor.value();
-//    QVariant value=QVariant::fromValue(brush);
-//    json["brush"]=value.toJsonObject();
+    json["penColor"]=penColor.name();
+    QVariant value=QVariant::fromValue(brush);
+    json["brush"]=value.toJsonObject();
+    json["isCenter"]=isCenter;
     return json;
-
 }
 int EllipseShape::getX() const
 {
