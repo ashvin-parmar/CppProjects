@@ -25,6 +25,7 @@ Model::Model(QWidget *parent) : QWidget(parent)
     drag=DISABLE;
     cordinates=nullptr;
     freeHandShape=nullptr;
+    rubber=nullptr;
     drawing=nullptr;
     this->color=Qt::black;
     this->penWidth=1;
@@ -63,10 +64,10 @@ QList<QString> Model::getAllShapes()
     return this->viewMap.keys();
 }
 void Model::clearCanvas() {
-    QList<Drawing*> cloneShape=shapes;
-    shapes.clear();
+
+    this->shapes.clear();
+    this->viewMap.clear();
     update();
-    shapes=cloneShape;
 }
 void Model::drawAll()
 {
@@ -122,6 +123,15 @@ void Model::paintEvent(QPaintEvent *event)
     painter.setClipRect(0,0,rect.width(),rect.height());
     painter.eraseRect(0,0,rect.width(),rect.height());
     cout<<"Painting got called size: "<<shapes.size()<<endl;
+    if(this->pageLines)
+    {
+        for(int y=30;y<rect.height();y+=30)
+        {
+            painter.setPen(QPen(Qt::gray,1));
+            painter.drawLine(0,y,rect.width(),y);
+//            printf("%d, %d, \n",y,rect.width());
+        }
+    }
     for (Drawing *shape : shapes) {
         shape->draw(painter);  // Call each shape’s draw method
     }
@@ -132,6 +142,10 @@ void Model::paintEvent(QPaintEvent *event)
     } else if(this->drag==DISABLE)
     {
         this->groupShapes->removeAllShape();
+    }
+    if(this->flag==RUBBER)
+    {
+        if(this->rubber!=nullptr) painter.eraseRect(*(this->rubber));
     }
 }
 void Model::mousePressEvent(QMouseEvent *event)
@@ -146,6 +160,15 @@ void Model::mousePressEvent(QMouseEvent *event)
         freeHandShape->setColor(color);
         freeHandShape->setPenWidth(penWidth);
         this->addShape(freeHandShape);
+    }
+    if(this->flag==RUBBER)
+    {
+        freeHandShape=new FreeHandShape();
+        freeHandShape->setColor(Qt::white);
+        freeHandShape->setPenWidth(penWidth);
+        this->addShape(freeHandShape);
+//        this->rubber=new QRect(point.x(),point.y(),penWidth,penWidth);
+//        update();
     }
     if(this->flag==LINE)
     {
@@ -234,6 +257,15 @@ void Model::mouseMoveEvent(QMouseEvent *event)
     {
         if(freeHandShape!=nullptr) this->freeHandShape->addPoint(currentPoint);
     }
+    if(this->flag==RUBBER)
+    {
+        if(freeHandShape!=nullptr) this->freeHandShape->addPoint(currentPoint);
+//        if(rubber!=nullptr)
+//        {
+//            this->rubber->setRect(currentPoint.x(),currentPoint.y(),penWidth,penWidth);
+//            update();
+//        }
+    }
     if(this->flag==LINE)
     {
         if(drawing!=nullptr)
@@ -299,7 +331,6 @@ void Model::mouseMoveEvent(QMouseEvent *event)
     }
     update();
 }
-
 void Model::mouseReleaseEvent(QMouseEvent *event)
 {
     if(this->flag==NOFLAG)
@@ -318,6 +349,21 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
             this->listWidget->insertItem(0,this->freeHandShape->toString());
             freeHandShape=nullptr;
         }
+    }
+    if(this->flag==RUBBER)
+    {
+        if(freeHandShape!=nullptr)
+        {
+            this->freeHandShape->addPoint(point);
+            freeHandShape=nullptr;
+        }
+//        if(rubber!=nullptr)
+//        {
+//            this->rubber->setRect(point.x(),point.y(),penWidth,penWidth);
+//            update();
+//            delete rubber;
+//            rubber=nullptr;
+//        }
     }
     if(this->flag==LINE)
     {
@@ -534,4 +580,18 @@ bool Model::getDrag() const
 void Model::setDrag(bool value)
 {
     drag = value;
+}
+bool Model::getPageLines() const
+{
+    return pageLines;
+}
+void Model::setPageLines(bool value)
+{
+    pageLines = value;
+}
+void Model::alterPageLines()
+{
+    if(pageLines==false) pageLines=true;
+    else                 pageLines=false;
+    update();
 }

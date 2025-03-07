@@ -14,6 +14,8 @@
 #define IMAGE 6
 #define GROUPPICK 7
 #define UNGROUPPICK 8
+#define RUBBER 9
+
 
 #include <QWidget>
 #include <QList>
@@ -62,6 +64,10 @@ public:
     bool getDrag() const;
     void setDrag(bool value);
 
+    bool getPageLines() const;
+    void setPageLines(bool value);
+    void alterPageLines();
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -75,6 +81,8 @@ private:
     bool drag=DISABLE;
     QLabel *cordinates;
     FreeHandShape *freeHandShape;
+    QRect *rubber;
+    bool pageLines=false;
     Drawing *drawing;
     QColor color;
     int penWidth;

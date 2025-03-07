@@ -43,10 +43,30 @@ MainWindow::MainWindow(QWidget *parent)
 {
     showFullScreen();
     ui->setupUi(this);
+
+    createLook();
     PhaseIII();
 
 }
+void MainWindow::createLook()
+{
+    QString mainWindowStyleSheet="QMainWindow {background-color: #D4ECFF;}";
+    QString frameStyleSheet="QFrame {border: none;}";
+//"QFrame#boardFrame { background-color: rgba(255, 255, 255, 0.9); border: none; border-radius: 4px; }";
+    QString transparentButtonStyleSheet="QPushButton{ background-color: rgba(0, 0, 0, 0); color: white; border: none;}";
+    QString borderedButtonStyleSheet="QPushButton { }";
+    QString fancyButtonStyleSheet="QPushButton {background: white; border: 0px solid gray; border-radius: 5px;}";
+    QString groupBoxStyleSheet="QGroupBox {background-color: transparent; border: none;}";
 
+
+    setStyleSheet(mainWindowStyleSheet);
+    this->ui->dynamicShape->setStyleSheet(frameStyleSheet+borderedButtonStyleSheet);
+//    this->ui->dynamicShape->setStyleSheet(frameStyleSheet+fancyButtonStyleSheet);
+    this->ui->otherToolFrame->setStyleSheet(frameStyleSheet+transparentButtonStyleSheet);
+    this->ui->boardWindow->setStyleSheet(groupBoxStyleSheet);
+    this->ui->closeApp->setStyleSheet(fancyButtonStyleSheet);
+
+}
 void MainWindow::PhaseIII()
 {
     this->ui->phaseIII->setVisible(true);
@@ -60,11 +80,16 @@ void MainWindow::PhaseIII()
     this->model->setVisible(true);
     this->model->setGeometry(0,0,1144,700);
     this->model->setCordinates(this->ui->coordinatesModel);
+    QPixmap pixmap(":/images/icon2/watermark.png","PNG");
+    pixmap.scaled(100,50,Qt::AspectRatioMode::KeepAspectRatio,Qt::TransformationMode::SmoothTransformation);
+    this->ui->watermark->setPixmap(pixmap);
+
 //    QRadioButton *radioButton=new QRadioButton(this->ui->boardWindow);
 
 
     connect(this->ui->closeApp, &QPushButton::clicked, this, [=]() {
-        this->close();
+//        this->close();
+        exit(0);
     });
 }
 
@@ -120,7 +145,15 @@ void MainWindow::on_mixColor_clicked()
 void MainWindow::on_penWidthSlider_valueChanged(int value)
 {
    this->model->setPenWidth(value);
+   this->ui->penWidthSpinBox->setValue(value);
 }
+
+void MainWindow::on_penWidthSpinBox_valueChanged(int arg1)
+{
+    this->model->setPenWidth(arg1);
+    this->ui->penWidthSlider->setValue(arg1);
+}
+
 void MainWindow::on_pickShape_clicked()
 {
     this->model->setFlag(PICK);
@@ -128,6 +161,10 @@ void MainWindow::on_pickShape_clicked()
 void MainWindow::on_freeHandDraw_clicked()
 {
     this->model->setFlag(FREEHAND);
+}
+void MainWindow::on_rubber_clicked()
+{
+    this->model->setFlag(RUBBER);
 }
 void MainWindow::on_lineDraw_clicked()
 {
@@ -260,4 +297,13 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
     Q_UNUSED(event);
     //if(event->key()==Qt::Key::Key_Control) this->model->setFlag(UNGROUPPICK);
+}
+void MainWindow::on_clearScreen_clicked()
+{
+    this->model->clearCanvas();
+}
+
+void MainWindow::on_pageScreen_clicked()
+{
+    this->model->alterPageLines();
 }

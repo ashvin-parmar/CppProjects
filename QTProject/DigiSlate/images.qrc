@@ -33,5 +33,10 @@
         <file>icon2/open_file.svg</file>
         <file>icon2/save.svg</file>
         <file>icon2/group-items.svg</file>
+        <file>icon2/clearn.svg</file>
+        <file>icon2/group.svg</file>
+        <file>icon2/rubber.svg</file>
+        <file>icon2/page.svg</file>
+        <file>icon2/watermark.png</file>
     </qresource>
 </RCC>

@@ -25,6 +25,8 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void PhaseIII(); 
 
+private:
+    void createLook();
 private slots:
     void on_freeHandDraw_clicked();
 
@@ -62,6 +64,14 @@ private slots:
     void on_drag_clicked();
 
     void on_group_shape_clicked();
+
+    void on_rubber_clicked();
+
+    void on_clearScreen_clicked();
+
+    void on_penWidthSpinBox_valueChanged(int arg1);
+
+    void on_pageScreen_clicked();
 
 private:
     Ui::MainWindow *ui;
