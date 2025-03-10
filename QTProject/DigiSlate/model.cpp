@@ -156,7 +156,16 @@ void Model::mousePressEvent(QMouseEvent *event)
     if(this->flag==NOFLAG) return;
     initialPoint=event->pos();
     QPoint point=event->pos();
-    if(this->flag==PICK || this->flag==GROUPPICK) this->pickPoint=point;
+    if(this->flag==PICK || this->flag==GROUPPICK)
+    {
+        this->pickPoint=point;
+        update();
+    }
+    else
+    {
+        pickPoint=QPoint();
+    }
+
     if(this->flag==FREEHAND)
     {
         freeHandShape=new FreeHandShape();
@@ -330,8 +339,13 @@ void Model::mouseMoveEvent(QMouseEvent *event)
             shape->moveShape(diff);
         }
         }
-        initialPoint=currentPoint;
+
     }
+    else if(this->resize==ENABLE)
+    {
+
+    }
+    initialPoint=currentPoint;
     update();
 }
 
@@ -509,9 +523,42 @@ Model* Model::fromJson(const QJsonObject &jsonObject,QWidget *parent)
         {
             shape=FreeHandShape::fromJson(value.toObject());
         }
+        else if(key.contains("Line"))
+        {
+            shape=LineShape::fromJson(value.toObject());
+        }
+        else if(key.contains("Image"))
+        {
+            shape=PixmapShape::fromJson(value.toObject());
+        }
+        else if(key.contains("Point"))
+        {
+            shape=PointShape::fromJson(value.toObject());
+        }
+        else if(key.contains("Polygon"))
+        {
+            shape=PolygonShape::fromJson(value.toObject());
+        }
+        else if(key.contains("Polyline"))
+        {
+            shape=PolylineShape::fromJson(value.toObject());
+        }
+        else if(key.contains("Rectangle"))
+        {
+            shape=RectangleShape::fromJson(value.toObject());
+        }
+        else if(key.contains("RoundedRectangle"))
+        {
+            shape=RoundedRectangleShape::fromJson(value.toObject());
+        }
+        else if(key.contains("Text"))
+        {
+            shape=TextShape::fromJson(value.toObject());
+        }
         if(shape!=nullptr)
         {
-            model->addShape(shape);
+            model->addShape(shape);//donedone
+            model->listWidget->insertItem(0,shape->toString());
         }
     }
     return model;
@@ -519,8 +566,9 @@ Model* Model::fromJson(const QJsonObject &jsonObject,QWidget *parent)
 QJsonObject Model::toJson() const
 {
     QJsonObject json;
-    for(Drawing *shape:shapes)
+    for(int i=shapes.size()-1;i>=0;i--)
     {
+        Drawing *shape=shapes[i];
         QJsonObject shapeJson=shape->toJson();
         if(shapeJson.isEmpty()) continue;
         json[shape->toString()]=shapeJson;
@@ -556,6 +604,13 @@ int Model::getFlag() const
 void Model::setFlag(int value)
 {
     flag = value;
+    if(!(flag==PICK || flag==GROUPPICK))
+    {
+        this->drag=DISABLE;
+        this->resize=DISABLE;
+        this->groupShapes->removeAllShape();
+    }
+    update();
 }
 
 void Model::setCordinates(QLabel *value)

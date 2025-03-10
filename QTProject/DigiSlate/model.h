@@ -68,6 +68,9 @@ public:
     void setPageLines(bool value);
     void alterPageLines();
 
+    bool getResize() const;
+    void setResize(bool value);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -79,6 +82,7 @@ private:
     QHash<QString,Drawing*> viewMap;
     int flag=NOFLAG;
     bool drag=DISABLE;
+    bool resize=DISABLE;
     QLabel *cordinates;
     FreeHandShape *freeHandShape;
     QRect *rubber;

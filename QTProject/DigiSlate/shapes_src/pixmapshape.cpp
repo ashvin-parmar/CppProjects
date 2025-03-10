@@ -1,4 +1,6 @@
 #include "shapes_header/pixmapshape.h"
+#include<iostream>
+using namespace std;
 int PixmapShape::count=1;
 PixmapShape::PixmapShape(QObject *parent):Drawing(parent)
 {
@@ -55,7 +57,8 @@ Drawing * PixmapShape::fromJson(const QJsonObject &json)
     shape->width=json["width"].toInt();
     shape->height=json["height"].toInt();
     shape->fileName=json["fileName"].toString();
-    shape->pixmap.save(shape->fileName);
+    cout<<shape->fileName.toStdString()<<endl;
+    shape->pixmap.load(shape->fileName);
     return shape;
 }
 QJsonObject PixmapShape::toJson() const

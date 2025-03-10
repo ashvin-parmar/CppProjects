@@ -73,9 +73,13 @@ private slots:
 
     void on_pageScreen_clicked();
 
+    void on_resizeShape_clicked();
+
 private:
     Ui::MainWindow *ui;
     QListWidget *listWidget;
     Model *model;
+    int countPage=1;
+    QMap<int,Model *> pages;
 };
 #endif // MAINWINDOW_H

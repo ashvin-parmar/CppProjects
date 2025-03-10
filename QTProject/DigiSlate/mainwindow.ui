@@ -98,32 +98,6 @@
         <number>2</number>
        </property>
        <item>
-        <widget class="QPushButton" name="logo">
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/icon2/logo_icon.svg</normaloff>:/images/icon2/logo_icon.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="freeHandDraw">
          <property name="maximumSize">
           <size>
@@ -434,35 +408,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="resizeShape">
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>Resize Shape</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/icon2/resize.svg</normaloff>:/images/icon2/resize.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>25</width>
-           <height>25</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="openFile">
          <property name="maximumSize">
           <size>
@@ -520,72 +465,39 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="addNewPage">
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Add New Page</string>
+         </property>
+         <property name="toolTipDuration">
+          <number>-1</number>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/icon2/addNewPage.svg</normaloff>:/images/icon2/addNewPage.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
       </layout>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="boardWindow">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>720</y>
-       <width>1161</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string/>
-     </property>
-     <widget class="QRadioButton" name="radioButton">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>0</y>
-        <width>16</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton_2">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>0</y>
-        <width>16</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton_3">
-      <property name="geometry">
-       <rect>
-        <x>50</x>
-        <y>0</y>
-        <width>16</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton_4">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>0</y>
-        <width>16</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="board" native="true">
@@ -880,9 +792,9 @@
     <widget class="QLabel" name="watermark">
      <property name="geometry">
       <rect>
-       <x>520</x>
+       <x>560</x>
        <y>30</y>
-       <width>351</width>
+       <width>231</width>
        <height>71</height>
       </rect>
      </property>
@@ -890,10 +802,55 @@
       <string/>
      </property>
     </widget>
-    <widget class="QPushButton" name="addNewPage">
+    <widget class="QGroupBox" name="boardWindow">
      <property name="geometry">
       <rect>
-       <x>1290</x>
+       <x>60</x>
+       <y>660</y>
+       <width>1161</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="logo">
+     <property name="geometry">
+      <rect>
+       <x>1300</x>
+       <y>710</y>
+       <width>30</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="images.qrc">
+       <normaloff>:/images/icon2/logo_icon.svg</normaloff>:/images/icon2/logo_icon.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="resizeShape">
+     <property name="geometry">
+      <rect>
+       <x>1270</x>
        <y>710</y>
        <width>30</width>
        <height>30</height>
@@ -909,17 +866,14 @@
       <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="toolTip">
-      <string>Add New Page</string>
-     </property>
-     <property name="toolTipDuration">
-      <number>-1</number>
+      <string>Resize Shape</string>
      </property>
      <property name="text">
       <string/>
      </property>
      <property name="icon">
       <iconset resource="images.qrc">
-       <normaloff>:/images/icon2/addNewPage.svg</normaloff>:/images/icon2/addNewPage.svg</iconset>
+       <normaloff>:/images/icon2/resize.svg</normaloff>:/images/icon2/resize.svg</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -928,14 +882,15 @@
       </size>
      </property>
     </widget>
-    <zorder>dynamicShape</zorder>
     <zorder>boardWindow</zorder>
+    <zorder>dynamicShape</zorder>
     <zorder>boardFrame</zorder>
     <zorder>board</zorder>
     <zorder>rubber</zorder>
     <zorder>otherToolFrame</zorder>
     <zorder>watermark</zorder>
-    <zorder>addNewPage</zorder>
+    <zorder>logo</zorder>
+    <zorder>resizeShape</zorder>
    </widget>
    <widget class="QLabel" name="coordinatesScreen">
     <property name="geometry">

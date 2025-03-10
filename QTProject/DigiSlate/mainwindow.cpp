@@ -19,6 +19,7 @@
 #include<QTreeWidgetItem>
 #include<QJsonDocument>
 #include<QColorDialog>
+#include<QRadioButton>
 
 #include<drawing.h>
 #include<model.h>
@@ -37,6 +38,8 @@
 #include<iostream>
 using namespace std;
 
+#define MAX_PAGES 10
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -45,8 +48,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     //Work on later ==> In Self Application [Commend those lines for them to be whike working on it.]
     this->ui->rubber->setVisible(false);
-    this->ui->addNewPage->setVisible(false);
-    this->ui->boardWindow->setVisible(false);
+    this->ui->logo->setVisible(false);
+    this->ui->resizeShape->setVisible(false);
     this->ui->coordinatesScreen->setVisible(false);
 
     createLook();
@@ -76,10 +79,55 @@ void MainWindow::PhaseIII()
 {
     this->ui->phaseIII->setVisible(true);
     this->ui->phaseIII->setGeometry(QRect(0,0,1369,900));
-    this->model=new Model(this->ui->board);
 
-    this->model->setColor(Qt::black);
-    this->model->setPenWidth(1);
+    QHBoxLayout *hl=new QHBoxLayout();
+    this->ui->boardWindow->setLayout(hl);
+    this->ui->boardWindow->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
+    hl->setAlignment(Qt::AlignmentFlag::AlignLeft);
+
+    QRadioButton *radioButton=new QRadioButton(this->ui->boardWindow);
+    radioButton->setVisible(true);
+    radioButton->setToolTip("Page "+QString::number(countPage));
+    connect(radioButton,&QRadioButton::clicked,this,[this,radioButton](bool checked){
+        if(checked==true)
+        {
+            QString value=radioButton->toolTip();
+            QString toSearch=value.right(value.size()-5);       //"Page " are of 5 character
+            int val=toSearch.toInt();
+            Model *newModel=this->pages[val];
+            if(newModel==nullptr) return;
+            newModel->setVisible(true);
+            this->model->setVisible(false);
+
+            QListWidget *newListWidget=newModel->getListWidget();
+            newListWidget->setVisible(true);
+            this->listWidget->setVisible(false);
+            this->model=newModel;
+            this->listWidget=newListWidget;
+            this->listWidget->setParent(this);
+            this->ui->penWidthSlider->setValue(this->model->getPenWidth());
+            this->model->update();
+        }
+        else
+        {
+            QString value=radioButton->toolTip();
+            QString toSearch=value.right(value.size()-5);       //"Page " are of 5 character
+            int val=toSearch.toInt();
+            Model *newModel=this->pages[val];
+            if(newModel==nullptr) return;
+            newModel->setVisible(false);
+            newModel->getListWidget()->setVisible(false);
+        }
+    });
+    hl->addWidget(radioButton);
+    radioButton->setChecked(true);
+
+    this->model=new Model(this->ui->board);
+    pages[countPage]=model;
+    this->ui->boardWindow->setChecked(true);
+
+//    this->model->setColor(Qt::black);
+//    this->model->setPenWidth(1);
 //    this->model->setListWidget(this->ui->listWidget);
     listWidget=this->model->getListWidget();
     listWidget->setParent(this);
@@ -87,15 +135,13 @@ void MainWindow::PhaseIII()
     listWidget->setToolTip("List of Shapes");
     listWidget->setVisible(true);
 
+
     this->model->setVisible(true);
     this->model->setGeometry(0,0,1144,700);
     this->model->setCordinates(this->ui->coordinatesModel);
     QPixmap pixmap(":/images/icon2/watermark.png","PNG");
     QPixmap scaledPixmap=pixmap.scaled(200,100,Qt::AspectRatioMode::KeepAspectRatio,Qt::TransformationMode::SmoothTransformation);
     this->ui->watermark->setPixmap(scaledPixmap);
-
-//    QRadioButton *radioButton=new QRadioButton(this->ui->boardWindow);
-
 
     connect(this->ui->closeApp, &QPushButton::clicked, this, [=]() {
 //        this->close();
@@ -212,8 +258,69 @@ void MainWindow::on_imageDraw_clicked()
 
 void MainWindow::on_addNewPage_clicked()
 {
-//    QRadioButton *radioButton=new QRadioButton(this->ui->boardWindow);
+    if(countPage>MAX_PAGES)
+    {
+           QMessageBox::warning(this,"Page Limit Exceed","Page limit reached. \nNo more pages added.");
+           return ;
+    }
+    this->model=new Model();
+    this->model->setParent(this->ui->board);
+    this->model->setGeometry(0,0,1144,700);
 
+    this->ui->penWidthSlider->setValue(this->model->getPenWidth());
+    this->listWidget=this->model->getListWidget();
+    listWidget->setParent(this);
+    listWidget->setGeometry(1232,42,131,371);
+    listWidget->setToolTip("List of Shapes");
+    listWidget->setVisible(true);
+
+    this->model->setVisible(true);
+    this->model->setCordinates(this->ui->coordinatesModel);
+    this->model->update();
+
+    if(countPage==MAX_PAGES)
+    {
+           QMessageBox::warning(this,"Page Limit Reached","You cannot add more pages from next time.\nBecause maximum number of pages reached.");
+    }
+    QRadioButton *radioButton=new QRadioButton(this->ui->boardWindow);
+    radioButton->setChecked(true);
+    radioButton->setToolTip("Page "+QString::number(++countPage));
+    this->ui->boardWindow->layout()->addWidget(radioButton);
+    this->pages[countPage]=model;
+
+    connect(radioButton,&QRadioButton::clicked,this,[this,radioButton](bool checked){
+            if(checked==true)
+            {
+                QString value=radioButton->toolTip();
+                QString toSearch=value.right(value.size()-5);       //"Page " are of 5 character
+                int val=toSearch.toInt();
+                Model *newModel=this->pages[val];
+                if(newModel==nullptr) return;
+                newModel->setVisible(true);
+                this->model->setVisible(false);
+
+                QListWidget *newListWidget=newModel->getListWidget();
+                newListWidget->setVisible(true);
+                this->listWidget->setVisible(false);
+
+                this->model=newModel;
+                this->listWidget=newListWidget;
+
+                this->listWidget->setParent(this);
+                this->ui->penWidthSlider->setValue(this->model->getPenWidth());
+                this->model->update();
+            }
+            else
+            {
+                QString value=radioButton->toolTip();
+                QString toSearch=value.right(value.size()-5);       //"Page " are of 5 character
+                int val=toSearch.toInt();
+                Model *newModel=this->pages[val];
+                if(newModel==nullptr) return;
+                newModel->setVisible(false);
+                newModel->getListWidget()->setVisible(false);
+            }
+        });
 }
 
 void MainWindow::on_saveFile_clicked()
@@ -268,16 +375,11 @@ void MainWindow::on_openFile_clicked()
         if(docs.isNull()) printf("Null");
         QJsonObject jsonObject=docs.object();
         if(jsonObject.isEmpty()) printf("Empty");
-        Model *newModel=Model::fromJson(jsonObject,this->ui->board);
-        if(newModel==nullptr) printf("Null model");
-        delete this->model;
-        this->model=newModel;
-//        this->model->setParent(this->ui->board);
+        this->model=Model::fromJson(jsonObject,this->ui->board);
+        this->model->setParent(this->ui->board);
         this->model->setGeometry(0,0,1144,700);
 
-        this->model->setColor(Qt::black);
-        this->model->setPenWidth(1);
-//        this->model->setListWidget(this->ui->listWidget);
+        this->ui->penWidthSlider->setValue(this->model->getPenWidth());
         this->listWidget=this->model->getListWidget();
         listWidget->setParent(this);
         listWidget->setGeometry(1232,42,131,371);
@@ -287,14 +389,60 @@ void MainWindow::on_openFile_clicked()
         this->model->setVisible(true);
         this->model->setCordinates(this->ui->coordinatesModel);
         this->model->update();
+        if(countPage>MAX_PAGES)
+        {
+               QMessageBox::warning(this,"Page Limit Exceed","Page limit reached, Necessary changes have been done on the same page.");
+               return ;
+        }
+        if(countPage==MAX_PAGES)
+        {
+               QMessageBox::warning(this,"Page Limit Reached","You cannot add more pages from next time.\nBecause maximum number of pages reached.");
+        }
+        QRadioButton *radioButton=new QRadioButton(this->ui->boardWindow);
+        radioButton->setChecked(true);
+        radioButton->setToolTip("Page "+QString::number(++countPage));
+        this->ui->boardWindow->layout()->addWidget(radioButton);
+        this->pages[countPage]=model;
 
+        connect(radioButton,&QRadioButton::clicked,this,[this,radioButton](bool checked){
+            if(checked==true)
+            {
+                QString value=radioButton->toolTip();
+                QString toSearch=value.right(value.size()-5);       //"Page " are of 5 character
+                int val=toSearch.toInt();
+                Model *newModel=this->pages[val];
+                if(newModel==nullptr) return;
+                newModel->setVisible(true);
+                this->model->setVisible(false);
+
+                QListWidget *newListWidget=newModel->getListWidget();
+                newListWidget->setVisible(true);
+                this->listWidget->setVisible(false);
+                this->model=newModel;
+                this->listWidget=newListWidget;
+                this->listWidget->setParent(this);
+                this->ui->penWidthSlider->setValue(this->model->getPenWidth());
+                this->model->update();
+            }
+            else
+            {
+                QString value=radioButton->toolTip();
+                QString toSearch=value.right(value.size()-5);       //"Page " are of 5 character
+                int val=toSearch.toInt();
+                Model *newModel=this->pages[val];
+                if(newModel==nullptr) return;
+                newModel->setVisible(false);
+                newModel->getListWidget()->setVisible(false);
+            }
+        });
     }
 }
 
 void MainWindow::on_drag_clicked()
 {
     this->model->setDrag(ENABLE);
-    this->model->setFlag(PICK);
+//    this->model->setFlag(PICK);
+    this->model->setResize(DISABLE);
 //    int flag=this->model->getFlag();
 //    if(!(flag==PICK || flag==GROUPPICK)) this->model->setFlag(NOFLAG);
 
@@ -321,4 +469,10 @@ void MainWindow::on_clearScreen_clicked()
 void MainWindow::on_pageScreen_clicked()
 {
     this->model->alterPageLines();
+}
+
+void MainWindow::on_resizeShape_clicked()
+{
+    this->model->setResize(ENABLE);
+    this->model->setDrag(DISABLE);
 }
