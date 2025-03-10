@@ -81,7 +81,7 @@
         <x>0</x>
         <y>10</y>
         <width>41</width>
-        <height>571</height>
+        <height>711</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -434,7 +434,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="addNewPage">
+        <widget class="QPushButton" name="resizeShape">
          <property name="maximumSize">
           <size>
            <width>30</width>
@@ -445,17 +445,14 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>Add New Page</string>
-         </property>
-         <property name="toolTipDuration">
-          <number>-1</number>
+          <string>Resize Shape</string>
          </property>
          <property name="text">
           <string/>
          </property>
          <property name="icon">
           <iconset resource="images.qrc">
-           <normaloff>:/images/icon2/addNewPage.svg</normaloff>:/images/icon2/addNewPage.svg</iconset>
+           <normaloff>:/images/icon2/resize.svg</normaloff>:/images/icon2/resize.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -682,19 +679,6 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QListWidget" name="listWidget">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>42</y>
-        <width>131</width>
-        <height>371</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>List of Shape</string>
-      </property>
-     </widget>
      <widget class="QWidget" name="layoutWidget_2">
       <property name="geometry">
        <rect>
@@ -896,7 +880,7 @@
     <widget class="QLabel" name="watermark">
      <property name="geometry">
       <rect>
-       <x>470</x>
+       <x>520</x>
        <y>30</y>
        <width>351</width>
        <height>71</height>
@@ -906,6 +890,44 @@
       <string/>
      </property>
     </widget>
+    <widget class="QPushButton" name="addNewPage">
+     <property name="geometry">
+      <rect>
+       <x>1290</x>
+       <y>710</y>
+       <width>30</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="toolTip">
+      <string>Add New Page</string>
+     </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="images.qrc">
+       <normaloff>:/images/icon2/addNewPage.svg</normaloff>:/images/icon2/addNewPage.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
+     </property>
+    </widget>
     <zorder>dynamicShape</zorder>
     <zorder>boardWindow</zorder>
     <zorder>boardFrame</zorder>
@@ -913,6 +935,7 @@
     <zorder>rubber</zorder>
     <zorder>otherToolFrame</zorder>
     <zorder>watermark</zorder>
+    <zorder>addNewPage</zorder>
    </widget>
    <widget class="QLabel" name="coordinatesScreen">
     <property name="geometry">

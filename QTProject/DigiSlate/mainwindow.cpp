@@ -43,6 +43,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     showFullScreen();
     ui->setupUi(this);
+    //Work on later ==> In Self Application [Commend those lines for them to be whike working on it.]
+    this->ui->rubber->setVisible(false);
+    this->ui->addNewPage->setVisible(false);
+    this->ui->boardWindow->setVisible(false);
+    this->ui->coordinatesScreen->setVisible(false);
 
     createLook();
     PhaseIII();
@@ -75,14 +80,19 @@ void MainWindow::PhaseIII()
 
     this->model->setColor(Qt::black);
     this->model->setPenWidth(1);
-    this->model->setListWidget(this->ui->listWidget);
+//    this->model->setListWidget(this->ui->listWidget);
+    listWidget=this->model->getListWidget();
+    listWidget->setParent(this);
+    listWidget->setGeometry(1232,42,131,371);
+    listWidget->setToolTip("List of Shapes");
+    listWidget->setVisible(true);
 
     this->model->setVisible(true);
     this->model->setGeometry(0,0,1144,700);
     this->model->setCordinates(this->ui->coordinatesModel);
     QPixmap pixmap(":/images/icon2/watermark.png","PNG");
-    pixmap.scaled(100,50,Qt::AspectRatioMode::KeepAspectRatio,Qt::TransformationMode::SmoothTransformation);
-    this->ui->watermark->setPixmap(pixmap);
+    QPixmap scaledPixmap=pixmap.scaled(200,100,Qt::AspectRatioMode::KeepAspectRatio,Qt::TransformationMode::SmoothTransformation);
+    this->ui->watermark->setPixmap(scaledPixmap);
 
 //    QRadioButton *radioButton=new QRadioButton(this->ui->boardWindow);
 
@@ -267,7 +277,12 @@ void MainWindow::on_openFile_clicked()
 
         this->model->setColor(Qt::black);
         this->model->setPenWidth(1);
-        this->model->setListWidget(this->ui->listWidget);
+//        this->model->setListWidget(this->ui->listWidget);
+        this->listWidget=this->model->getListWidget();
+        listWidget->setParent(this);
+        listWidget->setGeometry(1232,42,131,371);
+        listWidget->setToolTip("List of Shapes");
+        listWidget->setVisible(true);
 
         this->model->setVisible(true);
         this->model->setCordinates(this->ui->coordinatesModel);

@@ -23,6 +23,8 @@ Model::Model(QWidget *parent) : QWidget(parent)
     //Initialization
     flag=NOFLAG;
     drag=DISABLE;
+    resize=DISABLE;
+    listWidget=new QListWidget(parent);
     cordinates=nullptr;
     freeHandShape=nullptr;
     rubber=nullptr;
@@ -67,6 +69,7 @@ void Model::clearCanvas() {
 
     this->shapes.clear();
     this->viewMap.clear();
+    this->listWidget->clear();
     update();
 }
 void Model::drawAll()
@@ -249,10 +252,10 @@ void Model::mouseMoveEvent(QMouseEvent *event)
     cordinates->setText(QString("x=%1,y=%2").arg(event->x()).arg(event->y()));
     currentPoint=event->pos();
     if(this->flag==NOFLAG) return;
-    if(this->flag==PICK || this->flag==GROUPPICK)
-    {
-        this->drag=ENABLE;
-    }
+//    if(this->flag==PICK || this->flag==GROUPPICK)
+//    {
+//        this->drag=ENABLE;
+//    }
     if(this->flag==FREEHAND)
     {
         if(freeHandShape!=nullptr) this->freeHandShape->addPoint(currentPoint);
@@ -331,6 +334,7 @@ void Model::mouseMoveEvent(QMouseEvent *event)
     }
     update();
 }
+
 void Model::mouseReleaseEvent(QMouseEvent *event)
 {
     if(this->flag==NOFLAG)
@@ -469,10 +473,15 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
         }
         }
     }
-    if(this->flag==PICK || this->flag==GROUPPICK)
+    else if(this->resize==ENABLE)
     {
-       this->drag=DISABLE;
+
     }
+
+//    if(this->flag==PICK || this->flag==GROUPPICK)
+//    {
+//       this->drag=DISABLE;
+//    }
     update();
 }
 
@@ -594,4 +603,14 @@ void Model::alterPageLines()
     if(pageLines==false) pageLines=true;
     else                 pageLines=false;
     update();
+}
+
+bool Model::getResize() const
+{
+    return resize;
+}
+
+void Model::setResize(bool value)
+{
+    resize = value;
 }

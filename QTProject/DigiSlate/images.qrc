@@ -38,5 +38,7 @@
         <file>icon2/rubber.svg</file>
         <file>icon2/page.svg</file>
         <file>icon2/watermark.png</file>
+        <file>icon2/splash.png</file>
+        <file>icon2/resize.svg</file>
     </qresource>
 </RCC>
