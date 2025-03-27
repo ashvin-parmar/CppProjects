@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Draw A Think</string>
+   <string>DigiSlate</string>
   </property>
   <property name="windowIcon">
    <iconset resource="images.qrc">
@@ -28,10 +28,10 @@
      </rect>
     </property>
     <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
+     <enum>QFrame::Shape::StyledPanel</enum>
     </property>
     <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
+     <enum>QFrame::Shadow::Raised</enum>
     </property>
     <widget class="QLabel" name="boardFrame">
      <property name="geometry">
@@ -48,10 +48,10 @@
       </font>
      </property>
      <property name="contextMenuPolicy">
-      <enum>Qt::DefaultContextMenu</enum>
+      <enum>Qt::ContextMenuPolicy::DefaultContextMenu</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
+      <enum>QFrame::Shadow::Plain</enum>
      </property>
      <property name="text">
       <string/>
@@ -70,10 +70,10 @@
       </rect>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
@@ -563,11 +563,14 @@
        <height>711</height>
       </rect>
      </property>
+     <property name="cursor">
+      <cursorShape>ArrowCursor</cursorShape>
+     </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <widget class="QSlider" name="penWidthSlider">
       <property name="geometry">
@@ -577,6 +580,9 @@
         <width>71</width>
         <height>20</height>
        </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
       </property>
       <property name="toolTip">
        <string>Pen Width</string>
@@ -588,7 +594,7 @@
        <number>40</number>
       </property>
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
      </widget>
      <widget class="QWidget" name="layoutWidget_2">
@@ -607,9 +613,11 @@
           <font>
            <family>Times New Roman</family>
            <pointsize>14</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>BlankCursor</cursorShape>
          </property>
          <property name="text">
           <string>Shapes</string>
@@ -619,7 +627,7 @@
        <item>
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -666,6 +674,9 @@
         <height>21</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
       <property name="toolTip">
        <string>Pen Width</string>
       </property>
@@ -694,6 +705,9 @@
            <height>20</height>
           </size>
          </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="toolTip">
           <string>Black</string>
          </property>
@@ -713,6 +727,9 @@
            <width>20</width>
            <height>20</height>
           </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
           <string>Red</string>
@@ -734,6 +751,9 @@
            <height>20</height>
           </size>
          </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="toolTip">
           <string>Green</string>
          </property>
@@ -754,6 +774,9 @@
            <height>20</height>
           </size>
          </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="toolTip">
           <string>Blue</string>
          </property>
@@ -773,6 +796,9 @@
            <width>20</width>
            <height>20</height>
           </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
           <string>Mix Color </string>
@@ -806,10 +832,13 @@
      <property name="geometry">
       <rect>
        <x>60</x>
-       <y>660</y>
+       <y>670</y>
        <width>1161</width>
        <height>121</height>
       </rect>
+     </property>
+     <property name="cursor">
+      <cursorShape>ArrowCursor</cursorShape>
      </property>
      <property name="title">
       <string/>
@@ -831,7 +860,7 @@
       </size>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
+      <enum>Qt::FocusPolicy::NoFocus</enum>
      </property>
      <property name="text">
       <string/>
@@ -907,11 +936,14 @@
       <pointsize>12</pointsize>
      </font>
     </property>
+    <property name="cursor">
+     <cursorShape>BlankCursor</cursorShape>
+    </property>
     <property name="text">
      <string>x: 0, y=0</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="coordinatesModel">
@@ -933,7 +965,7 @@
      <string>x: 0, y=0</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
   </widget>

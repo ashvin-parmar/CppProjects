@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     showFullScreen();
     ui->setupUi(this);
-    //Work on later ==> In Self Application [Commend those lines for them to be whike working on it.]
+    //Work on later ==> [un-Comment those lines for them, while working on it.]
     this->ui->rubber->setVisible(false);
     this->ui->logo->setVisible(false);
     this->ui->resizeShape->setVisible(false);
@@ -62,18 +62,24 @@ void MainWindow::createLook()
     QString frameStyleSheet="QFrame {border: none;}";
 //"QFrame#boardFrame { background-color: rgba(255, 255, 255, 0.9); border: none; border-radius: 4px; }";
     QString transparentButtonStyleSheet="QPushButton{ background-color: rgba(0, 0, 0, 0); color: white; border: none;}";
-    QString borderedButtonStyleSheet="QPushButton { }";
+    QString borderedButtonStyleSheet="QPushButton {background-color: white; color: black; border: 0px solid gray; border-radius: 5px; }";
     QString fancyButtonStyleSheet="QPushButton {background: white; border: 0px solid gray; border-radius: 5px;}";
     QString groupBoxStyleSheet="QGroupBox {background-color: transparent; border: none;}";
-
+    QString sliderStyleSheet="QSlider {background-color: white; border: 0px solid gray; border-radius: 5px;} ";
+    // QString spinBoxStyleSheet="QSpinBox {background-color: white; color: black; border: 0px solid gray; border-radius: 5px;} QSpinBox::up-button{background-color: black;} QSpinBox::down-button{background-color: black;} QSpinBox::up-arrow{background:white;} QSpinBox::down-arrow{background:white;}";
+    QString spinBoxStyleSheet ="QSpinBox { }";
+    QString radioButtonStyleSheet="QRadioButton {}";
 
     setStyleSheet(mainWindowStyleSheet);
+    this->ui->viewShapeLabel->setStyleSheet("color:black;");
     this->ui->dynamicShape->setStyleSheet(frameStyleSheet+borderedButtonStyleSheet);
 //    this->ui->dynamicShape->setStyleSheet(frameStyleSheet+fancyButtonStyleSheet);
     this->ui->otherToolFrame->setStyleSheet(frameStyleSheet+transparentButtonStyleSheet);
-    this->ui->boardWindow->setStyleSheet(groupBoxStyleSheet);
+    this->ui->boardWindow->setStyleSheet(groupBoxStyleSheet+radioButtonStyleSheet);
     this->ui->closeApp->setStyleSheet(fancyButtonStyleSheet);
-
+    this->ui->penWidthSlider->setStyleSheet(sliderStyleSheet);
+    this->ui->penWidthSpinBox->setStyleSheet(spinBoxStyleSheet);
+    this->ui->coordinatesModel->setStyleSheet("color:black;");
 }
 void MainWindow::PhaseIII()
 {
@@ -96,6 +102,7 @@ void MainWindow::PhaseIII()
             int val=toSearch.toInt();
             Model *newModel=this->pages[val];
             if(newModel==nullptr) return;
+            if(newModel==model) return;
             newModel->setVisible(true);
             this->model->setVisible(false);
 
@@ -296,6 +303,7 @@ void MainWindow::on_addNewPage_clicked()
                 int val=toSearch.toInt();
                 Model *newModel=this->pages[val];
                 if(newModel==nullptr) return;
+                if(newModel==model) return;
                 newModel->setVisible(true);
                 this->model->setVisible(false);
 
@@ -309,16 +317,6 @@ void MainWindow::on_addNewPage_clicked()
                 this->listWidget->setParent(this);
                 this->ui->penWidthSlider->setValue(this->model->getPenWidth());
                 this->model->update();
-            }
-            else
-            {
-                QString value=radioButton->toolTip();
-                QString toSearch=value.right(value.size()-5);       //"Page " are of 5 character
-                int val=toSearch.toInt();
-                Model *newModel=this->pages[val];
-                if(newModel==nullptr) return;
-                newModel->setVisible(false);
-                newModel->getListWidget()->setVisible(false);
             }
         });
 }
@@ -368,13 +366,21 @@ void MainWindow::on_openFile_clicked()
         cout<<(openFile.toStdString())<<endl;
         if(!file.open(QIODevice::WriteOnly | QIODevice::ReadOnly))
         {
-    //        qWaring("Couldn't open file");
+            QMessageBox::warning(this,"File Error","Wrong file");
             return ;
         }
         QJsonDocument docs(QJsonDocument::fromJson(file.readAll()));
-        if(docs.isNull()) printf("Null");
+        if(docs.isNull())
+        {
+            QMessageBox::warning(this,"File Error","Empty File: "+openFile);
+            return ;
+        }
         QJsonObject jsonObject=docs.object();
-        if(jsonObject.isEmpty()) printf("Empty");
+        if(jsonObject.isEmpty())
+        {
+            QMessageBox::warning(this,"File Error","Empty File: "+openFile);
+            return ;
+        }
         this->model=Model::fromJson(jsonObject,this->ui->board);
         this->model->setParent(this->ui->board);
         this->model->setGeometry(0,0,1144,700);
@@ -410,8 +416,9 @@ void MainWindow::on_openFile_clicked()
                 QString value=radioButton->toolTip();
                 QString toSearch=value.right(value.size()-5);       //"Page " are of 5 character
                 int val=toSearch.toInt();
-                Model *newModel=this->pages[val];
+                Model *newModel=this->pages[val];                
                 if(newModel==nullptr) return;
+                if(newModel==model) return;
                 newModel->setVisible(true);
                 this->model->setVisible(false);
 
@@ -424,16 +431,16 @@ void MainWindow::on_openFile_clicked()
                 this->ui->penWidthSlider->setValue(this->model->getPenWidth());
                 this->model->update();
             }
-            else
-            {
-                QString value=radioButton->toolTip();
-                QString toSearch=value.right(value.size()-5);       //"Page " are of 5 character
-                int val=toSearch.toInt();
-                Model *newModel=this->pages[val];
-                if(newModel==nullptr) return;
-                newModel->setVisible(false);
-                newModel->getListWidget()->setVisible(false);
-            }
+            // else
+            // {
+            //     QString value=radioButton->toolTip();
+            //     QString toSearch=value.right(value.size()-5);       //"Page " are of 5 character
+            //     int val=toSearch.toInt();
+            //     Model *newModel=this->pages[val];
+            //     if(newModel==nullptr) return;
+            //     newModel->setVisible(false);
+            //     newModel->getListWidget()->setVisible(false);
+            // }
         });
     }
 }

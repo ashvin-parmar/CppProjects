@@ -25,6 +25,7 @@ Model::Model(QWidget *parent) : QWidget(parent)
     drag=DISABLE;
     resize=DISABLE;
     listWidget=new QListWidget(parent);
+    listWidget->setStyleSheet("background-color:white;color:black;");
     cordinates=nullptr;
     freeHandShape=nullptr;
     rubber=nullptr;
@@ -179,8 +180,8 @@ void Model::mousePressEvent(QMouseEvent *event)
         freeHandShape->setColor(Qt::white);
         freeHandShape->setPenWidth(penWidth);
         this->addShape(freeHandShape);
-//        this->rubber=new QRect(point.x(),point.y(),penWidth,penWidth);
-//        update();
+       this->rubber=new QRect(point.x(),point.y(),penWidth,penWidth);
+       update();
     }
     if(this->flag==LINE)
     {
@@ -272,11 +273,11 @@ void Model::mouseMoveEvent(QMouseEvent *event)
     if(this->flag==RUBBER)
     {
         if(freeHandShape!=nullptr) this->freeHandShape->addPoint(currentPoint);
-//        if(rubber!=nullptr)
-//        {
-//            this->rubber->setRect(currentPoint.x(),currentPoint.y(),penWidth,penWidth);
-//            update();
-//        }
+       if(rubber!=nullptr)
+       {
+           this->rubber->setRect(currentPoint.x(),currentPoint.y(),penWidth,penWidth);
+           update();
+       }
     }
     if(this->flag==LINE)
     {
@@ -375,13 +376,13 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
             this->freeHandShape->addPoint(point);
             freeHandShape=nullptr;
         }
-//        if(rubber!=nullptr)
-//        {
-//            this->rubber->setRect(point.x(),point.y(),penWidth,penWidth);
-//            update();
-//            delete rubber;
-//            rubber=nullptr;
-//        }
+       if(rubber!=nullptr)
+       {
+           this->rubber->setRect(point.x(),point.y(),penWidth,penWidth);
+           update();
+           delete rubber;
+           rubber=nullptr;
+       }
     }
     if(this->flag==LINE)
     {
@@ -473,19 +474,19 @@ void Model::mouseReleaseEvent(QMouseEvent *event)
 
     if(this->drag==ENABLE)
     {
-        QPointF diff=QPoint(currentPoint.x()-initialPoint.x(),currentPoint.y()-initialPoint.y());
-        if(this->flag==PICK)
-        {
-            if(drawing!=nullptr) drawing->moveShape(diff);
-            drawing=nullptr;
-        }
-        if(this->flag==GROUPPICK)
-        {
-        for(Drawing *shape:this->groupShapes->getShapes())
-        {
-            shape->moveShape(diff);
-        }
-        }
+        // QPointF diff=QPoint(currentPoint.x()-initialPoint.x(),currentPoint.y()-initialPoint.y());
+        // if(this->flag==PICK)
+        // {
+        //     if(drawing!=nullptr) drawing->moveShape(diff);
+        //     drawing=nullptr;
+        // }
+        // if(this->flag==GROUPPICK)
+        // {
+        // for(Drawing *shape:this->groupShapes->getShapes())
+        // {
+        //     shape->moveShape(diff);
+        // }
+        // }
     }
     else if(this->resize==ENABLE)
     {
